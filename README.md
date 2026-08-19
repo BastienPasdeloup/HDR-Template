@@ -30,19 +30,26 @@ Every piece of text is a placeholder: replace it with your own.
 
 ## Compiling
 
-The template requires **LuaLaTeX** (for the fonts and the emoji flags):
+The template requires **LuaLaTeX** (for the fonts and the emoji flags), **biber** for the bibliography, and a
+**makeglossaries** pass for the list of acronyms. The `.latexmkrc` shipped here wires all three together, so a
+plain `latexmk` is enough:
 
 ```bash
-latexmk -lualatex -outdir=build main_hdr.tex
-latexmk -lualatex -outdir=build main_demand.tex
-latexmk -lualatex -outdir=build main_phd.tex
+latexmk -outdir=build main_hdr.tex
+latexmk -outdir=build main_demand.tex
+latexmk -outdir=build main_phd.tex
 ```
 
-On Overleaf, set the compiler to *LuaLaTeX* in the project menu, and pick the main file you want to build.
+Without that `.latexmkrc`, `latexmk` does not know it has to run `makeglossaries`, and the list of acronyms comes
+out **empty** — so keep the file if you start your own document from this repository.
+
+On Overleaf, set the compiler to *LuaLaTeX* in the project menu and pick the main file you want to build:
+Overleaf runs `makeglossaries` on its own, and also honours the `.latexmkrc`.
 
 ## Repository layout
 
 ```
+.latexmkrc                Build rules: LuaLaTeX, biber, and the makeglossaries pass
 acronyms.tex              All acronyms, shared by the three examples
 bibliography.bib          All references, shared by the three examples
 main_hdr.tex              Example 1 -- full HDR manuscript (English)
