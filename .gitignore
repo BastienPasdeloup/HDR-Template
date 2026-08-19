@@ -1,2 +1,6 @@
-build
+# Build artefacts, except the produced PDFs: the compiled examples are kept in
+# the repository, so that one can look at the result without compiling anything
+build/*
+!build/*.pdf
+
 .DS_Store

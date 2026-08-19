@@ -19,6 +19,15 @@
 
 % Contact: bastien.pasdeloup@imt-atlantique.fr
 
+% Copyright (C) 2025-2026 Bastien Pasdeloup
+% This template is free software: you can redistribute it and/or modify it under the terms
+% of the GNU General Public License as published by the Free Software Foundation, either
+% version 3 of the License, or (at your option) any later version.
+% It is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+% even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+% See the GNU General Public License (file "LICENSE") for more details.
+% The license covers the template itself, not the manuscript you write with it.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%% HEADERS %%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

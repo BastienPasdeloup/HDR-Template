@@ -1,8 +1,8 @@
 # HDR / PhD LaTeX Template
 
 A LaTeX template for **HDR manuscripts**, **HDR demands** and **PhD manuscripts**, in **French** or **English**.
-It was originally written for [my own HDR](https://github.com/BastienPasdeloup/HDR), and is shared here with three
-minimal, self-contained examples so that you can see every feature in context before writing your own document.
+It was originally written for my own HDR, and is shared here with three minimal, self-contained examples,
+so that you can see every feature in context before writing your own document.
 
 ## What you get
 
@@ -31,6 +31,8 @@ minimal, self-contained examples so that you can see every feature in context be
 All three share `acronyms.tex`, `bibliography.bib` and the images in `manuscript/figures/`.
 Every piece of text is a placeholder: replace it with your own.
 
+The compiled PDFs are kept in `build/`, so you can have a look at the three documents without compiling anything.
+
 ## Compiling
 
 The template requires **LuaLaTeX** (for the fonts and the emoji flags), **biber** for the bibliography, and a
@@ -52,7 +54,9 @@ Overleaf runs `makeglossaries` on its own, and also honours the `.latexmkrc`.
 ## Repository layout
 
 ```
+LICENSE                   GNU General Public License, version 3
 .latexmkrc                Build rules: LuaLaTeX, biber, and the makeglossaries pass
+build/*.pdf               The three examples, already compiled
 acronyms.tex              All acronyms, shared by the three examples
 bibliography.bib          All references, shared by the three examples
 main_hdr.tex              Example 1 -- full HDR manuscript (English)
@@ -88,6 +92,16 @@ template/includes/        Front cover, back cover, chapter background
 \nameref{label} % "Chapter 2", "Figure 5", "Definition 1", ...
 \cite{key}      % [J3], [12], ...
 ```
+
+## License
+
+This template is free software, released under the **GNU General Public License, version 3** (see `LICENSE`).
+You may use it, modify it and redistribute it, provided that derived versions of the *template itself* stay
+under the same license.
+
+To be clear about what this covers: the license applies to the template — `template/hdr.cls`, its includes, and
+the example files. It does **not** apply to the manuscript you write with it. Your own text, figures and results
+remain entirely yours, and you are free to publish them under whatever terms you like.
 
 ## Credits
 
