@@ -7,12 +7,22 @@
 % * "usera"    (compulsory)     -> Category for grouping in the bibliography (set to custom value and declare it in the main document)
 % * "addendum" (compulsory)     -> To manually add a number to the ref (forces order instead of sorting by date)
 % * "note"     (optional)       -> To add (a), (b), etc. to the reference and manually disambiguate entries
-% * "url"      (optional, list) -> Link to the article
-% * "userb"    (optional, list) -> Poster url
-% * "userc"    (optional, list) -> Video url
-% * "userd"    (optional, list) -> GitHub url
-% * "usere"    (optional, list) -> Prize
-% * "userf"    (optional, list) -> Slides url
+% * "url"      (optional, list) -> Link to the article      -- icon: newspaper
+% * "userb"    (optional, list) -> Poster url               -- icon: picture
+% * "userc"    (optional, list) -> Video url                -- icon: YouTube
+% * "userd"    (optional, list) -> GitHub url               -- icon: GitHub
+% * "usere"    (optional, list) -> Prize url                -- icon: trophy
+% * "userf"    (optional, list) -> Slides url               -- icon: pictures
+
+% Every one of these fields holds URL(s): each value becomes a clickable icon under the entry
+% In particular, "usere" is the *page announcing the prize*, not the name of the prize -- putting
+% plain text there would produce a trophy icon pointing nowhere
+% They are lists: separate several URLs with commas to get several icons of the same kind,
+% e.g. userd = {https://github.com/a/one, https://github.com/a/two}
+% Beware of one asymmetry: "url" is a verbatim field for biblatex, so the space after a comma
+% is kept and ends up as a "%20" at the start of the next link -- in "url", and only there,
+% write the commas without any space: url = {https://a.org/one,https://a.org/two}
+% See "lastname2022conference" below for an entry using all of them at once
 
 % Warning: any entry with usera fields that is not declared in the main document will not appear
 % You can ommit "addendum", but entries will still be sorted according to it
@@ -55,6 +65,7 @@
     year         = {2015},
     type         = {\acro{phd}},
     url          = {https://example.org/placeholder/thesis},
+    userc        = {https://example.org/placeholder/thesis-defense-video},
     userf        = {https://example.org/placeholder/thesis-slides}
 }
 
@@ -93,8 +104,8 @@
     pages        = {42--58},
     year         = {2021},
     url          = {https://example.org/placeholder/journal},
-    userd        = {https://github.com/placeholder/placeholder},
-    usere        = {Best Placeholder Paper Award}
+    userd        = {https://github.com/placeholder/placeholder-method, https://github.com/placeholder/placeholder-experiments},
+    usere        = {https://example.org/placeholder/best-paper-award}
 }
 
 @article
@@ -125,9 +136,12 @@
     booktitle    = {14\textsuperscript{th} International Conference on Placeholder Science},
     pages        = {77--86},
     year         = {2022},
-    url          = {https://example.org/placeholder/conference},
+    url          = {https://example.org/placeholder/conference,https://example.org/placeholder/conference-extended},
     userb        = {https://example.org/placeholder/conference-poster},
-    userf        = {https://example.org/placeholder/conference-slides}
+    userc        = {https://example.org/placeholder/conference-talk},
+    userd        = {https://github.com/placeholder/placeholder-conference},
+    usere        = {https://example.org/placeholder/outstanding-paper-award},
+    userf        = {https://example.org/placeholder/conference-slides-long, https://example.org/placeholder/conference-slides-short}
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -144,7 +158,8 @@
     booktitle    = {Workshop on Placeholder Directions},
     year         = {2023},
     url          = {https://example.org/placeholder/workshop},
-    userc        = {https://example.org/placeholder/workshop-video}
+    userb        = {https://example.org/placeholder/workshop-poster},
+    userc        = {https://example.org/placeholder/workshop-talk, https://example.org/placeholder/workshop-demo}
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -13,9 +13,12 @@ minimal, self-contained examples so that you can see every feature in context be
 * Acronyms with **tooltips** in the PDF, and an automatically generated list of acronyms.
 * A bibliography split into *your own publications* (grouped by category, with clickable icons for the paper,
   the slides, the poster, the video, the code, the prize), *external references*, and *online resources*.
+  Every one of those fields is a comma-separated list of URLs, so a single entry can carry several posters,
+  several repositories, and so on.
 * Boxes (`boxenv`) for definitions, theorems, challenges, questions..., with automatic per-type counters,
   and a dedicated `proof` environment.
 * Figures, subfigures, tables and equations numbered continuously across the whole document.
+* Ready-to-adapt TikZ figures: a plot of the kind a script would generate, and a career timeline.
 
 ## The three examples
 
@@ -56,7 +59,7 @@ main_hdr.tex              Example 1 -- full HDR manuscript (English)
 main_demand.tex           Example 2 -- HDR demand (French)
 main_phd.tex              Example 3 -- PhD manuscript (English)
 manuscript/covers/        Logos and signature shown on the covers
-manuscript/figures/       Example images and an example generated figure
+manuscript/figures/       Example images, an example plot, and an example timeline
 manuscript/hdr/           Chapters of example 1
 manuscript/demand/        Chapters of example 2
 manuscript/phd/           Chapters of example 3

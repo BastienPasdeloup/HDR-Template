@@ -1,0 +1,65 @@
+% Example of a timeline, drawn with plain TikZ -- no extra package needed
+% Meant to be included with \input{} inside a figure environment
+% The tikzpicture environment is patched by the template to never overflow \linewidth,
+% so the whole drawing is scaled down automatically if it gets too wide
+%
+% Colors phdColor, postdocColor and facultyColor are the "extra colors" defined in the main file:
+% keeping them there makes it easy to reuse the same color for a period and for its caption
+%
+% Layout, from top to bottom:
+%   y = 4.00   time axis, with the year labels above it
+%   y = 1.75 to 3.65   one row per position
+%   y = 1.35   milestones, their labels alternating between two levels below
+
+\begin{tikzpicture}[x=0.82cm, y=1cm, font=\small]
+
+    % Origin of the horizontal axis, so that coordinates below can be written as years
+    \def\yearZero{2009}
+    \pgfmathsetmacro{\axisEnd}{2027 - \yearZero}
+
+    %%%%%%%%%%%%%%%%%%%%%%%%% TIME AXIS %%%%%%%%%%%%%%%%%%%%%%%%%
+
+    \draw[separatorColor, line width=1pt] (0, 4) -- (\axisEnd, 4);
+    \foreach \tickYear in {2010, 2012, 2014, 2016, 2018, 2020, 2022, 2024, 2026}
+    {
+        \pgfmathsetmacro{\x}{\tickYear - \yearZero}
+        \draw[separatorColor, line width=1pt] (\x, 4) -- (\x, 4.15);
+        \node[above, gray] at (\x, 4.15) {\tickYear};
+        \draw[separatorColor, line width=0.4pt, dotted] (\x, 4) -- (\x, 1.35);
+    }
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%% POSITIONS %%%%%%%%%%%%%%%%%%%%%%%%
+
+    % One row per position: a label on the left, and a rounded bar between two years
+    \node[left, phdColor!60!black] at (-0.2, 3.4) {\acro{phd} student};
+    \draw[fill=phdColor!25, draw=phdColor, rounded corners=2pt, line width=0.6pt]
+        (2010 - \yearZero, 3.15) rectangle (2015 - \yearZero, 3.65);
+
+    \node[left, postdocColor!60!black] at (-0.2, 2.7) {Postdoctoral researcher};
+    \draw[fill=postdocColor!25, draw=postdocColor, rounded corners=2pt, line width=0.6pt]
+        (2015 - \yearZero, 2.45) rectangle (2017 - \yearZero, 2.95);
+
+    \node[left, facultyColor!60!black] at (-0.2, 2) {Associate professor};
+    \draw[fill=facultyColor!25, draw=facultyColor, rounded corners=2pt, line width=0.6pt]
+        (2017 - \yearZero, 1.75) rectangle (\axisEnd, 2.25);
+
+    %%%%%%%%%%%%%%%%%%%%%%%%% MILESTONES %%%%%%%%%%%%%%%%%%%%%%%%
+
+    % A marker on the milestone row, a stem, and a label
+    % Labels alternate between two levels so that long ones never overlap
+    \foreach \milestoneYear/\level/\label in
+    {
+        2015/0.95/{\acro{phd} defended},
+        2019/0.40/{First book chapter},
+        2022/0.95/{Placeholder grant},
+        2026/0.40/{\acro{hdr} defended}
+    }
+    {
+        \pgfmathsetmacro{\x}{\milestoneYear - \yearZero}
+        \draw[separatorColor, line width=0.6pt] (\x, 1.35) -- (\x, \level + 0.2);
+        % A square rotated by 45 degrees, so that no extra TikZ library is needed
+        \node[fill=titlesColor, inner sep=1.6pt, rotate=45] at (\x, 1.35) {};
+        \node[gray] at (\x, \level) {\label};
+    }
+
+\end{tikzpicture}
