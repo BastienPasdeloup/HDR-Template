@@ -2,24 +2,24 @@
 % The optional argument in brackets is the label, used by \nameref
 \chapter*[foreword]{Foreword}
 
-    \section*[tldr]{TL; DR}
+\section*[tldr]{TL; DR}
 
-        This chapter is an unnumbered one, obtained with \verb|\chapter*[label]{Title}|.
-        Use it for a foreword, acknowledgements, or anything that should not carry a chapter number.
+This chapter is an unnumbered one, obtained with \verb|\chapter*[label]{Title}|.
+Use it for a foreword, acknowledgements, or anything that should not carry a chapter number.
 
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-        Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
 
-    \section*[reading_guide]{How to Read This Document}
+\section*[reading_guide]{How to Read This Document}
 
-        This document is meant to be read in its \acro{pdf} version, using a viewer able to display tooltips (\eg Evince, Foxit, Overleaf).
-        Hovering an acronym or a citation then shows a short description, without having to jump to the end of the document.
+This document is meant to be read in its \acro{pdf} version, using a viewer able to display tooltips (\eg Evince, Foxit, Overleaf).
+Hovering an acronym or a citation then shows a short description, without having to jump to the end of the document.
 
-        \begin{itemize}
-            \item \textbf{Acronyms} --- Every acronym is defined once in \verb|acronyms.tex|, and recalled in the list of \nameref{glossary}. In the text, \verb|\acro{ai}| gives \acro{ai}, \verb|\acrofull{ai}| gives \acrofull{ai}, and \verb|\acroname{ai}| gives \acroname{ai}.
-            \item \textbf{References} --- Citations to my own work carry a code indicating the type of publication, \eg \cite{lastname2021journal} for a \textbf{J}ournal or \cite{lastname2022conference} for a \textbf{C}onference. External references appear like \cite{ipsum1998foundational}, and online resources like \cite{placeholder_www}.
-            \item \textbf{Cross-references} --- Labels are declared as an optional argument of the sectioning command or environment, and recalled with \verb|\nameref|. For instance, \verb|\nameref{past}| gives \nameref{past}, and \verb|\nameref{example_figure}| gives \nameref{example_figure}.
-        \end{itemize}
+\begin{itemize}
+    \item \textbf{Acronyms} --- Every acronym is defined once in \verb|acronyms.tex|, and recalled in the list of \nameref{glossary}. In the text, \verb|\acro{ai}| gives \acro{ai}, \verb|\acrofull{ai}| gives \acrofull{ai}, and \verb|\acroname{ai}| gives \acroname{ai}.
+    \item \textbf{References} --- Citations to my own work carry a code indicating the type of publication, \eg \cite{lastname2021journal} for a \textbf{J}ournal or \cite{lastname2022conference} for a \textbf{C}onference. External references appear like \cite{ipsum1998foundational}, and online resources like \cite{placeholder_www}.
+    \item \textbf{Cross-references} --- Labels are declared as an optional argument of the sectioning command or environment, and recalled with \verb|\nameref|. For instance, \verb|\nameref{past}| gives \nameref{past}, and \verb|\nameref{example_figure}| gives \nameref{example_figure}.
+\end{itemize}
 
-        The template used for this document is available at \cite{template_repo}, under the \acro{gnu} \acro{gpl} v3.
-        Feel free to reuse it, and to replace all the placeholder text you find here.
+The template used for this document is available at \cite{template_repo}, under the \acro{gnu} \acro{gpl} v3.
+Feel free to reuse it, and to replace all the placeholder text you find here.

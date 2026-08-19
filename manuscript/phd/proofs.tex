@@ -1,21 +1,21 @@
 % Appendix of the PhD example: chapters after \appendices are numbered as appendices
 \chapter[phd_proofs]{Proofs}
-[
-    Deferring proofs to an appendix keeps the main text readable. \\
-    The \texttt{proof} environment takes the label of the statement it proves, and displays a clickable reference to it in its title.
-]
+ [
+  Deferring proofs to an appendix keeps the main text readable. \\
+  The \texttt{proof} environment takes the label of the statement it proves, and displays a clickable reference to it in its title.
+ ]
 
-    \section[phd_proofs_proposition]{Existence of a Placeholder Minimizer}
+\section[phd_proofs_proposition]{Existence of a Placeholder Minimizer}
 
-        \begin{proof}{phd_proposition}
-            The objective of \nameref{phd_contribution_loss} is continuous in $\theta$, and coercive as soon as $\lambda > 0$, since $\left\| \theta \right\|_2^2 \to \infty$ when $\left\| \theta \right\|_2 \to \infty$.
-            A continuous coercive function on $\mathbb{R}^d$ attains its infimum, hence the existence of a minimizer $\theta^\star$.
-        \end{proof}
+\begin{proof}{phd_proposition}
+    The objective of \nameref{phd_contribution_loss} is continuous in $\theta$, and coercive as soon as $\lambda > 0$, since $\left\| \theta \right\|_2^2 \to \infty$ when $\left\| \theta \right\|_2 \to \infty$.
+    A continuous coercive function on $\mathbb{R}^d$ attains its infimum, hence the existence of a minimizer $\theta^\star$.
+\end{proof}
 
-    \section[phd_proofs_misc]{A Proof Without a Statement}
+\section[phd_proofs_misc]{A Proof Without a Statement}
 
-        The mandatory argument of \texttt{proof} can also be left empty, in which case the box is simply titled \inquotes{Proof}.
+The mandatory argument of \texttt{proof} can also be left empty, in which case the box is simply titled \inquotes{Proof}.
 
-        \begin{proof}{}
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-        \end{proof}
+\begin{proof}{}
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+\end{proof}

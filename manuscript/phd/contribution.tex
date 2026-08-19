@@ -1,61 +1,61 @@
 \chapter[phd_contribution]{A Placeholder Contribution}
-[
-    This chapter presents the contribution of this thesis, and is the one that demonstrates most of the environments provided by the template. \\
-    It answers \nameref{phd_problem_box}, stated in \nameref{phd_introduction}.
-]
+ [
+  This chapter presents the contribution of this thesis, and is the one that demonstrates most of the environments provided by the template. \\
+  It answers \nameref{phd_problem_box}, stated in \nameref{phd_introduction}.
+ ]
 
-    \section[phd_contribution_method]{Method}
+\section[phd_contribution_method]{Method}
 
-        We look for a placeholder model $f_\theta$ minimizing the objective of \nameref{phd_contribution_loss}, where $\lambda > 0$ controls the strength of the placeholder regularizer.
+We look for a placeholder model $f_\theta$ minimizing the objective of \nameref{phd_contribution_loss}, where $\lambda > 0$ controls the strength of the placeholder regularizer.
 
-        \begin{equation}[phd_contribution_loss]
-            \mathcal{L}(\theta) = \underbrace{\frac{1}{N} \sum_{i = 1}^{N} \left\| f_\theta(\bm{x}_i) - \bm{y}_i \right\|_2^2}_{\text{placeholder fidelity}} + \lambda \underbrace{\left\| \theta \right\|_2^2}_{\text{placeholder regularizer}}
-        \end{equation}
+\begin{equation}[phd_contribution_loss]
+    \mathcal{L}(\theta) = \underbrace{\frac{1}{N} \sum_{i = 1}^{N} \left\| f_\theta(\bm{x}_i) - \bm{y}_i \right\|_2^2}_{\text{placeholder fidelity}} + \lambda \underbrace{\left\| \theta \right\|_2^2}_{\text{placeholder regularizer}}
+\end{equation}
 
-        \begin{boxenv}[phd_proposition]{Proposition}[Existence of a placeholder minimizer]
-            For every $\lambda > 0$, the objective of \nameref{phd_contribution_loss} admits at least one minimizer $\theta^\star$.
-        \end{boxenv}
+\begin{boxenv}[phd_proposition]{Proposition}[Existence of a placeholder minimizer]
+    For every $\lambda > 0$, the objective of \nameref{phd_contribution_loss} admits at least one minimizer $\theta^\star$.
+\end{boxenv}
 
-        The proof of \nameref{phd_proposition} is deferred to \nameref{phd_proofs}, so as not to interrupt the exposition.
-        An unnumbered equation is obtained with the starred variant, which is convenient for intermediate steps:
+The proof of \nameref{phd_proposition} is deferred to \nameref{phd_proofs}, so as not to interrupt the exposition.
+An unnumbered equation is obtained with the starred variant, which is convenient for intermediate steps:
 
-        \begin{equation*}
-            \nabla_\theta \mathcal{L}(\theta) = \frac{2}{N} \sum_{i = 1}^{N} \left( f_\theta(\bm{x}_i) - \bm{y}_i \right) \nabla_\theta f_\theta(\bm{x}_i) + 2 \lambda \theta
-        \end{equation*}
+\begin{equation*}
+    \nabla_\theta \mathcal{L}(\theta) = \frac{2}{N} \sum_{i = 1}^{N} \left( f_\theta(\bm{x}_i) - \bm{y}_i \right) \nabla_\theta f_\theta(\bm{x}_i) + 2 \lambda \theta
+\end{equation*}
 
-    \section[phd_contribution_results]{Results}
+\section[phd_contribution_results]{Results}
 
-        We evaluate the method of \nameref{phd_contribution_method} on placeholder datasets.
-        \nameref{phd_results_figure} reports the learning curves, and \nameref{phd_results_table} the final scores.
+We evaluate the method of \nameref{phd_contribution_method} on placeholder datasets.
+\nameref{phd_results_figure} reports the learning curves, and \nameref{phd_results_table} the final scores.
 
-        \begin{figure}[phd_results_figure]{Placeholder results. \nameref{phd_results_figure_curves} reports the metric along training, while \nameref{phd_results_figure_qualitative} shows a qualitative example.}
-            \begin{subfigure}[phd_results_figure_curves]{0.52\linewidth}{Placeholder metric along training, for our model and the baseline of \cite{amet2017seminal}.}
-                \input{manuscript/figures/example_plot.tex}
-            \end{subfigure}
-            \hfill
-            \begin{subfigure}[phd_results_figure_qualitative]{0.44\linewidth}{A qualitative placeholder example.}
-                \includegraphics[width=\linewidth]{manuscript/figures/example_image.png}
-            \end{subfigure}
-        \end{figure}
+\begin{figure}[phd_results_figure]{Placeholder results. \nameref{phd_results_figure_curves} reports the metric along training, while \nameref{phd_results_figure_qualitative} shows a qualitative example.}
+    \begin{subfigure}[phd_results_figure_curves]{0.52\linewidth}{Placeholder metric along training, for our model and the baseline of \cite{amet2017seminal}.}
+        \input{manuscript/figures/example_plot.tex}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[phd_results_figure_qualitative]{0.44\linewidth}{A qualitative placeholder example.}
+        \includegraphics[width=\linewidth]{manuscript/figures/example_image.png}
+    \end{subfigure}
+\end{figure}
 
-        \begin{table}[phd_results_table]{Final placeholder scores, averaged over five placeholder runs. Best results in bold.}
-            \begin{tabular}{lcc}
-                \hline
-                \textbf{Dataset} & \textbf{\cite{amet2017seminal}} & \textbf{Ours} \\
-                \hline
-                Placeholder-A & $0.70 \pm 0.02$ & $\bm{0.87 \pm 0.01}$ \\
-                Placeholder-B & $0.61 \pm 0.03$ & $\bm{0.79 \pm 0.02}$ \\
-                Placeholder-C & $0.55 \pm 0.04$ & $\bm{0.68 \pm 0.03}$ \\
-                \hline
-            \end{tabular}
-        \end{table}
+\begin{table}[phd_results_table]{Final placeholder scores, averaged over five placeholder runs. Best results in bold.}
+    \begin{tabular}{lcc}
+        \hline
+        \textbf{Dataset} & \textbf{\cite{amet2017seminal}} & \textbf{Ours}        \\
+        \hline
+        Placeholder-A    & $0.70 \pm 0.02$                 & $\bm{0.87 \pm 0.01}$ \\
+        Placeholder-B    & $0.61 \pm 0.03$                 & $\bm{0.79 \pm 0.02}$ \\
+        Placeholder-C    & $0.55 \pm 0.04$                 & $\bm{0.68 \pm 0.03}$ \\
+        \hline
+    \end{tabular}
+\end{table}
 
-        Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-        These results were partly published in \cite{lastname2021journal} and \cite{lastname2024journal}.
+Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+These results were partly published in \cite{lastname2021journal} and \cite{lastname2024journal}.
 
-    \section[phd_contribution_discussion]{Discussion}
+\section[phd_contribution_discussion]{Discussion}
 
-        \begin{boxenv*}{\faExclamationTriangle~Limitations}
-            An unnumbered box, obtained with \texttt{boxenv*}, is handy for remarks that do not need to be cross-referenced.
-            The placeholder method has placeholder limitations, which are discussed in \nameref{phd_conclusion}.
-        \end{boxenv*}
+\begin{boxenv*}{\faExclamationTriangle~Limitations}
+    An unnumbered box, obtained with \texttt{boxenv*}, is handy for remarks that do not need to be cross-referenced.
+    The placeholder method has placeholder limitations, which are discussed in \nameref{phd_conclusion}.
+\end{boxenv*}

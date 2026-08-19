@@ -1,123 +1,123 @@
 % Chapters declared after \appendices are numbered as appendices
 \chapter[cv]{Curriculum Vitæ}
-[
-    An appendix behaves exactly like a chapter, except that it is numbered as an appendix and appears under a dedicated entry in the table of contents. \\
-    This one shows the two-column layout used throughout the template for tabular material.
-]
+ [
+  An appendix behaves exactly like a chapter, except that it is numbered as an appendix and appears under a dedicated entry in the table of contents. \\
+  This one shows the two-column layout used throughout the template for tabular material.
+ ]
 
-    \section[cv_info]{General Information}
+\section[cv_info]{General Information}
 
-        \begin{tabularx}{\linewidth}{r|X}
-            \textbf{Name} & Firstname \textsc{Lastname} \\
-            \textbf{Born} & \date{1988-10-03} \\
-            \textbf{Nationality} & Placeholder \\
-            \textbf{Links} & \href{https://example.org}{\faGlobeAmericas}
-                             \hspace{\valparskip}\href{https://example.org}{\faGraduationCap}
-                             \hspace{\valparskip}\href{https://example.org}{\faGithub} \\
-            \textbf{Email} & \href{mailto:firstname.lastname@example.org}{\texttt{firstname.lastname@example.org}}
-        \end{tabularx}
+\begin{tabularx}{\linewidth}{r|X}
+    \textbf{Name}        & Firstname \textsc{Lastname}                                                           \\
+    \textbf{Born}        & \date{1988-10-03}                                                                     \\
+    \textbf{Nationality} & Placeholder                                                                           \\
+    \textbf{Links}       & \href{https://example.org}{\faGlobeAmericas}
+    \hspace{\valparskip}\href{https://example.org}{\faGraduationCap}
+    \hspace{\valparskip}\href{https://example.org}{\faGithub}                                                    \\
+    \textbf{Email}       & \href{mailto:firstname.lastname@example.org}{\texttt{firstname.lastname@example.org}}
+\end{tabularx}
 
-        Note the \verb|\date| command: it takes an ISO date and formats it according to the language of the document.
+Note the \verb|\date| command: it takes an ISO date and formats it according to the language of the document.
 
-    \section[cv_education]{Education \& Positions}
+\section[cv_education]{Education \& Positions}
 
-        \begin{tabularx}{\linewidth}{r|X}
-            \textbf{2010 -- 2015} & \acro{phd} in Placeholder Science \newline
-                                    Placeholder Laboratory, Placeholder University \newline
-                                    Dissertation: \cite{lastname2015thesis} \\
-            \textbf{2015 -- 2017} & Postdoctoral researcher \newline
-                                    Placeholder Institute \\
-            \textbf{Since 2017} & Associate professor \newline
-                                  Placeholder Laboratory, Placeholder University
-        \end{tabularx}
+\begin{tabularx}{\linewidth}{r|X}
+    \textbf{2010 -- 2015} & \acro{phd} in Placeholder Science \newline
+    Placeholder Laboratory, Placeholder University \newline
+    Dissertation: \cite{lastname2015thesis}                            \\
+    \textbf{2015 -- 2017} & Postdoctoral researcher \newline
+    Placeholder Institute                                              \\
+    \textbf{Since 2017}   & Associate professor \newline
+    Placeholder Laboratory, Placeholder University
+\end{tabularx}
 
-    \section[cv_supervision]{Supervision}
+\section[cv_supervision]{Supervision}
 
-        % \arrowBox draws a timeline: a colored ribbon on the left of an entry, carrying a
-        % vertical label, and a two-column table of details on the right
-        % Usage: \arrowBox{color}{ribbon label}{heading}{rows of the table}
-        % - color        one of the extra colors declared in "main_hdr.tex"
-        % - ribbon label the period the entry belongs to; consecutive entries of the same
-        %                period repeat \raisebox{0.4ex}{\dots} instead, so that the ribbon
-        %                reads as one continuous timeline
-        % - heading      shown above the table, and greyed out: links stay colored, so an
-        %                icon without a link (here GitHub) shows as unavailable
-        % - rows         the body of a "r|X" tabularx, so use & and \\ as usual
+% \arrowBox draws a timeline: a colored ribbon on the left of an entry, carrying a
+% vertical label, and a two-column table of details on the right
+% Usage: \arrowBox{color}{ribbon label}{heading}{rows of the table}
+% - color        one of the extra colors declared in "main_hdr.tex"
+% - ribbon label the period the entry belongs to; consecutive entries of the same
+%                period repeat \raisebox{0.4ex}{\dots} instead, so that the ribbon
+%                reads as one continuous timeline
+% - heading      shown above the table, and greyed out: links stay colored, so an
+%                icon without a link (here GitHub) shows as unavailable
+% - rows         the body of a "r|X" tabularx, so use & and \\ as usual
 
-        \subsection[cv_supervision_phd]{\acro{phd} Students}
+\subsection[cv_supervision_phd]{\acro{phd} Students}
 
-            \arrowBox{facultyColor}{As Associate Professor}
-            {
-                \paragraph[cv_student_fourth]{Fourth \textsc{Student}}
-                {\hspace{\valparskip}\href{https://example.org}{\faGraduationCap}}
-                {\hspace{\valparskip}\href{https://example.org}{\faLinkedin}}
-                {\hspace{\valparskip}\faGithub}
-            }{
-                \textbf{Period} & 2021 -- 2024 (36 months) \\
-                \textbf{Defended} & \date{2024-11-29} \\
-                \textbf{Share} & 50\% \\
-                \textbf{Funding} & Placeholder Foundation \\
-                \textbf{Subject} & \inquotes{A Placeholder Title for a Placeholder Thesis} \\
-                \textbf{Publications} & \cite{lastname2023workshop, lastname2025preprint}
-            }
-            \arrowBox{facultyColor}{\raisebox{0.4ex}{\dots}}
-            {
-                \paragraph[cv_student_fifth]{Fifth \textsc{Student}}
-                {\hspace{\valparskip}\href{https://example.org}{\faGraduationCap}}
-                {\hspace{\valparskip}\faLinkedin}
-                {\hspace{\valparskip}\href{https://example.org}{\faGithub}}
-            }{
-                \textbf{Period} & Since 2024 (in progress) \\
-                \textbf{Share} & 33\% \\
-                \textbf{Funding} & Placeholder Region (\inquotes{Placeholder} grant) \\
-                \textbf{Subject} & Yet another placeholder subject
-            }
+\arrowBox{facultyColor}{As Associate Professor}
+{
+    \paragraph[cv_student_fourth]{Fourth \textsc{Student}}
+    {\hspace{\valparskip}\href{https://example.org}{\faGraduationCap}}
+    {\hspace{\valparskip}\href{https://example.org}{\faLinkedin}}
+    {\hspace{\valparskip}\faGithub}
+}{
+    \textbf{Period} & 2021 -- 2024 (36 months) \\
+    \textbf{Defended} & \date{2024-11-29} \\
+    \textbf{Share} & 50\% \\
+    \textbf{Funding} & Placeholder Foundation \\
+    \textbf{Subject} & \inquotes{A Placeholder Title for a Placeholder Thesis} \\
+    \textbf{Publications} & \cite{lastname2023workshop, lastname2025preprint}
+}
+\arrowBox{facultyColor}{\raisebox{0.4ex}{\dots}}
+{
+    \paragraph[cv_student_fifth]{Fifth \textsc{Student}}
+    {\hspace{\valparskip}\href{https://example.org}{\faGraduationCap}}
+    {\hspace{\valparskip}\faLinkedin}
+    {\hspace{\valparskip}\href{https://example.org}{\faGithub}}
+}{
+    \textbf{Period} & Since 2024 (in progress) \\
+    \textbf{Share} & 33\% \\
+    \textbf{Funding} & Placeholder Region (\inquotes{Placeholder} grant) \\
+    \textbf{Subject} & Yet another placeholder subject
+}
 
-        \subsection[cv_supervision_interns]{Interns}
+\subsection[cv_supervision_interns]{Interns}
 
-            % Changing the color and the label starts a new period on the timeline
-            \arrowBox{facultyColor}{As Associate Professor}
-            {
-                \paragraph[cv_intern_second]{Second \textsc{Coauthor}}
-                {\hspace{\valparskip}\faGraduationCap}
-                {\hspace{\valparskip}\href{https://example.org}{\faLinkedin}}
-                {\hspace{\valparskip}\faGithub}
-            }{
-                \textbf{Period} & 2022 (6 months) \\
-                \textbf{Level} & \acro{msc} 2 \\
-                \textbf{Share} & 100\% \\
-                \textbf{Subject} & \inquotes{Another Placeholder Topic}
-            }
-            \arrowBox{postdocColor}{As Postdoctoral Researcher}
-            {
-                \paragraph[cv_intern_third]{Third \textsc{Contributor}}
-                {\hspace{\valparskip}\href{https://example.org}{\faGraduationCap}}
-                {\hspace{\valparskip}\faLinkedin}
-                {\hspace{\valparskip}\faGithub}
-            }{
-                \textbf{Period} & 2016 (4 months) \\
-                \textbf{Level} & \acro{msc} 1 \\
-                \textbf{Share} & 50\% \\
-                \textbf{Subject} & A placeholder internship topic
-            }
-            \arrowBox{phdColor}{As \acro{phd} Student}
-            {
-                \paragraph[cv_intern_first]{First \textsc{Placeholder}}
-                {\hspace{\valparskip}\faGraduationCap}
-                {\hspace{\valparskip}\faLinkedin}
-                {\hspace{\valparskip}\faGithub}
-            }{
-                \textbf{Period} & 2014 (3 months) \\
-                \textbf{Level} & \acro{bsc} 3 \\
-                \textbf{Share} & 100\% \\
-                \textbf{Subject} & The very first placeholder internship
-            }
+% Changing the color and the label starts a new period on the timeline
+\arrowBox{facultyColor}{As Associate Professor}
+{
+    \paragraph[cv_intern_second]{Second \textsc{Coauthor}}
+    {\hspace{\valparskip}\faGraduationCap}
+    {\hspace{\valparskip}\href{https://example.org}{\faLinkedin}}
+    {\hspace{\valparskip}\faGithub}
+}{
+    \textbf{Period} & 2022 (6 months) \\
+    \textbf{Level} & \acro{msc} 2 \\
+    \textbf{Share} & 100\% \\
+    \textbf{Subject} & \inquotes{Another Placeholder Topic}
+}
+\arrowBox{postdocColor}{As Postdoctoral Researcher}
+{
+    \paragraph[cv_intern_third]{Third \textsc{Contributor}}
+    {\hspace{\valparskip}\href{https://example.org}{\faGraduationCap}}
+    {\hspace{\valparskip}\faLinkedin}
+    {\hspace{\valparskip}\faGithub}
+}{
+    \textbf{Period} & 2016 (4 months) \\
+    \textbf{Level} & \acro{msc} 1 \\
+    \textbf{Share} & 50\% \\
+    \textbf{Subject} & A placeholder internship topic
+}
+\arrowBox{phdColor}{As \acro{phd} Student}
+{
+    \paragraph[cv_intern_first]{First \textsc{Placeholder}}
+    {\hspace{\valparskip}\faGraduationCap}
+    {\hspace{\valparskip}\faLinkedin}
+    {\hspace{\valparskip}\faGithub}
+}{
+    \textbf{Period} & 2014 (3 months) \\
+    \textbf{Level} & \acro{bsc} 3 \\
+    \textbf{Share} & 100\% \\
+    \textbf{Subject} & The very first placeholder internship
+}
 
-    \section[cv_teaching]{Teaching}
+\section[cv_teaching]{Teaching}
 
-        \begin{tabularx}{\linewidth}{r|X}
-            \textbf{Since 2017} & \inquotes{Introduction to \acroname{ml}} \newline
-                                  \acro{msc} 1, 30h/year \\
-            \textbf{Since 2019} & \inquotes{Placeholder Programming} \newline
-                                  \acro{msc} 2, 45h/year
-        \end{tabularx}
+\begin{tabularx}{\linewidth}{r|X}
+    \textbf{Since 2017} & \inquotes{Introduction to \acroname{ml}} \newline
+    \acro{msc} 1, 30h/year                                                  \\
+    \textbf{Since 2019} & \inquotes{Placeholder Programming} \newline
+    \acro{msc} 2, 45h/year
+\end{tabularx}
