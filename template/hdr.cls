@@ -1582,8 +1582,6 @@
         \else%
             \box@ensurecounter{#2}%
             \refstepcounter{\box@countername{#2}}%
-            % Expand the counter now, so that forward references (\nameref to a box
-            % that appears later in the document) also show the right number
             \protected@edef\@currentlabelname{#2~\csname the\box@countername{#2}\endcsname}%
             \settowidth{\boxtitlewidth}{#2~\csname the\box@countername{#2}\endcsname\quad}%
             \IfValueT{#1}{\label{#1}}%
