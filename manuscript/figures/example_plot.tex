@@ -1,0 +1,37 @@
+% Example of a vector figure, meant to be included with \input{} inside a figure environment
+% Such fragments are typically produced by a script, so that data and rendering stay in sync
+% The tikzpicture environment is patched by the template to never overflow \linewidth
+
+\begin{tikzpicture}
+
+    \begin{axis}
+    [
+        height      = 5cm,
+        width       = \linewidth,
+        xlabel      = {Number of training epochs},
+        ylabel      = {Placeholder metric},
+        xmin        = 0, xmax = 20,
+        ymin        = 0, ymax = 1,
+        grid        = major,
+        grid style  = {separatorColor},
+        legend pos  = south east,
+        legend cell align = left,
+    ]
+
+        \addplot[titlesColor, line width=1.5pt, mark=*, mark size=1.5pt] coordinates
+        {
+            (0, 0.10) (2, 0.38) (4, 0.55) (6, 0.66) (8, 0.73)
+            (10, 0.78) (12, 0.82) (14, 0.84) (16, 0.86) (18, 0.87) (20, 0.87)
+        };
+        \addlegendentry{Placeholder model}
+
+        \addplot[linksColor, line width=1.5pt, dashed, mark=square*, mark size=1.5pt] coordinates
+        {
+            (0, 0.10) (2, 0.30) (4, 0.44) (6, 0.53) (8, 0.59)
+            (10, 0.63) (12, 0.66) (14, 0.68) (16, 0.69) (18, 0.70) (20, 0.70)
+        };
+        \addlegendentry{Placeholder baseline}
+
+    \end{axis}
+
+\end{tikzpicture}

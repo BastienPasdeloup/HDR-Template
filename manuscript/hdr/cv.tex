@@ -1,0 +1,51 @@
+% Chapters declared after \appendices are numbered as appendices
+\chapter[cv]{Curriculum Vitæ}
+[
+    An appendix behaves exactly like a chapter, except that it is numbered as an appendix and appears under a dedicated entry in the table of contents. \\
+    This one shows the two-column layout used throughout the template for tabular material.
+]
+
+    \section[cv_info]{General Information}
+
+        \begin{tabularx}{\linewidth}{r|X}
+            \textbf{Name} & Firstname \textsc{Lastname} \\
+            \textbf{Born} & \date{1988-10-03} \\
+            \textbf{Nationality} & Placeholder \\
+            \textbf{Links} & \href{https://example.org}{\faGlobeAmericas}
+                             \hspace{\valparskip}\href{https://example.org}{\faGraduationCap}
+                             \hspace{\valparskip}\href{https://example.org}{\faGithub} \\
+            \textbf{Email} & \href{mailto:firstname.lastname@example.org}{\texttt{firstname.lastname@example.org}}
+        \end{tabularx}
+
+        Note the \verb|\date| command: it takes an ISO date and formats it according to the language of the document.
+
+    \section[cv_education]{Education \& Positions}
+
+        \begin{tabularx}{\linewidth}{r|X}
+            \textbf{2010 -- 2015} & \acro{phd} in Placeholder Science \newline
+                                    Placeholder Laboratory, Placeholder University \newline
+                                    Dissertation: \cite{lastname2015thesis} \\
+            \textbf{2015 -- 2017} & Postdoctoral researcher \newline
+                                    Placeholder Institute \\
+            \textbf{Since 2017} & Associate professor \newline
+                                  Placeholder Laboratory, Placeholder University
+        \end{tabularx}
+
+    \section[cv_supervision]{Supervision}
+
+        \begin{tabularx}{\linewidth}{r|X}
+            \textbf{2021 -- 2024} & Fourth \textsc{Student}, \acro{phd} student (50\%) \newline
+                                    \inquotes{A Placeholder Title for a Placeholder Thesis} \newline
+                                    Publications: \cite{lastname2023workshop}, \cite{lastname2025preprint} \\
+            \textbf{2022} & Second \textsc{Coauthor}, \acro{msc} intern (100\%) \newline
+                            \inquotes{Another Placeholder Topic}
+        \end{tabularx}
+
+    \section[cv_teaching]{Teaching}
+
+        \begin{tabularx}{\linewidth}{r|X}
+            \textbf{Since 2017} & \inquotes{Introduction to \acroname{ml}} \newline
+                                  \acro{msc} 1, 30h/year \\
+            \textbf{Since 2019} & \inquotes{Placeholder Programming} \newline
+                                  \acro{msc} 2, 45h/year
+        \end{tabularx}

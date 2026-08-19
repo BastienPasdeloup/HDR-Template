@@ -1,0 +1,231 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%% INFORMATION %%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% For the articles that should appear in the "References I Contributed To" category:
+% In addition to usual fields, there are some fields that need to be defined for proper display:
+% * "usera"    (compulsory)     -> Category for grouping in the bibliography (set to custom value and declare it in the main document)
+% * "addendum" (compulsory)     -> To manually add a number to the ref (forces order instead of sorting by date)
+% * "note"     (optional)       -> To add (a), (b), etc. to the reference and manually disambiguate entries
+% * "url"      (optional, list) -> Link to the article
+% * "userb"    (optional, list) -> Poster url
+% * "userc"    (optional, list) -> Video url
+% * "userd"    (optional, list) -> GitHub url
+% * "usere"    (optional, list) -> Prize
+% * "userf"    (optional, list) -> Slides url
+
+% Warning: any entry with usera fields that is not declared in the main document will not appear
+% You can ommit "addendum", but entries will still be sorted according to it
+% To declare a category, use e.g., \addBiblioCategory{book}{B}{Book Chapters}
+% If you only declare one category, the letter/addendum will not be used
+
+% You can also choose not to use categories at all
+% In that case, just format all entries as indicated below (i.e., remove "usera" and "addendum")
+% If no category is declared, all entries will appear in a single list
+
+% For the articles that should appear in the "Other References Cited in this Document" category:
+% In addition to usual fields, there are some fields that need to be defined for proper display:
+% * "url"   (compulsory) -> Link to the article
+% * "note"  (optional)   -> To add (a), (b), etc. to the reference and manually disambiguate entries
+
+% Links are used with the \urlext command
+% For those, just set the following fields:
+% * "howpublished" (compulsory) -> The website name, to appear in the brackets
+% * "title"        (compulsory) -> Showed when hovered
+% * "url"          (compulsory) -> The URL of the resource
+% * "author"       (optional)   -> To add extra info on author
+% * "year"         (optional)   -> To add extra info on publication year
+% * "note"         (optional)   -> To add (a), (b), etc. to the reference and manually disambiguate entries
+
+% All entries below are placeholders, kept minimal on purpose
+% Replace them with your own, and delete the ones you do not need
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%% MY REFERENCES -- THESIS %%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+@phdthesis
+{
+    lastname2015thesis,
+    usera        = {thesis},
+    addendum     = {01},
+    title        = {Lorem Ipsum Dolor Sit Amet: A Placeholder Doctoral Dissertation},
+    author       = {Lastname, Firstname},
+    school       = {Placeholder University},
+    year         = {2015},
+    type         = {\acro{phd}},
+    url          = {https://example.org/placeholder/thesis},
+    userf        = {https://example.org/placeholder/thesis-slides}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%% MY REFERENCES -- BOOK CHAPTERS %%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+@incollection
+{
+    lastname2019chapter,
+    usera        = {book},
+    addendum     = {02},
+    title        = {Consectetur Adipiscing Elit: A Placeholder Book Chapter},
+    author       = {Lastname, Firstname and Coauthor, Second},
+    booktitle    = {Handbook of Placeholder Methods},
+    publisher    = {Placeholder Press},
+    pages        = {101--128},
+    year         = {2019},
+    url          = {https://example.org/placeholder/chapter}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%% MY REFERENCES -- JOURNALS %%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+@article
+{
+    lastname2021journal,
+    usera        = {journal},
+    addendum     = {03},
+    title        = {Sed Do Eiusmod Tempor: Learning Placeholder Representations with \acro{cnn_plural}},
+    author       = {Lastname, Firstname and Coauthor, Second and Contributor, Third},
+    journal      = {Journal of Placeholder Research},
+    volume       = {12},
+    number       = {3},
+    pages        = {42--58},
+    year         = {2021},
+    url          = {https://example.org/placeholder/journal},
+    userd        = {https://github.com/placeholder/placeholder},
+    usere        = {Best Placeholder Paper Award}
+}
+
+@article
+{
+    lastname2024journal,
+    usera        = {journal},
+    addendum     = {04},
+    title        = {Ut Enim Ad Minim Veniam: Scaling Placeholder Models on a Single \acro{gpu}},
+    author       = {Coauthor, Second and Lastname, Firstname},
+    journal      = {Transactions on Placeholder Systems},
+    volume       = {7},
+    pages        = {1--21},
+    year         = {2024},
+    url          = {https://example.org/placeholder/journal-two}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%% MY REFERENCES -- CONFERENCES %%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+@inproceedings
+{
+    lastname2022conference,
+    usera        = {conference},
+    addendum     = {05},
+    title        = {Quis Nostrud Exercitation: A Placeholder Approach to Placeholder Problems},
+    author       = {Lastname, Firstname and Contributor, Third},
+    booktitle    = {14\textsuperscript{th} International Conference on Placeholder Science},
+    pages        = {77--86},
+    year         = {2022},
+    url          = {https://example.org/placeholder/conference},
+    userb        = {https://example.org/placeholder/conference-poster},
+    userf        = {https://example.org/placeholder/conference-slides}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%% MY REFERENCES -- WORKSHOPS %%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+@inproceedings
+{
+    lastname2023workshop,
+    usera        = {workshop},
+    addendum     = {06},
+    title        = {Duis Aute Irure: Preliminary Placeholder Results},
+    author       = {Student, Fourth and Lastname, Firstname},
+    booktitle    = {Workshop on Placeholder Directions},
+    year         = {2023},
+    url          = {https://example.org/placeholder/workshop},
+    userc        = {https://example.org/placeholder/workshop-video}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%% MY REFERENCES -- PREPRINTS %%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+@article
+{
+    lastname2025preprint,
+    usera        = {preprint},
+    addendum     = {07},
+    title        = {Excepteur Sint Occaecat: Towards Placeholder Foundation Models},
+    author       = {Lastname, Firstname and Student, Fourth},
+    journal      = {Placeholder Preprint Server},
+    year         = {2025},
+    url          = {https://example.org/placeholder/preprint}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%% EXTERNAL REFERENCES %%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% These must NOT have "usera" nor "addendum" fields
+% They appear in the "Other References Cited in this Document" category
+
+@article
+{
+    ipsum1998foundational,
+    title        = {A Foundational Placeholder Study of Nothing in Particular},
+    author       = {Ipsum, Lorem and Dolor, Sit},
+    journal      = {Proceedings of the Placeholder Society},
+    volume       = {3},
+    number       = {2},
+    pages        = {17--29},
+    year         = {1998},
+    url          = {https://example.org/placeholder/foundational}
+}
+
+@inproceedings
+{
+    amet2017seminal,
+    title        = {Seminal Placeholder Architectures for Structured Data},
+    author       = {Amet, Consectetur and Elit, Adipiscing},
+    booktitle    = {31\textsuperscript{st} Conference on Placeholder Systems},
+    pages        = {5998--6008},
+    year         = {2017},
+    url          = {https://example.org/placeholder/seminal}
+}
+
+@book
+{
+    tempor2009textbook,
+    title        = {The Elements of Placeholder Learning},
+    author       = {Tempor, Eiusmod and Labore, Ut},
+    publisher    = {Placeholder Academic Publishing},
+    year         = {2009},
+    url          = {https://example.org/placeholder/textbook}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%% ONLINE RESOURCES %%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+@online
+{
+    template_repo,
+    howpublished = {GitHub},
+    title        = {A LaTeX Template for \acro{hdr} and \acro{phd} Manuscripts},
+    author       = {Pasdeloup, Bastien},
+    organization = {GitHub},
+    urldate      = {2026-08-19},
+    url          = {https://github.com/BastienPasdeloup/HDR-Template}
+}
+
+@online
+{
+    placeholder_www,
+    howpublished = {Placeholder},
+    title        = {A Placeholder Online Resource},
+    organization = {Placeholder Organization},
+    year         = {2026},
+    urldate      = {2026-08-19},
+    url          = {https://example.org/placeholder/online}
+}

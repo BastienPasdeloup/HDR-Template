@@ -1,0 +1,35 @@
+% Numbered chapter, with a label and an introductory text shown on the chapter page
+\chapter[introduction]{Introduction}
+[
+    The optional fourth argument of \textbackslash chapter is a short text displayed on the chapter page, above the mini table of contents. \\
+    Use it to announce what the chapter contains, and to point to its sections, \eg \nameref{introduction_context} and \nameref{introduction_outline}.
+]
+
+    \section[introduction_context]{Context}
+
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua~\cite{ipsum1998foundational}.
+        Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat~\cite{tempor2009textbook}.
+
+        Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+        Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+        \begin{boxenv}[introduction_challenge]{Challenge}[Stating the problem in one sentence]
+            Boxes are created with \texttt{\textbackslash begin\{boxenv\}[label]\{Type\}[Title]}.
+            The type is free: a counter is created automatically for each distinct type, so this one is \nameref{introduction_challenge}.
+            Boxes are also breakable, so a long one will span several pages without any special care.
+        \end{boxenv}
+
+    \section[introduction_contributions]{Contributions}
+
+        My contributions to this placeholder topic are summarized below, and detailed in \nameref{past}.
+
+        \begin{itemize}
+            \item A placeholder method for placeholder data, published in \cite{lastname2021journal}.
+            \item A placeholder analysis of placeholder models, published in \cite{lastname2022conference}.
+            \item A placeholder application to a placeholder use case, published in \cite{lastname2019chapter}.
+        \end{itemize}
+
+    \section[introduction_outline]{Outline}
+
+        \nameref{past} summarizes my past activities, and \nameref{future} presents the directions I intend to follow.
+        Additional material is provided in \nameref{cv}.

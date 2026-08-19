@@ -1,0 +1,70 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%% EXAMPLE 2 %%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Minimal example of an HDR demand, i.e., the short document sent to the university
+% to be allowed to register for the HDR -- here written in French
+% Compile with: latexmk -lualatex -outdir=build main_demand.tex
+% Compared with "main_hdr.tex", the "hdr_demand" option gives a shorter document:
+% no table of contents, no chapter pages, no back cover, tighter spacing
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%% CONFIGURATION %%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Choose template
+\documentclass[hdr_demand, french]{template/hdr}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%% INFORMATION %%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Author
+\setAuthorFirstName{Prénom}
+\setAuthorName{Nom}
+
+% Affiliations
+\setUniversity{Université Fictive}
+\setDoctoralSchool{\acroname{ed} Fictive}
+\setDoctoralSchoolSubtitle{Sciences et Technologies de l'Information}
+\addLogo{manuscript/covers/logo_university.png}{https://example.org}
+\addLogo{manuscript/covers/logo_doctoral_school.png}{https://example.org}
+\addLogo{manuscript/covers/logo_laboratory.png}{https://example.org}
+
+% Document
+\setDocumentTitle{Un titre fictif pour un document fictif}
+
+% Testimony
+% Specific to the HDR demand: a sworn statement, followed by your signature
+\setSignature{manuscript/covers/signature.png}
+\setTestimony{
+    Je soussigné·e, \authorFirstName~\textsc{\authorName}, déclare sur l'honneur n'avoir pas déposé de demande d'inscription en \acrofull{hdr} dans un autre établissement que l'Université Fictive. \\
+    Ce paragraphe est un texte de remplacement : remplacez-le par les motivations réelles de votre demande, par exemple le rattachement de votre laboratoire, la proximité géographique, ou vos collaborations en cours.}
+
+% Bibliography
+% Fewer categories than in the full manuscript, to keep the document short
+% Every category cited in the text must be declared here, otherwise compilation fails
+% Categories that are declared nowhere simply do not appear (here, "book")
+\addBiblioCategory{thesis}{T}{Thèses}
+\addBiblioCategory{journal}{J}{Journaux}
+\addBiblioCategory{conference}{C}{Conférences}
+\addBiblioCategory{workshop}{W}{Workshops}
+\addBiblioCategory{preprint}{P}{Preprints}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%% CONTENT %%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Go
+\begin{document}
+
+    % Chapters
+    % In a short document, there is no dedicated bibliography chapter:
+    % \printbibliography is called at the end of "research.tex", as a section of that chapter
+    % Only the categories declared above are printed, external references and online
+    % resources are cited inline but not listed
+    \input{manuscript/demand/cv}
+    \input{manuscript/demand/research}
+
+% Done
+\end{document}

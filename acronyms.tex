@@ -1,0 +1,125 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%% INFORMATION %%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% In those acronyms, "long" should explicit the use of letters if possible
+% It will be displayed in the Acronyms section of the document
+% Field "description" is what is displayed when hovering an acronym in the document
+
+% If "long" is empty, the acronym will not appear in the list but will be available for tooltips
+% This can be used for instance to have a plural version of an acronym to show in a tooltip without duplicating the entry
+
+% In the document, use:
+% * \acro{key}     -> Shows the short form, with the description as a tooltip     (e.g., "CNN")
+% * \acrofull{key} -> Shows the description, followed by the short form           (e.g., "Convolutional Neural Network (CNN)")
+% * \acroname{key} -> Shows the description only                                  (e.g., "Convolutional Neural Network")
+
+% This file is shared by the three example documents (HDR, HDR demand, PhD)
+% Entries are sorted alphabetically, which is not required but makes edition easier
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%% ACRONYMS %%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newglossaryentry{ai}
+{
+    type        = {acronym},
+    name        = {AI},
+    long        = {\textbf{A}rtificial \textbf{I}ntelligence},
+    description = {Artificial Intelligence}
+}
+
+% Example of a French counterpart of an existing acronym
+% All entries of this file are listed in every document that prints a list of acronyms,
+% so a language-specific entry is better declared with an empty "long": it then keeps
+% its tooltip, without appearing in the list of the documents written in another language
+\newglossaryentry{ai_fr}
+{
+    type        = {acronym},
+    name        = {IA},
+    long        = {},
+    description = {Intelligence Artificielle}
+}
+
+\newglossaryentry{cnn}
+{
+    type        = {acronym},
+    name        = {CNN},
+    long        = {\textbf{C}onvolutional \textbf{N}eural \textbf{N}etwork},
+    description = {Convolutional Neural Network}
+}
+
+% Example of a tooltip-only entry: "long" is empty, so it does not pollute the list of acronyms
+% Here, this gives a plural form without duplicating the entry above
+\newglossaryentry{cnn_plural}
+{
+    type        = {acronym},
+    name        = {CNNs},
+    long        = {},
+    description = {Convolutional Neural Networks}
+}
+
+% Same as above: only used in the French example, hence not listed
+\newglossaryentry{ed}
+{
+    type        = {acronym},
+    name        = {ED},
+    long        = {},
+    description = {École Doctorale}
+}
+
+\newglossaryentry{gpu}
+{
+    type        = {acronym},
+    name        = {GPU},
+    long        = {\textbf{G}raphics \textbf{P}rocessing \textbf{U}nit},
+    description = {Graphics Processing Unit}
+}
+
+\newglossaryentry{hdr}
+{
+    type        = {acronym},
+    name        = {HDR},
+    long        = {\textbf{H}abilitation à \textbf{D}iriger des \textbf{R}echerches},
+    description = {Habilitation à Diriger des Recherches}
+}
+
+\newglossaryentry{ml}
+{
+    type        = {acronym},
+    name        = {ML},
+    long        = {\textbf{M}achine \textbf{L}earning},
+    description = {Machine Learning}
+}
+
+\newglossaryentry{msc}
+{
+    type        = {acronym},
+    name        = {MSc},
+    long        = {\textbf{M}aster of \textbf{Sc}ience},
+    description = {Master of Science}
+}
+
+\newglossaryentry{pdf}
+{
+    type        = {acronym},
+    name        = {PDF},
+    long        = {\textbf{P}ortable \textbf{D}ocument \textbf{F}ormat},
+    description = {Portable Document Format}
+}
+
+\newglossaryentry{phd}
+{
+    type        = {acronym},
+    name        = {PhD},
+    long        = {\textbf{Ph}ilosophiæ \textbf{D}octor},
+    description = {Philosophiæ Doctor}
+}
+
+\newglossaryentry{sota}
+{
+    type        = {acronym},
+    name        = {SOTA},
+    long        = {\textbf{S}tate \textbf{O}f \textbf{T}he \textbf{A}rt},
+    description = {State Of The Art}
+}

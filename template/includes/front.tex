@@ -1,0 +1,82 @@
+% Doctoral school
+\vspace*{0cm}%
+\begin{center}%
+    \Large%
+    \textbf{\university} \\[0.5cm]%
+    \textbf{\doctoralSchool}%
+    \large%
+    \textit{\doctoralSchoolSubtitle}%
+\end{center}%
+
+% Diploma
+\vfill%
+\begin{center}%
+    \Huge%
+    \textbf{\ifhdr\cstHDR\else\cstThesis\fi}%
+\end{center}%
+
+% Me
+\vfill%
+\begin{center}%
+    \large%
+    \ifshortdoc\cstRequiredBy\else\cstPresentedBy\fi \\%
+    \Large%
+    \textbf{\authorFirstName~\textsc{\authorName}}%
+\end{center}%
+
+% Title
+\vfill%
+\begin{center}%
+    \begin{tcolorbox}[colback=titleBoxColor, colframe=titlesColor, boxsep=0.5cm, width=0.9\textwidth]%
+        \centering\Huge%
+        \textbf{\textsc{\documentTitle}}%
+    \end{tcolorbox}%
+\end{center}%
+
+% Additional elements depending on the type of document
+\vfill%
+\begin{center}%
+    \ifhdr%
+        \ifshortdoc%
+    
+            % HDR demand: add a testimony
+            \begin{minipage}{0.9\textwidth}%
+                \inquotes{\testimony} \\%
+                \hspace*{0.75\textwidth}\includegraphics[height=0.8cm]{\signature}%
+            \end{minipage}%
+    
+        \else%
+
+            % HDR manuscript: jury composition & defense date
+            \large%
+            \cstPubliclyDefended~~\textbf{\defenseDate}~~\cstInFrontOf \\[0.5cm]%
+            \begin{varwidth}[t]{\maxdimen}%
+                \begin{center}%
+                    \textit{\cstReviewers}%
+                \end{center}%
+                \reviewers%
+            \end{varwidth}%
+            \hspace{2cm}%
+            \begin{varwidth}[t]{\maxdimen}%
+                \begin{center}%
+                    \textit{\cstExaminers}%
+                \end{center}%
+                \examiners%
+            \end{varwidth}%
+
+        \fi%
+    \else%
+
+        % PhD manuscript: jury composition & defense date
+        \large%
+        \cstPubliclyDefended~~\textbf{\defenseDate}~~\cstInFrontOf \\[0.5cm]%
+        \begin{varwidth}[t]{\maxdimen}%
+            \jury%
+        \end{varwidth}%
+    
+    \fi%
+\end{center}%
+
+% Logos
+\vfill%
+\showLogos{1.2cm}%
