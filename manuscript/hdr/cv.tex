@@ -21,12 +21,6 @@
 
     \section[cv_education]{Education \& Positions}
 
-        \nameref{cv_timeline} gives an overview of my career, and the table below details each position.
-
-        \begin{figure}[cv_timeline]{A timeline of my career, drawn with plain TikZ. Bar colors indicate when I was a \textcolor{phdColor!60!black}{\acro{phd} student}, a \textcolor{postdocColor!60!black}{postdoctoral researcher} and an \textcolor{facultyColor!60!black}{associate professor}. Diamonds mark the milestones. The colors are declared once in \texttt{main\_hdr.tex}, so the figure and its caption always agree.}
-            \input{manuscript/figures/example_timeline.tex}
-        \end{figure}
-
         \begin{tabularx}{\linewidth}{r|X}
             \textbf{2010 -- 2015} & \acro{phd} in Placeholder Science \newline
                                     Placeholder Laboratory, Placeholder University \newline
@@ -39,13 +33,85 @@
 
     \section[cv_supervision]{Supervision}
 
-        \begin{tabularx}{\linewidth}{r|X}
-            \textbf{2021 -- 2024} & Fourth \textsc{Student}, \acro{phd} student (50\%) \newline
-                                    \inquotes{A Placeholder Title for a Placeholder Thesis} \newline
-                                    Publications: \cite{lastname2023workshop}, \cite{lastname2025preprint} \\
-            \textbf{2022} & Second \textsc{Coauthor}, \acro{msc} intern (100\%) \newline
-                            \inquotes{Another Placeholder Topic}
-        \end{tabularx}
+        % \arrowBox draws a timeline: a colored ribbon on the left of an entry, carrying a
+        % vertical label, and a two-column table of details on the right
+        % Usage: \arrowBox{color}{ribbon label}{heading}{rows of the table}
+        % - color        one of the extra colors declared in "main_hdr.tex"
+        % - ribbon label the period the entry belongs to; consecutive entries of the same
+        %                period repeat \raisebox{0.4ex}{\dots} instead, so that the ribbon
+        %                reads as one continuous timeline
+        % - heading      shown above the table, and greyed out: links stay colored, so an
+        %                icon without a link (here GitHub) shows as unavailable
+        % - rows         the body of a "r|X" tabularx, so use & and \\ as usual
+
+        \subsection[cv_supervision_phd]{\acro{phd} Students}
+
+            \arrowBox{facultyColor}{As Associate Professor}
+            {
+                \paragraph[cv_student_fourth]{Fourth \textsc{Student}}
+                {\hspace{\valparskip}\href{https://example.org}{\faGraduationCap}}
+                {\hspace{\valparskip}\href{https://example.org}{\faLinkedin}}
+                {\hspace{\valparskip}\faGithub}
+            }{
+                \textbf{Period} & 2021 -- 2024 (36 months) \\
+                \textbf{Defended} & \date{2024-11-29} \\
+                \textbf{Share} & 50\% \\
+                \textbf{Funding} & Placeholder Foundation \\
+                \textbf{Subject} & \inquotes{A Placeholder Title for a Placeholder Thesis} \\
+                \textbf{Publications} & \cite{lastname2023workshop, lastname2025preprint}
+            }
+            \arrowBox{facultyColor}{\raisebox{0.4ex}{\dots}}
+            {
+                \paragraph[cv_student_fifth]{Fifth \textsc{Student}}
+                {\hspace{\valparskip}\href{https://example.org}{\faGraduationCap}}
+                {\hspace{\valparskip}\faLinkedin}
+                {\hspace{\valparskip}\href{https://example.org}{\faGithub}}
+            }{
+                \textbf{Period} & Since 2024 (in progress) \\
+                \textbf{Share} & 33\% \\
+                \textbf{Funding} & Placeholder Region (\inquotes{Placeholder} grant) \\
+                \textbf{Subject} & Yet another placeholder subject
+            }
+
+        \subsection[cv_supervision_interns]{Interns}
+
+            % Changing the color and the label starts a new period on the timeline
+            \arrowBox{facultyColor}{As Associate Professor}
+            {
+                \paragraph[cv_intern_second]{Second \textsc{Coauthor}}
+                {\hspace{\valparskip}\faGraduationCap}
+                {\hspace{\valparskip}\href{https://example.org}{\faLinkedin}}
+                {\hspace{\valparskip}\faGithub}
+            }{
+                \textbf{Period} & 2022 (6 months) \\
+                \textbf{Level} & \acro{msc} 2 \\
+                \textbf{Share} & 100\% \\
+                \textbf{Subject} & \inquotes{Another Placeholder Topic}
+            }
+            \arrowBox{postdocColor}{As Postdoctoral Researcher}
+            {
+                \paragraph[cv_intern_third]{Third \textsc{Contributor}}
+                {\hspace{\valparskip}\href{https://example.org}{\faGraduationCap}}
+                {\hspace{\valparskip}\faLinkedin}
+                {\hspace{\valparskip}\faGithub}
+            }{
+                \textbf{Period} & 2016 (4 months) \\
+                \textbf{Level} & \acro{msc} 1 \\
+                \textbf{Share} & 50\% \\
+                \textbf{Subject} & A placeholder internship topic
+            }
+            \arrowBox{phdColor}{As \acro{phd} Student}
+            {
+                \paragraph[cv_intern_first]{First \textsc{Placeholder}}
+                {\hspace{\valparskip}\faGraduationCap}
+                {\hspace{\valparskip}\faLinkedin}
+                {\hspace{\valparskip}\faGithub}
+            }{
+                \textbf{Period} & 2014 (3 months) \\
+                \textbf{Level} & \acro{bsc} 3 \\
+                \textbf{Share} & 100\% \\
+                \textbf{Subject} & The very first placeholder internship
+            }
 
     \section[cv_teaching]{Teaching}
 

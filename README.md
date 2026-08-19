@@ -18,7 +18,9 @@ so that you can see every feature in context before writing your own document.
 * Boxes (`boxenv`) for definitions, theorems, challenges, questions..., with automatic per-type counters,
   and a dedicated `proof` environment.
 * Figures, subfigures, tables and equations numbered continuously across the whole document.
-* Ready-to-adapt TikZ figures: a plot of the kind a script would generate, and a career timeline.
+* `\arrowBox`, to lay out a CV as a **timeline**: a colored ribbon runs along consecutive entries of the
+  same period, so that supervisions, positions or projects read chronologically at a glance.
+* An example TikZ plot, of the kind a script would generate, ready to adapt.
 
 ## The three examples
 
@@ -63,7 +65,7 @@ main_hdr.tex              Example 1 -- full HDR manuscript (English)
 main_demand.tex           Example 2 -- HDR demand (French)
 main_phd.tex              Example 3 -- PhD manuscript (English)
 manuscript/covers/        Logos and signature shown on the covers
-manuscript/figures/       Example images, an example plot, and an example timeline
+manuscript/figures/       Example images and an example generated plot
 manuscript/hdr/           Chapters of example 1
 manuscript/demand/        Chapters of example 2
 manuscript/phd/           Chapters of example 3
@@ -84,6 +86,8 @@ template/includes/        Front cover, back cover, chapter background
 
 \begin{boxenv}[label]{Type}[Title] ... \end{boxenv}      % starred variant: unnumbered
 \begin{proof}{label_of_statement} ... \end{proof}        % empty argument for a generic proof
+
+\arrowBox{color}{Ribbon label}{Heading}{Rows & of a \\ r|X tabularx}   % timeline entry
 
 \acro{ai}       % AI, with a tooltip
 \acrofull{ai}   % Artificial Intelligence (AI)
