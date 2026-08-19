@@ -24,16 +24,17 @@ so that you can see every feature in context before writing your own document.
 
 ## The three examples
 
-| File | Document class options | What it shows |
-| --- | --- | --- |
-| `main_hdr.tex` | `[hdr, english]` | A full HDR manuscript: foreword, numbered chapters, appendices, bibliography, list of acronyms. |
-| `main_demand.tex` | `[hdr_demand, french]` | The short document sent to the university to register for the HDR: no chapter pages, no table of contents, sworn statement and signature on the cover. |
-| `main_phd.tex` | `[phd, english]` | A PhD manuscript: same commands, single jury list, appendix of proofs. |
+| Source | Result | Document class options | What it shows |
+| --- | --- | --- | --- |
+| `main_hdr.tex` | [main_hdr.pdf](build/main_hdr.pdf) | `[hdr, english]` | A full HDR manuscript: foreword, numbered chapters, appendices, bibliography, list of acronyms. |
+| `main_demand.tex` | [main_demand.pdf](build/main_demand.pdf) | `[hdr_demand, french]` | The short document sent to the university to register for the HDR: no chapter pages, no table of contents, sworn statement and signature on the cover. |
+| `main_phd.tex` | [main_phd.pdf](build/main_phd.pdf) | `[phd, english]` | A PhD manuscript: same commands, single jury list, appendix of proofs. |
 
 All three share `acronyms.tex`, `bibliography.bib` and the images in `manuscript/figures/`.
 Every piece of text is a placeholder: replace it with your own.
 
-The compiled PDFs are kept in `build/`, so you can have a look at the three documents without compiling anything.
+The compiled PDFs above are kept in the repository, so you can have a look at the three documents without
+compiling anything.
 
 ## Compiling
 
