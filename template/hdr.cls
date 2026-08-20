@@ -1111,7 +1111,7 @@
     }{}%
     \ifshortdoc%
     \else%
-        \iflistundef{pageref}{}{\hspace{0.05cm}{\scriptsize \faBookOpen}\hspace{0.2cm}\printlist[pageref]{pageref}}%
+        \iflistundef{pageref}{}{\hspace{0.05cm}{\scriptsize \faBookOpen}\hspace{0.2cm}\printlist[pageref][1-999]{pageref}}%
         \par\vspace*{0cm}%
     \fi%
 }%
