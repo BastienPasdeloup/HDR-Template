@@ -10,6 +10,8 @@ so that you can see every feature in context before writing your own document.
 * Chapter pages with a background image, a chapter abstract, and a mini table of contents.
 * Simplified label management: labels are declared as an **optional argument** of the sectioning command or
   environment, and recalled with `\nameref` — no more `\ref{fig:...}` next to `\autoref{sec:...}`.
+  Unnumbered chapters are labelled the same way, and are recalled by their title: the bibliography and the list
+  of acronyms come with the ready-made labels `bibliography` and `glossary`.
 * Acronyms with **tooltips** in the PDF, and an automatically generated list of acronyms.
 * A bibliography split into *your own publications* (grouped by category, with clickable icons for the paper,
   the slides, the poster, the video, the code, the prize), *external references*, and *online resources*.
@@ -26,9 +28,9 @@ so that you can see every feature in context before writing your own document.
 
 | Source | Result | Document class options | What it shows |
 | --- | --- | --- | --- |
-| `main_hdr.tex` | [main_hdr.pdf](build/main_hdr.pdf) | `[hdr, english]` | A full HDR manuscript: foreword, numbered chapters, appendices, bibliography, list of acronyms. |
-| `main_demand.tex` | [main_demand.pdf](build/main_demand.pdf) | `[hdr_demand, french]` | The short document sent to the university to register for the HDR: no chapter pages, no table of contents, sworn statement and signature on the cover. |
-| `main_phd.tex` | [main_phd.pdf](build/main_phd.pdf) | `[phd, english]` | A PhD manuscript: same commands, single jury list, appendix of proofs. |
+| `main_hdr.tex` | [main_hdr.pdf](build/main_hdr.pdf) | `[hdr, english]` | A full HDR manuscript: unnumbered foreword and acknowledgements, numbered chapters, appendices, bibliography, list of acronyms. |
+| `main_demand.tex` | [main_demand.pdf](build/main_demand.pdf) | `[hdr_demand, french]` | The short document sent to the university to register for the HDR: unnumbered foreword, no chapter pages, no table of contents, sworn statement and signature on the cover. |
+| `main_phd.tex` | [main_phd.pdf](build/main_phd.pdf) | `[phd, english]` | A PhD manuscript: same commands, unnumbered acknowledgements, single jury list, appendix of proofs. |
 
 All three share `acronyms.tex`, `bibliography.bib` and the images in `manuscript/figures/`.
 Every piece of text is a placeholder: replace it with your own.
