@@ -360,19 +360,19 @@
         \ifnum\thetocchapterpartcounter>1%
             \vspace{1em}%
         \fi%
-        {\iftocinappendix%
-            % In appendices, chapters appear as sections
-            \vspace{-1.3em}%
-            \setlength\@tempdima{\tocEntrySpacing em}%
-            \hspace*{\tocEntrySpacing em}%
-            \small%
-        \else%
-            % Formatting in TOC
-            \setlength\@tempdima{\tocEntrySpacing em}%
-            \normalsize%
-            \bfseries%
-        \fi%
-        #1\margindotfill#2\par}%
+            {\iftocinappendix%
+                    % In appendices, chapters appear as sections
+                    \vspace{-1.3em}%
+                    \setlength\@tempdima{\tocEntrySpacing em}%
+                    \hspace*{\tocEntrySpacing em}%
+                    \small%
+                \else%
+                    % Formatting in TOC
+                    \setlength\@tempdima{\tocEntrySpacing em}%
+                    \normalsize%
+                    \bfseries%
+                \fi%
+                #1\margindotfill#2\par}%
     \fi}%
 
 % Format chapters
@@ -382,120 +382,120 @@
         \ifnum\thetocchapterpartcounter>1%
             \vspace{1em}%
         \fi%
-        {\iftocinappendix%
-            % In appendices, chapters appear as sections
-            \vspace{-1.3em}%
-            \setlength\@tempdima{\tocEntrySpacing em}%
-            \hspace*{\tocEntrySpacing em}%
-            \small%
-        \else%
-            % Formatting in TOC
-            \setlength\@tempdima{\tocEntrySpacing em}%
-            \normalsize%
-            \bfseries%
-        \fi%
-        #1\margindotfill#2\par}%
+            {\iftocinappendix%
+                    % In appendices, chapters appear as sections
+                    \vspace{-1.3em}%
+                    \setlength\@tempdima{\tocEntrySpacing em}%
+                    \hspace*{\tocEntrySpacing em}%
+                    \small%
+                \else%
+                    % Formatting in TOC
+                    \setlength\@tempdima{\tocEntrySpacing em}%
+                    \normalsize%
+                    \bfseries%
+                \fi%
+                #1\margindotfill#2\par}%
     \fi}%
 
 % Format sections
 \renewcommand*\l@section[2]{%
     \ifnum \c@tocdepth >\z@%
         {\iftocinappendix%
-            \ifinmaintoc%
-                % In appendices, sections appear as subsections
-                \vspace{-0.3em}%
-                \setlength\@tempdima{\tocEntrySpacing em}%
-                \hspace*{\the\numexpr2*\tocEntrySpacing\relax em}%
-                \footnotesize%
+                \ifinmaintoc%
+                    % In appendices, sections appear as subsections
+                    \vspace{-0.3em}%
+                    \setlength\@tempdima{\tocEntrySpacing em}%
+                    \hspace*{\the\numexpr2*\tocEntrySpacing\relax em}%
+                    \footnotesize%
+                \else%
+                    % Formatting in mini-TOC
+                    \setlength\@tempdima{\minitocEntrySpacing em}%
+                    \normalsize%
+                \fi%
             \else%
-                % Formatting in mini-TOC
-                \setlength\@tempdima{\minitocEntrySpacing em}%
-                \normalsize%
+                \ifinmaintoc%
+                    % Formatting in TOC
+                    \vspace{-0.3em}%
+                    \setlength\@tempdima{\tocEntrySpacing em}%
+                    \hspace*{\tocEntrySpacing em}%
+                    \small%
+                \else%
+                    % Formatting in mini-TOC
+                    \setlength\@tempdima{\minitocEntrySpacing em}%
+                    \normalsize%
+                \fi%
             \fi%
-        \else%
-            \ifinmaintoc%
-                % Formatting in TOC
-                \vspace{-0.3em}%
-                \setlength\@tempdima{\tocEntrySpacing em}%
-                \hspace*{\tocEntrySpacing em}%
-                \small%
-            \else%
-                % Formatting in mini-TOC
-                \setlength\@tempdima{\minitocEntrySpacing em}%
-                \normalsize%
-            \fi%
-        \fi%
-        #1\margindotfill#2\par}%
+            #1\margindotfill#2\par}%
     \fi}%
 
 % Format subsections
 \renewcommand*\l@subsection[2]{%
     \ifnum \c@tocdepth >1%
-        {\iftocinappendix%
-            \ifinmaintoc%
-                % In appendices, subsections appear as subsubsections
-                \vspace{-0.3em}%
-                \setlength\@tempdima{\tocEntrySpacing em}%
-                \hspace*{\the\numexpr3*\tocEntrySpacing\relax em}%
-                \scriptsize%
-            \else%
-                % Formatting in mini-TOC
-                \vspace{-0.2em}%
-                \setlength\@tempdima{\minitocEntrySpacing em}%
-                \hspace*{\minitocEntrySpacing em}%
-                \small%
-            \fi%
-        \else%
-            \ifinmaintoc%
-                % Formatting in TOC
-                \vspace{-0.3em}%
-                \setlength\@tempdima{\tocEntrySpacing em}%
-                \hspace*{\the\numexpr2*\tocEntrySpacing\relax em}%
-                \footnotesize%
-            \else%
-                % Formatting in mini-TOC
-                \vspace{-0.2em}%
-                \setlength\@tempdima{\minitocEntrySpacing em}%
-                \hspace*{\minitocEntrySpacing em}%
-                \small%
-            \fi%
-        \fi%
-        #1\margindotfill#2\par}%
+            {\iftocinappendix%
+                    \ifinmaintoc%
+                        % In appendices, subsections appear as subsubsections
+                        \vspace{-0.3em}%
+                        \setlength\@tempdima{\tocEntrySpacing em}%
+                        \hspace*{\the\numexpr3*\tocEntrySpacing\relax em}%
+                        \scriptsize%
+                    \else%
+                        % Formatting in mini-TOC
+                        \vspace{-0.2em}%
+                        \setlength\@tempdima{\minitocEntrySpacing em}%
+                        \hspace*{\minitocEntrySpacing em}%
+                        \small%
+                    \fi%
+                \else%
+                    \ifinmaintoc%
+                        % Formatting in TOC
+                        \vspace{-0.3em}%
+                        \setlength\@tempdima{\tocEntrySpacing em}%
+                        \hspace*{\the\numexpr2*\tocEntrySpacing\relax em}%
+                        \footnotesize%
+                    \else%
+                        % Formatting in mini-TOC
+                        \vspace{-0.2em}%
+                        \setlength\@tempdima{\minitocEntrySpacing em}%
+                        \hspace*{\minitocEntrySpacing em}%
+                        \small%
+                    \fi%
+                \fi%
+                #1\margindotfill#2\par}%
     \fi}%
 
 % Format subsubsections
 \renewcommand*\l@subsubsection[2]{%
     \ifnum \c@tocdepth >2%
-        {\iftocinappendix%
-            \ifinmaintoc%
-                % In appendices, subsubsections appear as subsubsubsections
-                \vspace{-0.3em}%
-                \setlength\@tempdima{\tocEntrySpacing em}%
-                \hspace*{\the\numexpr4*\tocEntrySpacing\relax em}%
-                \tiny%
-            \else%
-                % Formatting in mini-TOC
-                \vspace{-0.2em}%
-                \setlength\@tempdima{\minitocEntrySpacing em}%
-                \hspace*{\the\numexpr2*\minitocEntrySpacing\relax em}%
-                \footnotesize%
-            \fi%
-        \else%
-            \ifinmaintoc%
-                % Formatting in TOC
-                \vspace{-0.3em}%
-                \setlength\@tempdima{\tocEntrySpacing em}%
-                \hspace*{\the\numexpr3*\tocEntrySpacing\relax em}%
-                \scriptsize%
-            \else%
-                % Formatting in mini-TOC
-                \vspace{-0.2em}%
-                \setlength\@tempdima{\minitocEntrySpacing em}%
-                \hspace*{\the\numexpr2*\minitocEntrySpacing\relax em}%
-                \footnotesize%
-            \fi%
-        \fi%
-        #1\margindotfill#2\par}%
+            {\iftocinappendix%
+                    \ifinmaintoc%
+                        % In appendices, subsubsections appear as subsubsubsections
+                        \vspace{-0.3em}%
+                        \setlength\@tempdima{\tocEntrySpacing em}%
+                        \hspace*{\the\numexpr4*\tocEntrySpacing\relax em}%
+                        \tiny%
+                    \else%
+                        % Formatting in mini-TOC
+                        \vspace{-0.2em}%
+                        \setlength\@tempdima{\minitocEntrySpacing em}%
+                        \hspace*{\the\numexpr2*\minitocEntrySpacing\relax em}%
+                        \footnotesize%
+                    \fi%
+                \else%
+                    \ifinmaintoc%
+                        % Formatting in TOC
+                        \vspace{-0.3em}%
+                        \setlength\@tempdima{\tocEntrySpacing em}%
+                        \hspace*{\the\numexpr3*\tocEntrySpacing\relax em}%
+                        \scriptsize%
+                    \else%
+                        % Formatting in mini-TOC
+                        \vspace{-0.2em}%
+                        \setlength\@tempdima{\minitocEntrySpacing em}%
+                        \hspace*{\the\numexpr2*\minitocEntrySpacing\relax em}%
+                        \footnotesize%
+                    \fi%
+                \fi%
+                #1\margindotfill#2\par}%
     \fi}%
 
 % Remove mini-TOC title
@@ -504,7 +504,7 @@
 % To hide the table of contents while still enabling minitoc
 \newcommand{\silenttableofcontents}{%
     \IfFileExists{\jobname.toc}{}{\@starttoc{toc}}}%
-    
+
 % Nothing on header for odd pages in TOC
 % Separate index creation from showing TOC
 % Set a flag to avoid having a TOC entry in TOC
@@ -584,240 +584,240 @@
 \newcommand{\chaptertext}{}%
 \renewcommand{\chaptername}{\cstChapter}%
 \makeatletter%
-    \let\oldchapter\chapter%
-    \RenewDocumentCommand{\chapter}{s o m O{}}{%
-        \if\relax\detokenize\expandafter{#4}%
-        \else%
-            \renewcommand{\chaptertext}{%
-                \begingroup
-                    \let\oldnewline\\%
-                    \renewcommand{\\}{\oldnewline[\valparskip]}%
-                    #4%
-                \endgroup%
-            }%
-        \fi%
-        \IfBooleanTF{#1}{%
-            \iftocinappendix%
-                \let\oldthechapter\thechapter%
-                \renewcommand{\thechapter}{}%
-                \renewcommand{\chaptermark}[1]{\markboth{##1}{}}%
-                \oldchapter{#3}%
-                \renewcommand{\thechapter}{\oldthechapter}%
-                \renewcommand{\chaptermark}{\oldchaptermark}%
-            \else%
-                \oldchapter*{#3}%
-            \fi%
-            \def\@currentlabelname{#3}%
-        }{%
-            \oldchapter{#3}%
-            \edef\@currentlabelname{\iftocinappendix\cstAppendix\else\cstChapter\fi~\thechapter}%
+\let\oldchapter\chapter%
+\RenewDocumentCommand{\chapter}{s o m O{}}{%
+    \if\relax\detokenize\expandafter{#4}%
+    \else%
+        \renewcommand{\chaptertext}{%
+            \begingroup
+            \let\oldnewline\\%
+            \renewcommand{\\}{\oldnewline[\valparskip]}%
+            #4%
+            \endgroup%
         }%
-        \IfValueT{#2}{\label{#2}}%
+    \fi%
+    \IfBooleanTF{#1}{%
+        \iftocinappendix%
+            \let\oldthechapter\thechapter%
+            \renewcommand{\thechapter}{}%
+            \renewcommand{\chaptermark}[1]{\markboth{##1}{}}%
+            \oldchapter{#3}%
+            \renewcommand{\thechapter}{\oldthechapter}%
+            \renewcommand{\chaptermark}{\oldchaptermark}%
+        \else%
+            \oldchapter*{#3}%
+        \fi%
+        \def\@currentlabelname{#3}%
+    }{%
+        \oldchapter{#3}%
+        \edef\@currentlabelname{\iftocinappendix\cstAppendix\else\cstChapter\fi~\thechapter}%
     }%
+    \IfValueT{#2}{\label{#2}}%
+}%
 \makeatother%
 
 % Section
 \makeatletter%
-    \let\oldsection\section%
-    \RenewDocumentCommand{\section}{s o m}{%
-        \IfBooleanTF{#1}{%
-            \phantomsection%
-            \oldsection*{#3}%
-            \def\@currentlabelname{#3}%
-        }{%
-            \oldsection{#3}%
-            \edef\@currentlabelname{\cstSection~\thesection}%
-        }%
-        \IfValueT{#2}{\label{#2}}%
+\let\oldsection\section%
+\RenewDocumentCommand{\section}{s o m}{%
+    \IfBooleanTF{#1}{%
+        \phantomsection%
+        \oldsection*{#3}%
+        \def\@currentlabelname{#3}%
+    }{%
+        \oldsection{#3}%
+        \edef\@currentlabelname{\cstSection~\thesection}%
     }%
+    \IfValueT{#2}{\label{#2}}%
+}%
 \makeatother%
 
 % Subsection
 \makeatletter%
-    \let\oldsubsection\subsection%
-    \RenewDocumentCommand{\subsection}{s o m}{%
-        \IfBooleanTF{#1}{%
-            \phantomsection%
-            \oldsubsection*{#3}%
-            \def\@currentlabelname{#3}%
-        }{%
-            \oldsubsection{#3}%
-            \edef\@currentlabelname{\cstSection~\thesubsection}%
-        }%
-        \IfValueT{#2}{\label{#2}}%
+\let\oldsubsection\subsection%
+\RenewDocumentCommand{\subsection}{s o m}{%
+    \IfBooleanTF{#1}{%
+        \phantomsection%
+        \oldsubsection*{#3}%
+        \def\@currentlabelname{#3}%
+    }{%
+        \oldsubsection{#3}%
+        \edef\@currentlabelname{\cstSection~\thesubsection}%
     }%
+    \IfValueT{#2}{\label{#2}}%
+}%
 \makeatother%
 
 % Subsubsection
 \makeatletter%
-    \let\oldsubsubsection\subsubsection%
-    \RenewDocumentCommand{\subsubsection}{s o m}{%
-        \IfBooleanTF{#1}{%
-            \phantomsection%
-            \oldsubsubsection*{#3}%
-            \def\@currentlabelname{#3}%
-        }{%
-            \oldsubsubsection{#3}%
-            \edef\@currentlabelname{\cstSection~\thesubsubsection}%
-        }%
-        \IfValueT{#2}{\label{#2}}%
+\let\oldsubsubsection\subsubsection%
+\RenewDocumentCommand{\subsubsection}{s o m}{%
+    \IfBooleanTF{#1}{%
+        \phantomsection%
+        \oldsubsubsection*{#3}%
+        \def\@currentlabelname{#3}%
+    }{%
+        \oldsubsubsection{#3}%
+        \edef\@currentlabelname{\cstSection~\thesubsubsection}%
     }%
+    \IfValueT{#2}{\label{#2}}%
+}%
 \makeatother%
 
 % Paragraph
 \makeatletter%
-    \let\oldparagraph\paragraph%
-    \RenewDocumentCommand{\paragraph}{s o m}{%
-        \IfBooleanTF{#1}{%
-            \phantomsection%
-            \oldparagraph*{#3}%
-        }{%
-            \oldparagraph{#3}%
-        }%
-        \def\@currentlabelname{#3}%
-        \IfValueT{#2}{\label{#2}}%
+\let\oldparagraph\paragraph%
+\RenewDocumentCommand{\paragraph}{s o m}{%
+    \IfBooleanTF{#1}{%
+        \phantomsection%
+        \oldparagraph*{#3}%
+    }{%
+        \oldparagraph{#3}%
     }%
+    \def\@currentlabelname{#3}%
+    \IfValueT{#2}{\label{#2}}%
+}%
 \makeatother%
 
 % Subparagraph
 \makeatletter%
-    \let\oldsubparagraph\subparagraph%
-    \RenewDocumentCommand{\subparagraph}{s o m}{%
-        \IfBooleanTF{#1}{%
-            \phantomsection%
-            \oldsubparagraph*{#3}%
-        }{%
-            \oldsubparagraph{#3}%
-        }%
-        \def\@currentlabelname{#3}%
-        \IfValueT{#2}{\label{#2}}%
+\let\oldsubparagraph\subparagraph%
+\RenewDocumentCommand{\subparagraph}{s o m}{%
+    \IfBooleanTF{#1}{%
+        \phantomsection%
+        \oldsubparagraph*{#3}%
+    }{%
+        \oldsubparagraph{#3}%
     }%
+    \def\@currentlabelname{#3}%
+    \IfValueT{#2}{\label{#2}}%
+}%
 \makeatother%
 
 % To start appendices
 \newif\iftocinappendix%
 \tocinappendixfalse%
 \makeatletter%
-    \let\oldappendix\appendix
-    \NewDocumentCommand{\appendices}{}{%
-        \iftocinappendix%
-        \else%
-            \tocinappendixtrue%
-            \renewcommand{\chaptername}{\cstAppendix}%
-            \cleardoublepage%
-            \phantomsection%
-            \addcontentsline{toc}{part}{\cstAppendices}%
-            \addtocontents{toc}{\protect\tocinappendixtrue}%
-            \oldappendix%
-        \fi%
-    }%
+\let\oldappendix\appendix
+\NewDocumentCommand{\appendices}{}{%
+    \iftocinappendix%
+    \else%
+        \tocinappendixtrue%
+        \renewcommand{\chaptername}{\cstAppendix}%
+        \cleardoublepage%
+        \phantomsection%
+        \addcontentsline{toc}{part}{\cstAppendices}%
+        \addtocontents{toc}{\protect\tocinappendixtrue}%
+        \oldappendix%
+    \fi%
+}%
 \makeatother%
 
 % Figure
 \counterwithout{figure}{chapter}%
 \makeatletter%
-    \let\oldfigure\figure%
-    \let\endoldfigure\endfigure%
-    \RenewDocumentEnvironment{figure}{o m}%
-    {%
-        \oldfigure%
-        \centering%
-    }{%
-        \caption{#2}%
-        \edef\@currentlabelname{\cstFigure~\thefigure}%
-        \IfValueT{#1}{\label{#1}}%
-        \endoldfigure%
-    }%
-    \RenewDocumentEnvironment{figure*}{o m}%
-    {%
-        \oldfigure%
-        \centering%
-    }{%
-        \caption*{#2}%
-        \edef\@currentlabelname{\cstFigure}%
-        \IfValueT{#1}{\label{#1}}%
-        \endoldfigure%
-    }%
+\let\oldfigure\figure%
+\let\endoldfigure\endfigure%
+\RenewDocumentEnvironment{figure}{o m}%
+{%
+    \oldfigure%
+    \centering%
+}{%
+    \caption{#2}%
+    \edef\@currentlabelname{\cstFigure~\thefigure}%
+    \IfValueT{#1}{\label{#1}}%
+    \endoldfigure%
+}%
+\RenewDocumentEnvironment{figure*}{o m}%
+{%
+    \oldfigure%
+    \centering%
+}{%
+    \caption*{#2}%
+    \edef\@currentlabelname{\cstFigure}%
+    \IfValueT{#1}{\label{#1}}%
+    \endoldfigure%
+}%
 \makeatother%
 
 % Subfigure
 \makeatletter%
-    \let\oldsubfigure\subfigure%
-    \let\endoldsubfigure\endsubfigure%
-    \RenewDocumentEnvironment{subfigure}{o m m}%
-    {%
-        \oldsubfigure[t]{#2}%
-        \vspace{0pt}%
-        \centering%
-    }{%
-        \caption{#3}%
-        \edef\@currentlabelname{(\thesubfigure)}%
-        \IfValueT{#1}{\label{#1}}%
-        \endoldsubfigure%
-    }%
-    \NewDocumentEnvironment{subfigure*}{o m m}%
-    {%
-        \oldsubfigure[t]{#2}%
-        \vspace{0pt}%
-        \centering%
-    }{%
-        \caption*{#3}%
-        \edef\@currentlabelname{}%
-        \IfValueT{#1}{\label{#1}}%
-        \endoldsubfigure%
-    }%
+\let\oldsubfigure\subfigure%
+\let\endoldsubfigure\endsubfigure%
+\RenewDocumentEnvironment{subfigure}{o m m}%
+{%
+    \oldsubfigure[t]{#2}%
+    \vspace{0pt}%
+    \centering%
+}{%
+    \caption{#3}%
+    \edef\@currentlabelname{(\thesubfigure)}%
+    \IfValueT{#1}{\label{#1}}%
+    \endoldsubfigure%
+}%
+\NewDocumentEnvironment{subfigure*}{o m m}%
+{%
+    \oldsubfigure[t]{#2}%
+    \vspace{0pt}%
+    \centering%
+}{%
+    \caption*{#3}%
+    \edef\@currentlabelname{}%
+    \IfValueT{#1}{\label{#1}}%
+    \endoldsubfigure%
+}%
 \makeatother%
 
 % Table
 \counterwithout{table}{chapter}%
 \makeatletter%
-    \let\oldtable\table%
-    \let\endoldtable\endtable%
-    \RenewDocumentEnvironment{table}{o m}%
-    {%
-        \oldtable%
-        \centering%
-    }{%
-        \caption{#2}%
-        \edef\@currentlabelname{\cstTable~\thetable}%
-        \IfValueT{#1}{\label{#1}}%
-        \endoldtable%
-    }%
-    \RenewDocumentEnvironment{table*}{o m}%
-    {%
-        \oldtable%
-        \centering%
-    }{%
-        \caption*{#2}%
-        \edef\@currentlabelname{\cstTable}%
-        \IfValueT{#1}{\label{#1}}%
-        \endoldtable%
-    }%
+\let\oldtable\table%
+\let\endoldtable\endtable%
+\RenewDocumentEnvironment{table}{o m}%
+{%
+    \oldtable%
+    \centering%
+}{%
+    \caption{#2}%
+    \edef\@currentlabelname{\cstTable~\thetable}%
+    \IfValueT{#1}{\label{#1}}%
+    \endoldtable%
+}%
+\RenewDocumentEnvironment{table*}{o m}%
+{%
+    \oldtable%
+    \centering%
+}{%
+    \caption*{#2}%
+    \edef\@currentlabelname{\cstTable}%
+    \IfValueT{#1}{\label{#1}}%
+    \endoldtable%
+}%
 \makeatother%
 
 % Equation
 \counterwithout{equation}{chapter}%
 \makeatletter%
-    \let\oldequation\equation%
-    \let\endoldequation\endequation%
-    \RenewDocumentEnvironment{equation}{o}%
-    {%
-        \oldequation%
-    }{%
-        \edef\@currentlabelname{\cstEquation~\theequation}%
-        \IfValueT{#1}{\label{#1}}%
-        \endoldequation%
-    }%
-    \RenewDocumentEnvironment{equation*}{o}%
-    {%
-        \oldequation%
-        \phantomsection%
-    }{%
-        \notag%
-        \edef\@currentlabelname{\cstEquation}%
-        \IfValueT{#1}{\label{#1}}%
-        \endoldequation%
-    }%
+\let\oldequation\equation%
+\let\endoldequation\endequation%
+\RenewDocumentEnvironment{equation}{o}%
+{%
+    \oldequation%
+}{%
+    \edef\@currentlabelname{\cstEquation~\theequation}%
+    \IfValueT{#1}{\label{#1}}%
+    \endoldequation%
+}%
+\RenewDocumentEnvironment{equation*}{o}%
+{%
+    \oldequation%
+    \phantomsection%
+}{%
+    \notag%
+    \edef\@currentlabelname{\cstEquation}%
+    \IfValueT{#1}{\label{#1}}%
+    \endoldequation%
+}%
 \makeatother%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -826,6 +826,8 @@
 
 % Prepare glossary
 \RequirePackage[acronym]{glossaries}%
+\glssetnoexpandfield{long}%
+\glssetnoexpandfield{description}%
 \loadglsentries{acronyms}%
 \makeglossaries%
 
@@ -836,7 +838,7 @@
         \begingroup%
         \ifglshaslong{##1}{%
             \begin{tabularx}{\textwidth}{@{}l@{}X@{}}%
-                \glsentryitem{##1}\glstarget{##1}{\glsentryname{##1}}&\raggedleft\margindotfill\glsentrylong{##1}%
+                \glsentryitem{##1}\glstarget{##1}{\glsentryname{##1}} & \raggedleft\margindotfill\glsentrylong{##1} %
             \end{tabularx}\\%
         }{}%
         \endgroup%
@@ -925,18 +927,18 @@
     \markboth{#1}{}%
     \vspace*{0pt}%
     {\centering%
-    \normalfont\huge\bfseries\scshape\color{titlesColor}\contour{white}{#1}\par%
-    \vspace*{40pt}%
-    \chapterSeparator\par%
-    \vspace*{50pt}}%
+        \normalfont\huge\bfseries\scshape\color{titlesColor}\contour{white}{#1}\par%
+        \vspace*{40pt}%
+        \chapterSeparator\par%
+        \vspace*{50pt}}%
     \if\relax\detokenize\expandafter{\chaptertext}%
         \relax%
     \else%
         \chaptertext\par%
         {\centering%
-        \vspace*{50pt}%
-        \chapterSeparator\par%
-        \vspace*{50pt}}%
+            \vspace*{50pt}%
+            \chapterSeparator\par%
+            \vspace*{50pt}}%
         \renewcommand{\chaptertext}{}%
     \fi}%
 \makeatother%
@@ -951,12 +953,12 @@
     \renewcommand\chaptermark\oldchaptermark%
     \vspace*{0pt}%
     {\centering%
-    \normalfont\huge\scshape\color{titlesColor}\contour{white}{\chaptername~~\thechapter}\par%
-    \vspace*{10pt}%
-    \normalfont\huge\bfseries\scshape\color{titlesColor}\contour{white}{#1}\par%
-    \vspace*{40pt}%
-    \chapterSeparator\par%
-    \vspace*{50pt}}%
+        \normalfont\huge\scshape\color{titlesColor}\contour{white}{\chaptername~~\thechapter}\par%
+        \vspace*{10pt}%
+        \normalfont\huge\bfseries\scshape\color{titlesColor}\contour{white}{#1}\par%
+        \vspace*{40pt}%
+        \chapterSeparator\par%
+        \vspace*{50pt}}%
     \if\relax\detokenize\expandafter{\chaptertext}%
         \relax%
     \else%
@@ -1009,11 +1011,11 @@
 \RequirePackage[normalem]{ulem}%
 \DeclareNameFormat{author}{%
     \ifthenelse{\equal{\namepartfamily}{\authorName} \and \equal{\namepartgiven}{\authorFirstName}}%
-        {\dotuline{\namepartgiven\space{\scshape\namepartfamily}}}%
-        {\namepartgiven\space{\scshape\namepartfamily}}%
+    {\dotuline{\namepartgiven\space{\scshape\namepartfamily}}}%
+    {\namepartgiven\space{\scshape\namepartfamily}}%
     \ifthenelse{\value{listcount} < \value{listtotal}}%
-        {,\space\newunit\newblock}%
-        {}}%
+    {,\space\newunit\newblock}%
+    {}}%
 
 % Show as [Author et al., date]
 % Use field "note" for the suffix to put to the ref in case of ambiguous entries
@@ -1151,7 +1153,7 @@
     }%
     \DeclareBibliographyDriver{secondcol:#1}{#2}%
 }%
-  
+
 % Thesis/report
 \declareReferenceType{thesis}{%
     \printnames{author}\space%
@@ -1320,64 +1322,64 @@
 \newif\ifonlyonecategory%
 \onlyonecategorytrue%
 \makeatletter%
-    \let\oldprintbibliography\printbibliography
-    \newcommand{\@biblioCategories}{}%
-    \newcommand{\@biblioCategoriesNoTitle}{}%
-    \newcommand{\addBiblioCategory}[3]{%
-        \ifcategoriesused%
-            \onlyonecategoryfalse%
-        \fi%
-        \categoriesusedtrue%
-        \ifcsname abbr@#1\endcsname%
-            \errmessage{Duplicate bibliography category \thefield{usera}}%
+\let\oldprintbibliography\printbibliography
+\newcommand{\@biblioCategories}{}%
+\newcommand{\@biblioCategoriesNoTitle}{}%
+\newcommand{\addBiblioCategory}[3]{%
+    \ifcategoriesused%
+        \onlyonecategoryfalse%
+    \fi%
+    \categoriesusedtrue%
+    \ifcsname abbr@#1\endcsname%
+        \errmessage{Duplicate bibliography category \thefield{usera}}%
+    \else%
+        \expandafter\gdef\csname abbr@#1\endcsname{#2}%
+    \fi%
+    \DeclareSourcemap{%
+        \maps[datatype=bibtex]{%
+            \map{%
+                \step[fieldsource=usera, match=\regexp{#1}, final]%
+                \step[fieldset=keywords, fieldvalue={filter_#1}, append]}}}%
+    \g@addto@macro\@biblioCategories{%
+        \ifshortdoc%
+            \subsection{#3}%
         \else%
-            \expandafter\gdef\csname abbr@#1\endcsname{#2}%
+            \subsection*{#3}%
         \fi%
-        \DeclareSourcemap{%
-            \maps[datatype=bibtex]{%
-                \map{%
-                    \step[fieldsource=usera, match=\regexp{#1}, final]%
-                    \step[fieldset=keywords, fieldvalue={filter_#1}, append]}}}%
-        \g@addto@macro\@biblioCategories{%
-            \ifshortdoc%
-                \subsection{#3}%
-            \else%
-                \subsection*{#3}%
-            \fi%
+        \oldprintbibliography[keyword=filter_#1, heading=none]}%
+    \ifonlyonecategory%
+        \g@addto@macro\@biblioCategoriesNoTitle{%
             \oldprintbibliography[keyword=filter_#1, heading=none]}%
-        \ifonlyonecategory%
-            \g@addto@macro\@biblioCategoriesNoTitle{%
-                \oldprintbibliography[keyword=filter_#1, heading=none]}%
-        \fi%
-    }%
-    \let\olddocument\document%
-    \renewcommand\document{%
-        \DeclareSourcemap{%
-            \maps[datatype=bibtex]{%
-                \map{%
-                    \step[fieldsource=usera, null]%
-                    \step[fieldset=usera, fieldvalue={nousera}]%
-                    \step[fieldsource=usera, match=\regexp{nousera}, final]%
-                    \step[fieldsource=howpublished, null, final]%
-                    \step[fieldset=keywords, fieldvalue={filter_url}, append]%
-                }%
-                \map{%
-                    \step[fieldsource=usera, null]%
-                    \step[fieldset=usera, fieldvalue={nousera}]%
-                    \step[fieldsource=usera, match=\regexp{nousera}, final]%
-                    \step[fieldset=keywords, fieldvalue={filter_external}, append]%
-                }}}%
-        \olddocument}%
+    \fi%
+}%
+\let\olddocument\document%
+\renewcommand\document{%
+\DeclareSourcemap{%
+    \maps[datatype=bibtex]{%
+        \map{%
+            \step[fieldsource=usera, null]%
+            \step[fieldset=usera, fieldvalue={nousera}]%
+            \step[fieldsource=usera, match=\regexp{nousera}, final]%
+            \step[fieldsource=howpublished, null, final]%
+            \step[fieldset=keywords, fieldvalue={filter_url}, append]%
+        }%
+        \map{%
+            \step[fieldsource=usera, null]%
+            \step[fieldset=usera, fieldvalue={nousera}]%
+            \step[fieldsource=usera, match=\regexp{nousera}, final]%
+            \step[fieldset=keywords, fieldvalue={filter_external}, append]%
+        }}}%
+\olddocument}%
 \makeatother%
 
 % For including abbreviations in entries
 \makeatletter%
-    \newcommand{\myabbr}[1]{%
-        \ifcsname abbr@#1\endcsname%
-            \csname abbr@#1\endcsname%
-        \else%
-            #1%
-        \fi}%
+\newcommand{\myabbr}[1]{%
+    \ifcsname abbr@#1\endcsname%
+        \csname abbr@#1\endcsname%
+    \else%
+        #1%
+    \fi}%
 \makeatother%
 
 % To show the bibliography
@@ -1458,9 +1460,9 @@
 \firstlogotrue%
 \newcommand{\showLogos}[1]{%
     \begingroup%
-        \let\oldincludegraphics\includegraphics%
-        \renewcommand{\includegraphics}[2][]{\oldincludegraphics[height=#1]{##2}}%
-        \logos%
+    \let\oldincludegraphics\includegraphics%
+    \renewcommand{\includegraphics}[2][]{\oldincludegraphics[height=#1]{##2}}%
+    \logos%
     \endgroup}%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1493,58 +1495,58 @@
 
 % Arrow + content
 \makeatletter%
-    \newcommand{\arrowBox}[4]{%
-        \begingroup%
-            \begin{tikzpicture}%
-                \node (table) at (0.085\linewidth, 0) {%
-                    \let\old@centercr\@centercr%
-                    \let\old@normalcr\@normalcr%
-                    \begin{minipage}{0.915\linewidth}%
-                        \let\@centercr\old@centercr%
-                        \let\@normalcr\old@normalcr%
-                        \vspace*{-\topskip}%
-                        \vspace{2\valparskip}%
-                        \titlespacing*{\paragraph}{0pt}{0.5\valparskip}{0pt}%
-                        \textcolor{missingColor}{#3~}\par\vspace*{\valparskip}%
-                        \begin{tabularx}{\linewidth}{r|X}%
-                            #4%
-                        \end{tabularx}%
-                        \vspace{2\valparskip}%
-                    \end{minipage}%
-                };%
-                \coordinate (topwest) at (table.west|-table.north);%
-                \coordinate (southwest) at (table.west|-table.south);%
-                \fill[#1!20]%
-                    ([xshift=-0.085\linewidth]topwest) --%
-                    ([xshift=-0.055\linewidth, yshift=-0.02\linewidth]topwest) --%
-                    ([xshift=-0.025\linewidth]topwest) --%
-                    ([xshift=-0.025\linewidth, yshift={0.02\linewidth+0.12cm}]southwest) --%
-                    ([xshift=-0.055\linewidth, yshift=0.12cm]southwest) --%
-                    ([xshift=-0.085\linewidth, yshift={0.02\linewidth+0.12cm}]southwest) --%
-                    cycle;%
-                \node[anchor=center] at ([xshift=-0.055\linewidth, yshift=-0.005\linewidth]table.west){\rotatebox{-90}{\scriptsize{\textcolor{#1}{\hypersetup{linkcolor=#1}\textbf{{\transparent{0}{|}}#2{\transparent{0}{|}}}}}}};
-            \end{tikzpicture}%
-        \endgroup}%
+\newcommand{\arrowBox}[4]{%
+    \begingroup%
+    \begin{tikzpicture}%
+        \node (table) at (0.085\linewidth, 0) {%
+            \let\old@centercr\@centercr%
+            \let\old@normalcr\@normalcr%
+            \begin{minipage}{0.915\linewidth}%
+                \let\@centercr\old@centercr%
+                \let\@normalcr\old@normalcr%
+                \vspace*{-\topskip}%
+                \vspace{2\valparskip}%
+                \titlespacing*{\paragraph}{0pt}{0.5\valparskip}{0pt}%
+                \textcolor{missingColor}{#3~}\par\vspace*{\valparskip}%
+                \begin{tabularx}{\linewidth}{r|X}%
+                    #4%
+                \end{tabularx}%
+                \vspace{2\valparskip}%
+            \end{minipage}%
+        };%
+        \coordinate (topwest) at (table.west|-table.north);%
+        \coordinate (southwest) at (table.west|-table.south);%
+        \fill[#1!20]%
+        ([xshift=-0.085\linewidth]topwest) --%
+            ([xshift=-0.055\linewidth, yshift=-0.02\linewidth]topwest) --%
+            ([xshift=-0.025\linewidth]topwest) --%
+            ([xshift=-0.025\linewidth, yshift={0.02\linewidth+0.12cm}]southwest) --%
+            ([xshift=-0.055\linewidth, yshift=0.12cm]southwest) --%
+            ([xshift=-0.085\linewidth, yshift={0.02\linewidth+0.12cm}]southwest) --%
+        cycle;%
+        \node[anchor=center] at ([xshift=-0.055\linewidth, yshift=-0.005\linewidth]table.west){\rotatebox{-90}{\scriptsize{\textcolor{#1}{\hypersetup{linkcolor=#1}\textbf{{\transparent{0}{|}}#2{\transparent{0}{|}}}}}}};
+    \end{tikzpicture}%
+    \endgroup}%
 \makeatother%
 
 % Boxes
 \RequirePackage[most]{tcolorbox}%
 \tcbset{%
     boxstyle/.style={%
-        breakable,%
-        coltitle=black,%
-        colbacktitle=white,%
-        colback=boxEnvColor,%
-        enhanced,%
-        attach boxed title to top center={yshift=-3mm},%
-        boxed title style={boxrule=1pt, left=3mm, right=3mm, bottom=1mm, top=1mm, boxrule=0.5pt},%
-        boxrule=0.5pt,%
-        middle=3mm,%
-        top=5.5mm,%
-        bottom=3mm,%
-        before skip=\textfloatsep,%
-        after skip=\textfloatsep,%
-    }}%
+            breakable,%
+            coltitle=black,%
+            colbacktitle=white,%
+            colback=boxEnvColor,%
+            enhanced,%
+            attach boxed title to top center={yshift=-3mm},%
+            boxed title style={boxrule=1pt, left=3mm, right=3mm, bottom=1mm, top=1mm, boxrule=0.5pt},%
+            boxrule=0.5pt,%
+            middle=3mm,%
+            top=5.5mm,%
+            bottom=3mm,%
+            before skip=\textfloatsep,%
+            after skip=\textfloatsep,%
+        }}%
 
 % Generic box environment
 % Usage: \begin{box}[label]{type}[title] or \begin{box*}[label]{type}[title]
@@ -1554,136 +1556,136 @@
 % - A counter <type>counter is created automatically on first use
 \RequirePackage{pdftexcmds}%
 \makeatletter%
-    \newlength{\boxmaxtitlewidth}%
-    \newlength{\boxtitlewidth}%
-    \newcommand{\box@hash}[1]{\pdf@mdfivesum{#1}}%
-    \newcommand{\box@countername}[1]{boxcounter@\box@hash{#1}}%
-    \newcommand{\box@ensurecounter}[1]{%
-        \ifcsname c@\box@countername{#1}\endcsname\else%
-            \newcounter{\box@countername{#1}}%
-        \fi%
-    }%
-    \newcommand{\box@setcapitalized}[1]{\expandafter\box@setcap@helper#1\relax}
-    \def\box@setcap@helper#1#2\relax{%
-        \uppercase{\def\box@capresult{#1}}%
-        \expandafter\def\expandafter\box@capresult\expandafter{\box@capresult#2}%
-    }%
-    \newcommand{\box@displayname}[1]{%
-        \box@setcapitalized{#1}%
-        \ifcsname cst\box@capresult\endcsname%
-            \csname cst\box@capresult\endcsname%
-        \else%
-            \box@capresult%
-        \fi%
-    }%
-    \NewDocumentEnvironment{boxenv}{o m O{}}{%
-        \phantomsection%
-        \setlength{\boxmaxtitlewidth}{\dimexpr0.9\linewidth-7.5mm\relax}%
-        \if\relax\detokenize{#2}\relax%
-            \IfBlankTF{#3}{%
-                \def\@currentlabelname{\cstBox}%
-                \IfValueT{#1}{\label{#1}}%
-                \begin{tcolorbox}[boxstyle]%
-            }{%
-                \begin{tcolorbox}[boxstyle,title={%
-                    \begin{varwidth}{\boxmaxtitlewidth}#3\end{varwidth}}]%
-            }%
-        \else%
-            \box@ensurecounter{#2}%
-            \refstepcounter{\box@countername{#2}}%
-            \protected@edef\@currentlabelname{#2~\csname the\box@countername{#2}\endcsname}%
-            \settowidth{\boxtitlewidth}{#2~\csname the\box@countername{#2}\endcsname\quad}%
-            \IfValueT{#1}{\label{#1}}%
-            \begin{tcolorbox}[boxstyle,title={%
-                \begin{varwidth}{\boxmaxtitlewidth}%
-                    \begingroup%
-                        \hypersetup{citecolor=titlesColor}%
-                        \textcolor{titlesColor}{#2~\csname the\box@countername{#2}\endcsname}%
-                    \endgroup%
-                    \IfBlankF{#3}{%
-                        \quad\begin{varwidth}[t]{\dimexpr\boxmaxtitlewidth-\boxtitlewidth\relax}%
-                            #3%
-                        \end{varwidth}%
-                    }%
-                \end{varwidth}}]%
-        \fi%
-    }{%
-        \end{tcolorbox}%
-    }%
-    \NewDocumentEnvironment{boxenv*}{o m O{}}{%
-        \phantomsection%
-        \setlength{\boxmaxtitlewidth}{\dimexpr0.9\linewidth-7.5mm\relax}%
-        \if\relax\detokenize{#2}\relax%
+\newlength{\boxmaxtitlewidth}%
+\newlength{\boxtitlewidth}%
+\newcommand{\box@hash}[1]{\pdf@mdfivesum{#1}}%
+\newcommand{\box@countername}[1]{boxcounter@\box@hash{#1}}%
+\newcommand{\box@ensurecounter}[1]{%
+    \ifcsname c@\box@countername{#1}\endcsname\else%
+        \newcounter{\box@countername{#1}}%
+    \fi%
+}%
+\newcommand{\box@setcapitalized}[1]{\expandafter\box@setcap@helper#1\relax}
+\def\box@setcap@helper#1#2\relax{%
+    \uppercase{\def\box@capresult{#1}}%
+    \expandafter\def\expandafter\box@capresult\expandafter{\box@capresult#2}%
+}%
+\newcommand{\box@displayname}[1]{%
+    \box@setcapitalized{#1}%
+    \ifcsname cst\box@capresult\endcsname%
+        \csname cst\box@capresult\endcsname%
+    \else%
+        \box@capresult%
+    \fi%
+}%
+\NewDocumentEnvironment{boxenv}{o m O{}}{%
+    \phantomsection%
+    \setlength{\boxmaxtitlewidth}{\dimexpr0.9\linewidth-7.5mm\relax}%
+    \if\relax\detokenize{#2}\relax%
+        \IfBlankTF{#3}{%
             \def\@currentlabelname{\cstBox}%
             \IfValueT{#1}{\label{#1}}%
-            \IfBlankTF{#3}{%
-                \begin{tcolorbox}[boxstyle]%
-            }{%
-                \begin{tcolorbox}[boxstyle,title={%
-                    \begin{varwidth}{\boxmaxtitlewidth}#3\end{varwidth}}]%
-            }%
-        \else%
-            \def\@currentlabelname{#2}%
-            \settowidth{\boxtitlewidth}{#2\quad}%
-            \IfValueT{#1}{\label{#1}}%
+            \begin{tcolorbox}[boxstyle]%
+        }{%
             \begin{tcolorbox}[boxstyle,title={%
-                \begin{varwidth}{\boxmaxtitlewidth}%
-                    \begingroup%
+                        \begin{varwidth}{\boxmaxtitlewidth}#3\end{varwidth}}]%
+        }%
+    \else%
+        \box@ensurecounter{#2}%
+        \refstepcounter{\box@countername{#2}}%
+        \protected@edef\@currentlabelname{#2~\csname the\box@countername{#2}\endcsname}%
+        \settowidth{\boxtitlewidth}{#2~\csname the\box@countername{#2}\endcsname\quad}%
+        \IfValueT{#1}{\label{#1}}%
+        \begin{tcolorbox}[boxstyle,title={%
+                    \begin{varwidth}{\boxmaxtitlewidth}%
+                        \begingroup%
+                        \hypersetup{citecolor=titlesColor}%
+                        \textcolor{titlesColor}{#2~\csname the\box@countername{#2}\endcsname}%
+                        \endgroup%
+                        \IfBlankF{#3}{%
+                            \quad\begin{varwidth}[t]{\dimexpr\boxmaxtitlewidth-\boxtitlewidth\relax}%
+                                #3%
+                            \end{varwidth}%
+                        }%
+                    \end{varwidth}}]%
+    \fi%
+}{%
+    \end{tcolorbox}%
+}%
+\NewDocumentEnvironment{boxenv*}{o m O{}}{%
+    \phantomsection%
+    \setlength{\boxmaxtitlewidth}{\dimexpr0.9\linewidth-7.5mm\relax}%
+    \if\relax\detokenize{#2}\relax%
+        \def\@currentlabelname{\cstBox}%
+        \IfValueT{#1}{\label{#1}}%
+        \IfBlankTF{#3}{%
+            \begin{tcolorbox}[boxstyle]%
+        }{%
+            \begin{tcolorbox}[boxstyle,title={%
+                        \begin{varwidth}{\boxmaxtitlewidth}#3\end{varwidth}}]%
+        }%
+    \else%
+        \def\@currentlabelname{#2}%
+        \settowidth{\boxtitlewidth}{#2\quad}%
+        \IfValueT{#1}{\label{#1}}%
+        \begin{tcolorbox}[boxstyle,title={%
+                    \begin{varwidth}{\boxmaxtitlewidth}%
+                        \begingroup%
                         \hypersetup{citecolor=titlesColor}%
                         \textcolor{titlesColor}{#2}%
-                    \endgroup%
-                    \IfBlankF{#3}{%
-                        \quad\begin{varwidth}[t]{\dimexpr\boxmaxtitlewidth-\boxtitlewidth\relax}%
-                            #3%
-                        \end{varwidth}%
-                    }%
-                \end{varwidth}}]%
-        \fi%
-    }{%
-        \end{tcolorbox}%
-    }%
+                        \endgroup%
+                        \IfBlankF{#3}{%
+                            \quad\begin{varwidth}[t]{\dimexpr\boxmaxtitlewidth-\boxtitlewidth\relax}%
+                                #3%
+                            \end{varwidth}%
+                        }%
+                    \end{varwidth}}]%
+    \fi%
+}{%
+    \end{tcolorbox}%
+}%
 \makeatother%
 
 % Proof
 \makeatletter%
-    \tcbset{
-        proofstyle/.style={%
+\tcbset{
+    proofstyle/.style={%
             segmentation hidden,%
             top=-2.5mm,%
             after lower={\hfill$\square$}%
         }}%
-    \NewDocumentEnvironment{proof}{o m}%
-    {%
-        \phantomsection%
-        \if\relax\detokenize{#2}\relax%
-            \def\@currentlabelname{\cstProof}%
-            \IfValueT{#1}{\label{#1}}%
-            \begin{tcolorbox}[boxstyle, proofstyle, title={\textcolor{titlesColor}{\cstProof}}]%
-        \else%
-            \edef\@currentlabelname{\cstProofOf~\nameref{#2}}%
-            \IfValueT{#1}{\label{#1}}%
-            \begin{tcolorbox}[boxstyle, proofstyle, title={\textcolor{titlesColor}{\cstProofOf~{\hypersetup{linkcolor=titlesColor}\nameref{#2}}}}]%
-        \fi%
-        \tcblower%
-    }{%
-        \end{tcolorbox}%
-    }%
-    \NewDocumentEnvironment{proof*}{o m}%
-    {%
-        \phantomsection%
-        \if\relax\detokenize{#2}\relax%
-            \def\@currentlabelname{\cstProof}%
-            \IfValueT{#1}{\label{#1}}%
-            \begin{tcolorbox}[boxstyle, proofstyle, title={\textcolor{titlesColor}{\cstProof}}]%
-        \else%
-            \edef\@currentlabelname{\cstProofOf~\nameref{#2}}%
-            \IfValueT{#1}{\label{#1}}%
-            \begin{tcolorbox}[boxstyle, proofstyle, title={\textcolor{titlesColor}{\cstProofOf~{\hypersetup{linkcolor=titlesColor}\nameref{#2}}}}]%
-        \fi%
-        \tcblower%
-    }{%
-        \end{tcolorbox}%
-    }%
+\NewDocumentEnvironment{proof}{o m}%
+{%
+    \phantomsection%
+    \if\relax\detokenize{#2}\relax%
+        \def\@currentlabelname{\cstProof}%
+        \IfValueT{#1}{\label{#1}}%
+        \begin{tcolorbox}[boxstyle, proofstyle, title={\textcolor{titlesColor}{\cstProof}}]%
+    \else%
+        \edef\@currentlabelname{\cstProofOf~\nameref{#2}}%
+        \IfValueT{#1}{\label{#1}}%
+        \begin{tcolorbox}[boxstyle, proofstyle, title={\textcolor{titlesColor}{\cstProofOf~{\hypersetup{linkcolor=titlesColor}\nameref{#2}}}}]%
+    \fi%
+    \tcblower%
+}{%
+    \end{tcolorbox}%
+}%
+\NewDocumentEnvironment{proof*}{o m}%
+{%
+    \phantomsection%
+    \if\relax\detokenize{#2}\relax%
+        \def\@currentlabelname{\cstProof}%
+        \IfValueT{#1}{\label{#1}}%
+        \begin{tcolorbox}[boxstyle, proofstyle, title={\textcolor{titlesColor}{\cstProof}}]%
+    \else%
+        \edef\@currentlabelname{\cstProofOf~\nameref{#2}}%
+        \IfValueT{#1}{\label{#1}}%
+        \begin{tcolorbox}[boxstyle, proofstyle, title={\textcolor{titlesColor}{\cstProofOf~{\hypersetup{linkcolor=titlesColor}\nameref{#2}}}}]%
+    \fi%
+    \tcblower%
+}{%
+    \end{tcolorbox}%
+}%
 \makeatother%
 
 % Itemize with stuff other than text inside
@@ -1747,17 +1749,17 @@
 \counterwithout{footnote}{chapter}%
 \setlength{\skip\footins}{30pt}%
 \makeatletter%
-    \AtBeginDocument{%
-        \renewcommand{\@makefntext}[1]{%
-            \Hy@raisedlink{\hypertarget{Hfootnote.\@thefnmark}{}}%
-            \small\makebox[2em][l]{\textcolor{titlesColor}{(\@thefnmark)}}#1%
-        }%
-        \renewcommand{\@makefnmark}{%
-            \hyperlink{Hfootnote.\@thefnmark}{%
-                \textsuperscript{\small(\@thefnmark)}%
-            }%
+\AtBeginDocument{%
+    \renewcommand{\@makefntext}[1]{%
+        \Hy@raisedlink{\hypertarget{Hfootnote.\@thefnmark}{}}%
+        \small\makebox[2em][l]{\textcolor{titlesColor}{(\@thefnmark)}}#1%
+    }%
+    \renewcommand{\@makefnmark}{%
+        \hyperlink{Hfootnote.\@thefnmark}{%
+            \textsuperscript{\small(\@thefnmark)}%
         }%
     }%
+}%
 \makeatother%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
