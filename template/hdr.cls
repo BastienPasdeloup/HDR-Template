@@ -836,6 +836,7 @@
     \renewenvironment{theglossary}{}{}%
     \renewcommand*{\glossentry}[2]{%
         \begingroup%
+        \hdrtipsoff%
         \ifglshaslong{##1}{%
             \begin{tabularx}{\textwidth}{@{}l@{}X@{}}%
                 \glsentryitem{##1}\glstarget{##1}{\glsentryname{##1}} & \raggedleft\margindotfill\glsentrylong{##1} %
@@ -849,6 +850,11 @@
 
 % Set glossary title and avoid too many double pages before
 \makeatletter%
+% An acronym is only linked to its entry when the list of acronyms is actually
+% printed; documents that omit it (the "demand", typically) would otherwise point
+% at destinations that do not exist. The information is carried by the .aux file,
+% so the links appear from the second compilation on
+\newif\ifhdrglossaryprinted%
 \renewcommand{\printglossaries}{%
     \addtocontents{toc}{\protect\tocinappendixfalse}%
     \tocinappendixfalse%
@@ -856,6 +862,9 @@
     \chapter*[glossary]{\cstGlossary}%
     \renewcommand{\glossarysection}[2][]{}
     \printglossary[type=\acronymtype]%
+    % \global is required: the switch set by \newif is a local \let, and the
+    % .aux file is read inside a group (minitoc writes \global the same way)
+    \immediate\write\@auxout{\string\global\string\hdrglossaryprintedtrue}%
     \renewcommand\rightmark{}}%
 \makeatother%
 
@@ -868,25 +877,125 @@
 % That's why there is a \lappendix{...}
 \RequirePackage{soul}%
 \RequirePackage{pdfcomment}%
-\pdfstringdefDisableCommands{\def\pdftooltip#1#2{#1}}%
-\newcommand{\checkacro}[1]{%
+
+% Tooltips that are also links (see "test/" for the comparison of the candidate
+% PDF mechanisms). A pdfcomment tooltip is a read-only push button widget
+% carrying /TU; a viewer only honours it, and the action attached to it, when the
+% widget is a real form field, so every tooltip is collected here and declared in
+% the document catalog's /AcroForm at the very end of the document
+\makeatletter%
+\ifdefined\pdfextension% LuaTeX renamed every pdfTeX primitive
+    \protected\def\hdr@catalog{\pdfextension catalog }%
+    \def\hdr@lastannot{\the\numexpr\pdffeedback lastannot\relax}%
+\else%
+    \protected\def\hdr@catalog{\pdfcatalog }%
+    \def\hdr@lastannot{\the\pdflastannot}%
+\fi%
+\newcommand{\hdr@formfields}{}%
+\AtEndDocument{%
+    \ifx\hdr@formfields\@empty\else%
+        \hdr@catalog{/AcroForm << /Fields [\hdr@formfields] /NeedAppearances false >>}%
+    \fi}%
+
+% The annotation dictionary pdfcomment writes for every tooltip, with an extra
+% action slot. It is redefined once and for all rather than per call: \hdrTooltip
+% must not open a group, because ulem's \dotuline (used for author names in the
+% bibliography) cannot cope with one in its argument
+\newcommand{\hdr@tip@action}{}%
+\renewcommand{\pc@annot@tooltip}{%
+    /TU (\pc@pdfenc@contents)\space%
+    /T (tooltip \thezref@unique)\space%
+    /FT /Btn\space%
+    /Ff 65536\space%
+    /F 4\space%
+    /H /N\space%
+    /BS << /W 0 >>\space%
+    \hdr@tip@action}%
+
+% \hdrTooltip{destination}{tooltip}{text}
+% Reuses pdfcomment's widget (hence its PDF string encoding, which matters for
+% accents), adds a "go to destination" action to it, and registers it as a form
+% field. An empty destination gives a plain tooltip, for entries that have
+% nowhere to point to. Note that a bare \pdftooltip is not registered, so use
+% this command instead everywhere in the document
+% Some contexts typeset their content several times and throw all but the last
+% copy away (tabularx trial passes, for instance). Every discarded copy would
+% still have reserved an annotation object number, leaving dangling references in
+% /Fields, so tooltips can be switched off locally with \hdrtipsoff
+\newif\ifhdr@tips%
+\hdr@tipstrue%
+\newcommand{\hdrtipsoff}{\hdr@tipsfalse}%
+
+% tabularx measures its content in trial passes and throws the result away, and
+% the CV is full of tabularx (181 \arrowBox instances). Suppress tooltips during
+% those passes, otherwise every discarded copy leaves a reserved annotation
+% object behind. No group here: tabularx reads \@tempboxa after the trial, so a
+% group would undo its \setbox
+\let\hdr@TX@trial\TX@trial%
+\def\TX@trial#1{%
+    \ifhdr@tips%
+        \let\hdr@tips@restore\hdr@tipstrue%
+    \else%
+        \let\hdr@tips@restore\hdr@tipsfalse%
+    \fi%
+    \hdr@tipsfalse%
+    \hdr@TX@trial{#1}%
+    \hdr@tips@restore}%
+\DeclareRobustCommand{\hdrTooltip}[3]{%
+    \ifhdr@tips%
+        \ifblank{#1}%
+            {\def\hdr@tip@action{}}%
+            {\edef\hdr@tip@action{/A << /S /GoTo /D (#1) >>\space}}%
+        \pdftooltip{#3}{#2}%
+        \xdef\hdr@formfields{\hdr@formfields\space\hdr@lastannot\space 0 R}%
+        \def\hdr@tip@action{}%
+    \else%
+        #3%
+    \fi}%
+\makeatother%
+
+% In a PDF string (bookmarks, document properties) no annotation can be created,
+% and hyperref silently drops any command it does not know -- including the
+% \ifglshaslong test below, whose leftover arguments then break the string. So
+% the acronym commands are replaced by their plain-text equivalent altogether
+\pdfstringdefDisableCommands{%
+    \def\pdftooltip#1#2{#1}%
+    \def\hdrTooltip#1#2#3{#3}%
+    \def\citeTooltip#1#2{#2}%
+    \def\citeTooltipNoLink#1#2{#2}%
+    \def\citeTooltipExternal#1#2{#2}%
+    \def\citeTooltipURL#1#2{#2}%
+    \def\checkacro#1{}%
+    \def\acro#1{\glsentryname{#1}}%
+    \def\acrofull#1{\glsentrydesc{#1} (\glsentryname{#1})}%
+    \def\acroname#1{\glsentrydesc{#1}}%
+}%
+\DeclareRobustCommand{\checkacro}[1]{%
     \ifglsentryexists{#1}{}{%
         \PackageWarning{hdr}{Acronym `#1' is not defined}%
     }%
 }
-\newcommand{\acro}[1]{%
+\DeclareRobustCommand{\acro}[1]{%
     \checkacro{#1}%
     \ifglsentryexists{#1}{%
-        \pdftooltip{\glsentryname{#1}}{\glsentrydesc{#1}}%
+        % Entries with an empty "long" are not printed in the list of acronyms,
+        % so there is no target to jump to for those (plural/adjective variants)
+        \ifhdrglossaryprinted%
+            \ifglshaslong{#1}%
+                {\hdrTooltip{glo:#1}{\glsentrydesc{#1}}{\glsentryname{#1}}}%
+                {\hdrTooltip{}{\glsentrydesc{#1}}{\glsentryname{#1}}}%
+        \else%
+            \hdrTooltip{}{\glsentrydesc{#1}}{\glsentryname{#1}}%
+        \fi%
     }{#1}%
 }
-\newcommand{\acrofull}[1]{%
+\DeclareRobustCommand{\acrofull}[1]{%
     \checkacro{#1}%
     \ifglsentryexists{#1}{%
         \glsentrydesc{#1}~(\acro{#1})%
     }{#1}%
 }
-\newcommand{\acroname}[1]{%
+\DeclareRobustCommand{\acroname}[1]{%
     \checkacro{#1}%
     \ifglsentryexists{#1}{%
         \glsentrydesc{#1}%
@@ -1245,6 +1354,39 @@
     \par\vspace*{\cstBiblioEntriesSpacing}%
 }%
 
+\makeatletter%
+% Citations: tooltip with the title of the entry + link to its bibliography entry
+\DeclareRobustCommand{\citeTooltip}[2]{% #1 = tooltip, #2 = text
+    \edef\hdr@cite@dest{cite.\the\c@refsection @\abx@field@entrykey}%
+    % \bibhyperref provides the /Link (and the colour), \hdrTooltip the widget
+    \bibhyperref{\hdrTooltip{\hdr@cite@dest}{#1}{#2}}}%
+\makeatother%
+
+% Same, for entries that are excluded from the bibliography: nothing to link to
+\DeclareRobustCommand{\citeTooltipNoLink}[2]{%
+    \hdrTooltip{}{#1}{\textcolor{linksColor}{#2}}}%
+
+% External references and URLs are only linked when they appear in the
+% bibliography. A short document never prints them (see \printbibliography, which
+% only lists the author's own categories in that case), so there is nothing to
+% point to there either
+\AtBeginDocument{%
+    \ifshortdoc%
+        \let\citeTooltipExternal\citeTooltipNoLink%
+        \let\citeTooltipURL\citeTooltipNoLink%
+    \else%
+        \ifIncludeExternalRefsInBib%
+            \let\citeTooltipExternal\citeTooltip%
+        \else%
+            \let\citeTooltipExternal\citeTooltipNoLink%
+        \fi%
+        \ifIncludeURLsInBib%
+            \let\citeTooltipURL\citeTooltip%
+        \else%
+            \let\citeTooltipURL\citeTooltipNoLink%
+        \fi%
+    \fi}%
+
 % Use brackets in citep (and others), and make full entry clickable
 \let\citep\relax%
 \newif\ifpreviouswithicon%
@@ -1258,21 +1400,17 @@
             \errmessage{External references should not have "usera" or "addendum" fields (found in \thefield{entrykey})}%
         }%
         \iffieldundef{howpublished}{%
-            \pdftooltip{%
-                \textcolor{linksColor}{%
-                    \printnames{labelname}\setunit{,\space}\printfield{year}%
-                    \iffieldundef{note}{}{\textsuperscript{(\printfield{note})}}%
-                }%
-            }{\thefield{title}}%
+            \citeTooltipExternal{\thefield{title}}{%
+                \printnames{labelname}\setunit{,\space}\printfield{year}%
+                \iffieldundef{note}{}{\textsuperscript{(\printfield{note})}}%
+            }%
             \space%
             \href{\thefield{url}}{\faNewspaper[regular]}%
         }{%
-            \pdftooltip{%
-                \textcolor{linksColor}{%
-                    \textsc{\printfield{howpublished}}%
-                    \iffieldundef{note}{}{\textsuperscript{(\printfield{note})}}%
-                }%
-            }{\thefield{title}}%
+            \citeTooltipURL{\thefield{title}}{%
+                \textsc{\printfield{howpublished}}%
+                \iffieldundef{note}{}{\textsuperscript{(\printfield{note})}}%
+            }%
             \space%
             \href{\thefield{url}}{\faGlobeAmericas}%
         }%
@@ -1283,17 +1421,17 @@
                 \errmessage{Citing reference \thefield{entrykey} with undeclared category "\thefield{usera}". This entry will not appear in the bibliography}%
             \fi%
             \ifonlyonecategory%
-                \bibhyperref{%
+                \citeTooltip{\thefield{title}}{%
                     \printnames{labelname}\setunit{,\space}\printfield{year}%
                     \iffieldundef{note}{}{\textsuperscript{(\printfield{note})}}%
                 }%
             \else%
-                \bibhyperref{\myabbr{\thefield{usera}}}%
+                \citeTooltip{\thefield{title}}{\myabbr{\thefield{usera}}}%
                 \iffieldundef{addendum}{}{\textsubscript{\scriptsize\number\numexpr\thefield{addendum}\relax}}%
             \fi%
         \else%
             \errmessage{When no categories are used, no references should have "usera" or "addendum" fields (found in \thefield{entrykey}). This entry will not appear in the bibliography}%
-            \bibhyperref{%
+            \citeTooltip{\thefield{title}}{%
                 \printnames{labelname}\setunit{,\space}\printfield{year}%
                 \iffieldundef{note}{}{\textsuperscript{(\printfield{note})}}%
             }%
