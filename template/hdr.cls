@@ -925,9 +925,9 @@
     \ifhdr@tips%
         \sbox\hdr@tipbox{#3}%
         \hdr@annot width \the\wd\hdr@tipbox
-                   height \the\ht\hdr@tipbox
-                   depth \the\dp\hdr@tipbox
-            {/Subtype /Link /Border [0 0 0] /A << /S /GoTo /D (#1) >>}%
+        height \the\ht\hdr@tipbox
+        depth \the\dp\hdr@tipbox
+        {/Subtype /Link /Border [0 0 0] /A << /S /GoTo /D (#1) >>}%
         \hdrTooltip{#1}{#2}{\Hy@colorlink\@citecolor#3\Hy@endcolorlink}%
     \else%
         #3%
@@ -965,8 +965,8 @@
 \DeclareRobustCommand{\hdrTooltip}[3]{%
     \ifhdr@tips%
         \ifblank{#1}%
-            {\def\hdr@tip@action{}}%
-            {\edef\hdr@tip@action{/A << /S /GoTo /D (#1) >>\space}}%
+        {\def\hdr@tip@action{}}%
+        {\edef\hdr@tip@action{/A << /S /GoTo /D (#1) >>\space}}%
         \pdftooltip{#3}{#2}%
         \xdef\hdr@formfields{\hdr@formfields\space\hdr@lastannot\space 0 R}%
         \def\hdr@tip@action{}%
@@ -1003,8 +1003,8 @@
         % so there is no target to jump to for those (plural/adjective variants)
         \ifhdrglossaryprinted%
             \ifglshaslong{#1}%
-                {\hdrTooltip{glo:#1}{\glsentrydesc{#1}}{\glsentryname{#1}}}%
-                {\hdrTooltip{}{\glsentrydesc{#1}}{\glsentryname{#1}}}%
+            {\hdrTooltip{glo:#1}{\glsentrydesc{#1}}{\glsentryname{#1}}}%
+            {\hdrTooltip{}{\glsentrydesc{#1}}{\glsentryname{#1}}}%
         \else%
             \hdrTooltip{}{\glsentrydesc{#1}}{\glsentryname{#1}}%
         \fi%
@@ -1869,6 +1869,29 @@
             \hfill --- \emph{#1}%
         \end{minipage}%
     \end{center}}%
+
+% Initials of a name
+\ExplSyntaxOn
+\tl_new:N \l__hdr_initials_tl
+\seq_new:N \l__hdr_initials_seq
+\cs_new_protected:Npn \__hdr_initials_add:n #1
+{
+    \tl_if_blank:nF {#1}
+    { \tl_put_right:Nx \l__hdr_initials_tl { \text_uppercase:n { \tl_head:n {#1} } . } }
+}
+\cs_new_protected:Npn \__hdr_initials:n #1
+{
+    \tl_clear:N \l__hdr_initials_tl
+    \tl_set:Nx \l_tmpa_tl { \text_purify:n {#1} }
+    \tl_replace_all:Nnn \l_tmpa_tl { - } { ~ }
+    \seq_set_split:NnV \l__hdr_initials_seq { ~ } \l_tmpa_tl
+    \seq_map_function:NN \l__hdr_initials_seq \__hdr_initials_add:n
+}
+\NewDocumentCommand { \nameInitials } { m }
+{ \__hdr_initials:n {#1} \tl_use:N \l__hdr_initials_tl }
+\NewDocumentCommand { \authorInitials } { }
+{ \nameInitials { \authorFirstName \c_space_tl \authorName } }
+\ExplSyntaxOff
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%% FINAL ADJUSTMENTS %%%%%%%%%%%%%%%
