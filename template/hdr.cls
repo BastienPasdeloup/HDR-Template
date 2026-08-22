@@ -915,6 +915,9 @@
     \hdr@tip@action}%
 
 % \hdrTooltipLink{destination}{tooltip}{text}
+% The label is boxed, hence unbreakable: an annotation is a single rectangle,
+% so a label split across two lines would carry neither tooltip nor link on
+% its second half (only \pdfstartlink, which hyperref uses, splits by itself)
 % Same as \hdrTooltip below, plus a /Link annotation for the viewers that ignore
 % form widgets. The link is emitted *before* the widget on purpose: Acrobat gives
 % the hover to whichever annotation comes last in the page's /Annots array, and
@@ -923,12 +926,12 @@
 \newsavebox{\hdr@tipbox}%
 \DeclareRobustCommand{\hdrTooltipLink}[3]{%
     \ifhdr@tips%
-        \sbox\hdr@tipbox{#3}%
+        \sbox\hdr@tipbox{\Hy@colorlink\@citecolor#3\Hy@endcolorlink}%
         \hdr@annot width \the\wd\hdr@tipbox
         height \the\ht\hdr@tipbox
         depth \the\dp\hdr@tipbox
         {/Subtype /Link /Border [0 0 0] /A << /S /GoTo /D (#1) >>}%
-        \hdrTooltip{#1}{#2}{\Hy@colorlink\@citecolor#3\Hy@endcolorlink}%
+        \hdrTooltip{#1}{#2}{\usebox\hdr@tipbox}%
     \else%
         #3%
     \fi}%
@@ -967,7 +970,7 @@
         \ifblank{#1}%
         {\def\hdr@tip@action{}}%
         {\edef\hdr@tip@action{/A << /S /GoTo /D (#1) >>\space}}%
-        \pdftooltip{#3}{#2}%
+        \pdftooltip{\mbox{#3}}{#2}%
         \xdef\hdr@formfields{\hdr@formfields\space\hdr@lastannot\space 0 R}%
         \def\hdr@tip@action{}%
     \else%
@@ -1277,7 +1280,7 @@
         \hfill%
         \begin{minipage}[t]{\cstBiblioLastColWidth}%
             \vspace{0pt}%
-            #2%
+            #2.%
         \end{minipage}%
         \par\vspace*{\cstBiblioEntriesSpacing}%
     }%
