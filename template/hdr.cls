@@ -885,9 +885,11 @@
 % the document catalog's /AcroForm at the very end of the document
 \makeatletter%
 \ifdefined\pdfextension% LuaTeX renamed every pdfTeX primitive
+    \protected\def\hdr@annot{\pdfextension annot }%
     \protected\def\hdr@catalog{\pdfextension catalog }%
     \def\hdr@lastannot{\the\numexpr\pdffeedback lastannot\relax}%
 \else%
+    \protected\def\hdr@annot{\pdfannot }%
     \protected\def\hdr@catalog{\pdfcatalog }%
     \def\hdr@lastannot{\the\pdflastannot}%
 \fi%
@@ -911,6 +913,25 @@
     /H /N\space%
     /BS << /W 0 >>\space%
     \hdr@tip@action}%
+
+% \hdrTooltipLink{destination}{tooltip}{text}
+% Same as \hdrTooltip below, plus a /Link annotation for the viewers that ignore
+% form widgets. The link is emitted *before* the widget on purpose: Acrobat gives
+% the hover to whichever annotation comes last in the page's /Annots array, and
+% \bibhyperref writes its link at \pdfendlink, hence after the widget, which hid
+% the tooltip. Test T3 in "test/" had it in this order, which is why it worked
+\newsavebox{\hdr@tipbox}%
+\DeclareRobustCommand{\hdrTooltipLink}[3]{%
+    \ifhdr@tips%
+        \sbox\hdr@tipbox{#3}%
+        \hdr@annot width \the\wd\hdr@tipbox
+                   height \the\ht\hdr@tipbox
+                   depth \the\dp\hdr@tipbox
+            {/Subtype /Link /Border [0 0 0] /A << /S /GoTo /D (#1) >>}%
+        \hdrTooltip{#1}{#2}{\Hy@colorlink\@citecolor#3\Hy@endcolorlink}%
+    \else%
+        #3%
+    \fi}%
 
 % \hdrTooltip{destination}{tooltip}{text}
 % Reuses pdfcomment's widget (hence its PDF string encoding, which matters for
@@ -1358,13 +1379,12 @@
 % Citations: tooltip with the title of the entry + link to its bibliography entry
 \DeclareRobustCommand{\citeTooltip}[2]{% #1 = tooltip, #2 = text
     \edef\hdr@cite@dest{cite.\the\c@refsection @\abx@field@entrykey}%
-    % \bibhyperref provides the /Link (and the colour), \hdrTooltip the widget
-    \bibhyperref{\hdrTooltip{\hdr@cite@dest}{#1}{#2}}}%
-\makeatother%
+    \hdrTooltipLink{\hdr@cite@dest}{#1}{#2}}%
 
 % Same, for entries that are excluded from the bibliography: nothing to link to
 \DeclareRobustCommand{\citeTooltipNoLink}[2]{%
-    \hdrTooltip{}{#1}{\textcolor{linksColor}{#2}}}%
+    \hdrTooltip{}{#1}{\Hy@colorlink\@citecolor#2\Hy@endcolorlink}}%
+\makeatother%
 
 % External references and URLs are only linked when they appear in the
 % bibliography. A short document never prints them (see \printbibliography, which
