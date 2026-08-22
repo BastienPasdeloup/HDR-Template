@@ -1374,6 +1374,7 @@
         }%
         \textbf{``\thefield{title}''}%
         \iflistundef{organization}{}{.\space\textit{\thelist{organization}}}%
+        .%
     \end{minipage}%
     \par\vspace*{\cstBiblioEntriesSpacing}%
 }%
