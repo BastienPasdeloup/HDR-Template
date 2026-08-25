@@ -13,7 +13,7 @@
 % Check "main_hdr.tex", "main_demand.tex" and "main_phd.tex" for three complete examples
 
 % Important remarks:
-% - It is not possible to use parts, please start with chapters
+% - It is not possible to use parts, please start with chapter
 % - Check "bibliography.bib" and "acronyms.tex" to see how they work
 % - Compile with LuaLaTeX: latexmk -lualatex -outdir=build main_hdr.tex
 
@@ -1730,8 +1730,8 @@
 % The two transparent bars keep the text away from the ends of the ribbon
 \newcommand{\hdr@ab@labelbox}[1]{%
     \sbox\hdr@ab@tag{\scriptsize\textcolor{\hdr@ab@color}{%
-        \hypersetup{linkcolor=\hdr@ab@color}%
-        \textbf{{\transparent{0}{|}}#1{\transparent{0}{|}}}}}}%
+            \hypersetup{linkcolor=\hdr@ab@color}%
+            \textbf{{\transparent{0}{|}}#1{\transparent{0}{|}}}}}}%
 
 % Words of the label are consumed one by one, fragment after fragment
 % \hdr@ab@rest holds those that are left, always ended by \hdr@ab@endword
@@ -1764,13 +1764,13 @@
         \ifx\hdr@ab@taken\@empty\else\space\fi%
         \unexpanded\expandafter{\hdr@ab@word}}%
     \begingroup%
-        \hdrtipsoff%
-        \hdr@ab@labelbox{\hdr@ab@candidate}%
-        \ifdim\wd\hdr@ab@tag>\hdr@ab@avail%
-            \global\hdr@ab@fitsfalse%
-        \else%
-            \global\hdr@ab@fitstrue%
-        \fi%
+    \hdrtipsoff%
+    \hdr@ab@labelbox{\hdr@ab@candidate}%
+    \ifdim\wd\hdr@ab@tag>\hdr@ab@avail%
+        \global\hdr@ab@fitsfalse%
+    \else%
+        \global\hdr@ab@fitstrue%
+    \fi%
     \endgroup}%
 
 % Take the words that fit in a piece of ribbon of length #1, leave the others
@@ -1822,16 +1822,18 @@
         \setlength{\hdr@ab@ytip}{0pt}%
     \fi%
     % The label lies on the middle line of the band, so it is centred on what is
-    % colored along that very line: the head digs a whole notch into it from the
-    % top, the tip carries it down to its point, and neither of them is drawn on
-    % the side where the box continues on another page
+    % colored along that very line: the head digs a notch into it from the top,
+    % the tip carries it down to its point, and neither of them is drawn on the
+    % side where the box continues on another page
+    % A quarter of a notch is given back at the top and taken at the bottom, as
+    % centring between the two extremes exactly leaves the label sitting low
     \setlength{\hdr@ab@ylow}{\z@}%
     \ifhdr@ab@tip%
-        \setlength{\hdr@ab@ylow}{\hdr@ab@margin}%
+        \setlength{\hdr@ab@ylow}{\dimexpr\hdr@ab@margin+0.25\hdr@ab@notch\relax}%
     \fi%
     \setlength{\hdr@ab@yhigh}{\hdr@ab@height}%
     \ifhdr@ab@head%
-        \addtolength{\hdr@ab@yhigh}{-\hdr@ab@notch}%
+        \addtolength{\hdr@ab@yhigh}{-0.75\hdr@ab@notch}%
     \fi%
     \setlength{\hdr@ab@ylabel}{\dimexpr0.5\hdr@ab@ylow+0.5\hdr@ab@yhigh\relax}%
     % Words drawn here: as many as fit, or all of them for an unbroken box, which
@@ -1844,9 +1846,9 @@
         \hdr@ab@labelbox{\hdr@ab@taken}%
     \fi%
     \raisebox{-\dp\hdr@ab@box}[\z@][\z@]{\makebox[\hdr@ab@ribbon][l]{%
-        \begin{tikzpicture}[inner sep=0pt, outer sep=0pt, baseline=0pt]%
-            \useasboundingbox (0pt, 0pt) rectangle (\hdr@ab@ribbon, \hdr@ab@height);%
-            \fill[\hdr@ab@color!20]%
+            \begin{tikzpicture}[inner sep=0pt, outer sep=0pt, baseline=0pt]%
+                \useasboundingbox (0pt, 0pt) rectangle (\hdr@ab@ribbon, \hdr@ab@height);%
+                \fill[\hdr@ab@color!20]%
                 (0pt, \hdr@ab@height)%
                 \ifhdr@ab@head%
                     -- (\hdr@ab@xmid, \hdr@ab@ynotch)%
@@ -1857,12 +1859,12 @@
                     -- (\hdr@ab@xmid, \hdr@ab@ytip)%
                 \fi%
                 -- (0pt, \hdr@ab@ybase)%
-            -- cycle;%
-            \ifx\hdr@ab@taken\@empty\else%
-                \node[anchor=center] at (\hdr@ab@xmid, \hdr@ab@ylabel)%
+                -- cycle;%
+                \ifx\hdr@ab@taken\@empty\else%
+                    \node[anchor=center] at (\hdr@ab@xmid, \hdr@ab@ylabel)%
                     {\rotatebox{-90}{\usebox\hdr@ab@tag}};%
-            \fi%
-        \end{tikzpicture}}}}%
+                \fi%
+            \end{tikzpicture}}}}%
 
 % Decoration of one fragment: the piece of ribbon, then the contents
 % "framed" hands over the fragment as a box, and calls this once per page
@@ -1884,14 +1886,14 @@
 \def\hdr@ab@sentinel{}%
 \def\hdr@ab@sentinelrow{\hdr@ab@sentinel}%
 \long\def\hdr@ab@rowloop#1\\{%
-    \def\hdr@ab@thisrow{#1}%
-    \ifx\hdr@ab@thisrow\hdr@ab@sentinelrow%
-        \let\hdr@ab@next\relax%
-    \else%
-        \ifblank{#1}{}{\hdr@ab@dorow#1\hdr@ab@endrow}%
-        \let\hdr@ab@next\hdr@ab@rowloop%
-    \fi%
-    \hdr@ab@next}%
+        \def\hdr@ab@thisrow{#1}%
+        \ifx\hdr@ab@thisrow\hdr@ab@sentinelrow%
+            \let\hdr@ab@next\relax%
+        \else%
+            \ifblank{#1}{}{\hdr@ab@dorow#1\hdr@ab@endrow}%
+            \let\hdr@ab@next\hdr@ab@rowloop%
+        \fi%
+        \hdr@ab@next}%
 
 % First pass over the rows: width of the widest label, as the "r" column of a
 % table would have it (tooltips are turned off, since this copy is thrown away)
@@ -1915,9 +1917,9 @@
     \fi%
     \hbox{%
         \begin{tabular}[t]{%
-            >{\raggedleft\arraybackslash\ignorespaces}p{\hdr@ab@labelwidth}<{\unskip}%
-            |>{\ignorespaces}p{\hdr@ab@valuewidth}<{\unskip}}%
-            #1 & #2%
+                >{\raggedleft\arraybackslash\ignorespaces}p{\hdr@ab@labelwidth}<{\unskip}%
+                |>{\ignorespaces}p{\hdr@ab@valuewidth}<{\unskip}}%
+            #1 & #2 %
         \end{tabular}}%
     \ifnum\hdr@ab@row=\@ne%
         \nopagebreak%
@@ -1972,23 +1974,23 @@
     % at the very top of the box, and "framed" would happily split there
     \MakeFramed{\advance\hsize-\width \FrameRestore%
         \parindent\z@ \parskip\z@ \@secpenalty\@M}%
-        \setlength{\hdr@ab@valuewidth}{%
-            \dimexpr\hsize-\hdr@ab@labelwidth-4\tabcolsep-\arrayrulewidth\relax}%
-        % Plain \vskip, not \vspace*: the latter inserts a zero-height rule, which
-        % would make this very first glue a legal breakpoint and let "framed" split
-        % the box right there, leaving a stub of ribbon at the bottom of the page
-        % Both paddings may shrink a little, so that a fragment squeezed by
-        % "framed" to fit the space left on the page does not overflow its box
-        \vskip\dimexpr\valparskip\relax\@minus\dimexpr\valparskip\relax%
-        \titlespacing*{\paragraph}{0pt}{0.5\valparskip}{0pt}%
-        \textcolor{missingColor}{#3~}\par%
-        \nopagebreak%
-        \vskip\dimexpr\valparskip\relax\@minus\dimexpr\valparskip\relax%
-        \hdr@ab@row=\z@%
-        \let\hdr@ab@dorow\hdr@ab@emitrow%
-        \hdr@ab@rowloop#4\\\hdr@ab@sentinel\\%
-        \nopagebreak%
-        \vskip\dimexpr2.5\valparskip\relax\@minus\dimexpr2\valparskip\relax%
+    \setlength{\hdr@ab@valuewidth}{%
+        \dimexpr\hsize-\hdr@ab@labelwidth-4\tabcolsep-\arrayrulewidth\relax}%
+    % Plain \vskip, not \vspace*: the latter inserts a zero-height rule, which
+    % would make this very first glue a legal breakpoint and let "framed" split
+    % the box right there, leaving a stub of ribbon at the bottom of the page
+    % Both paddings may shrink a little, so that a fragment squeezed by
+    % "framed" to fit the space left on the page does not overflow its box
+    \vskip\dimexpr\valparskip\relax\@minus\dimexpr\valparskip\relax%
+    \titlespacing*{\paragraph}{0pt}{0.5\valparskip}{0pt}%
+    \textcolor{missingColor}{#3~}\par%
+    \nopagebreak%
+    \vskip\dimexpr\valparskip\relax\@minus\dimexpr\valparskip\relax%
+    \hdr@ab@row=\z@%
+    \let\hdr@ab@dorow\hdr@ab@emitrow%
+    \hdr@ab@rowloop#4\\\hdr@ab@sentinel\\%
+    \nopagebreak%
+    \vskip\dimexpr2.5\valparskip\relax\@minus\dimexpr2\valparskip\relax%
     \endMakeFramed%
     \kern-\valparskip%
     \endgroup}%
