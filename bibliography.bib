@@ -2,7 +2,15 @@
 %%%%%%%%%%%%%%%%%% INFORMATION %%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% For the articles that should appear in the "References I Contributed To" category:
+% This file holds the three families of references the class knows about, told
+% apart by their fields, and each printed in its own part of the bibliography:
+% - the publications of the author, grouped by category      ("group" field)
+% - the other works cited in the document                    (no "group" field)
+% - the online resources cited in the document               ("howpublished" field)
+% Every entry is printed, even one that is never cited: the class ends with a
+% \nocite{*}, since the bibliography of an HDR doubles as a list of publications
+
+% For the entries that should appear in the "References I Contributed To" part:
 % In addition to usual fields, there are some fields that need to be defined for proper display:
 % * "group"    (compulsory)     -> Category for grouping in the bibliography (set to custom value and declare it in the main document)
 % * "addendum" (compulsory)     -> To manually add a number to the ref (forces order instead of sorting by date)
@@ -14,7 +22,7 @@
 % * "prize"    (optional, list) -> Prize url              -- icon: trophy
 % * "slides"   (optional, list) -> Slides url             -- icon: pictures
 
-% Every one of these fields holds URL(s): each value becomes a clickable icon under the entry
+% The last six fields hold URL(s): each value becomes a clickable icon under the entry
 % In particular, "prize" is the *page announcing the prize*, not the name of the prize -- putting
 % plain text there would produce a trophy icon pointing nowhere
 % They are lists: separate several URLs with commas to get several icons of the same kind,
@@ -22,7 +30,10 @@
 % Beware of one asymmetry: "url" is a verbatim field for biblatex, so the space after a comma
 % is kept and ends up as a "%20" at the start of the next link -- in "url", and only there,
 % write the commas without any space: url = {https://a.org/one,https://a.org/two}
+% Those fields are not standard: they are declared in "template/hdr.dbx", which is where
+% a new one would have to be added for Biber to accept it
 % See "lastname2022conference" below for an entry using all of them at once
+
 
 % Warning: any entry with a group field that is not declared in the main document will not appear
 % You can ommit "addendum", but entries will still be sorted according to it
@@ -33,12 +44,12 @@
 % In that case, just format all entries as indicated below (i.e., remove "group" and "addendum")
 % If no category is declared, all entries will appear in a single list
 
-% For the articles that should appear in the "Other References Cited in this Document" category:
+% For the entries that should appear in the "Other References Cited in this Document" part:
 % In addition to usual fields, there are some fields that need to be defined for proper display:
 % * "url"   (compulsory) -> Link to the article
 % * "note"  (optional)   -> To add (a), (b), etc. to the reference and manually disambiguate entries
 
-% Links are used with the \urlext command
+% Online resources are cited with the \urlext command
 % For those, just set the following fields:
 % * "howpublished" (compulsory) -> The website name, to appear in the brackets
 % * "title"        (compulsory) -> Showed when hovered

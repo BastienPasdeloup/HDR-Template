@@ -2,18 +2,23 @@
 %%%%%%%%%%%%%%%%%% INFORMATION %%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% In those acronyms, "long" should explicit the use of letters if possible
-% It will be displayed in the Acronyms section of the document
-% Field "description" is what is displayed when hovering an acronym in the document
+% Acronyms of the document, declared as glossary entries:
+% * "name"        -> The short form, the one shown in the text (e.g., "CNN")
+% * "long"        -> The developed form shown in the list of acronyms, where the
+%                    letters the short form is made of are usually put in bold
+% * "description" -> What a reader sees when hovering the acronym in the document
 
 % If "long" is empty, the acronym will not appear in the list but will be available for tooltips
 % This can be used for instance to have a plural version of an acronym to show in a tooltip without duplicating the entry
 
 % In the document, use:
-% * \acro{key}     -> Shows the short form, with the description as a tooltip     (e.g., "CNN")
-% * \acrofull{key} -> Shows the description, followed by the short form           (e.g., "Convolutional Neural Network (CNN)")
-% * \acroname{key} -> Shows the description only                                  (e.g., "Convolutional Neural Network")
+% * \acro{key}     -> Shows the short form, with the description as a tooltip (e.g., "CNN")
+% * \acrofull{key} -> Shows the description, followed by the short form (e.g., "Convolutional Neural Network (CNN)")
+% * \acroname{key} -> Shows the description only (e.g., "Convolutional Neural Network")
 
+% Every entry of this file is listed in every document that prints a list of acronyms,
+% whether it is cited or not, and an acronym is only turned into a link to that list
+% in the documents that do print it
 % This file is shared by the three example documents (HDR, HDR demand, PhD)
 % Entries are sorted alphabetically, which is not required but makes edition easier
 

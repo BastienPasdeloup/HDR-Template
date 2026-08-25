@@ -4,16 +4,31 @@
 
 % This is the template I made for my HDR, feel free to adapt it for yours or your PhD
 % Normally, you do not need to edit this file
-% It provides the following options:
-% - \documentclass[hdr_demand, french]{template/hdr} if you need to write a shorter HDR demand document (here, in French)
-% - \documentclass[hdr, english]{template/hdr}       for the main HDR manuscript
-% - \documentclass[phd, english]{template/hdr}       for a PhD manuscript
-% Both "french" and "english" are available for the three document types
-% Some commands have been defined that need to be used to make this work properly
-% Check "main_hdr.tex", "main_demand.tex" and "main_phd.tex" for three complete examples
+
+% Three kinds of documents, each of them in French or in English:
+% - \documentclass[hdr, english]{template/hdr}        the HDR manuscript itself
+% - \documentclass[hdr_demand, french]{template/hdr}  the shorter document that comes with it
+% - \documentclass[phd, english]{template/hdr}        a PhD manuscript
+% "hdr_demand" is the short variant: tighter spacing, a running head reduced to the
+% page number, no blank page added to start chapters on the right, no back cover,
+% and a bibliography reduced to the publications of the author
+% The template ships three complete examples, one per kind: "main_hdr.tex",
+% "main_demand.tex" and "main_phd.tex"
+
+% The author describes the document through the commands of the OPTIONS section
+% below (\setAuthorName, \setDocumentTitle, \addReviewer, \addLogo, ...), and the
+% class expects these files around it:
+% - "bibliography.bib"      the references, own publications and cited works alike
+% - "template/hdr.dbx"      the custom Biblatex fields that "bibliography.bib" uses
+% - "acronyms.tex"          the acronyms, shown as tooltips and in a list at the end
+% - "template/includes/"    front cover, back cover, and chapter page background
+% - ".latexmkrc"            build rules, including the makeglossaries pass that
+%                           latexmk does not know about by default
 
 % Important remarks:
-% - It is not possible to use parts, please start with chapter
+% - It is not possible to use parts, please start with chapters
+% - Sectioning commands take a label as their first argument, and it is recalled
+%   with \nameref: \chapter[context]{Context} ... \nameref{context}
 % - Check "bibliography.bib" and "acronyms.tex" to see how they work
 % - Compile with LuaLaTeX: latexmk -lualatex -outdir=build main_hdr.tex
 
@@ -352,8 +367,10 @@
 \newcommand\tocEntrySpacing{3}%
 \newcommand\minitocEntrySpacing{4}%
 
-% Format parts as chapters
-% This allows a needed hack, as added non-numbered chapters seem to break minitoc
+% Parts are formatted as chapters in the table of contents
+% Unnumbered chapters are in fact added to it as parts (see the chapter pages
+% further down), because adding them as chapters makes minitoc lose track of the
+% mini-tables of contents
 \renewcommand*\l@part[2]{%
     \ifnum \c@tocdepth > -1\relax%
         \stepcounter{tocchapterpartcounter}%
@@ -868,13 +885,14 @@
     \renewcommand\rightmark{}}%
 \makeatother%
 
-% Needed hack to have acronyms in paragraphs/TOC
+% An acronym used in a title also travels to the table of contents and to the PDF
+% bookmarks, where no link can be created: only its name is kept there
 \newcommand{\glsintitle}[1]{\texorpdfstring{\glslink{#1}{\glsentryname{#1}}}{\glsentryname{#1}}}%
 \renewcommand{\gls}{\glsintitle}%
 
 % Tooltips for acronyms
-% This breaks appendices :(
-% That's why there is a \lappendix{...}
+% These two packages interfere with \appendix, which is why the class provides
+% the \appendices command above, and why a document should use that one
 \RequirePackage{soul}%
 \RequirePackage{pdfcomment}%
 
@@ -884,7 +902,8 @@
 % widget is a real form field, so every tooltip is collected here and declared in
 % the document catalog's /AcroForm at the very end of the document
 \makeatletter%
-\ifdefined\pdfextension% LuaTeX renamed every pdfTeX primitive
+% LuaTeX renamed the pdfTeX primitives, so both spellings have to be provided
+\ifdefined\pdfextension%
     \protected\def\hdr@annot{\pdfextension annot }%
     \protected\def\hdr@catalog{\pdfextension catalog }%
     \def\hdr@lastannot{\the\numexpr\pdffeedback lastannot\relax}%
@@ -950,11 +969,10 @@
 \hdr@tipstrue%
 \newcommand{\hdrtipsoff}{\hdr@tipsfalse}%
 
-% tabularx measures its content in trial passes and throws the result away, and
-% the CV is full of tabularx (181 \arrowBox instances). Suppress tooltips during
-% those passes, otherwise every discarded copy leaves a reserved annotation
-% object behind. No group here: tabularx reads \@tempboxa after the trial, so a
-% group would undo its \setbox
+% tabularx measures its content in trial passes and throws the result away, which
+% the tables of a CV do a lot. Suppress tooltips during those passes, otherwise
+% every discarded copy leaves a reserved annotation object behind. No group here:
+% tabularx reads \@tempboxa after the trial, so a group would undo its \setbox
 \let\hdr@TX@trial\TX@trial%
 \def\TX@trial#1{%
     \ifhdr@tips%
@@ -1045,10 +1063,11 @@
 \RequirePackage{contour}%
 \contourlength{0.7pt}%
 
-% Hack: Format chapter titles for unnumbered sections
-% Part instead of chapter to avoid minitoc disappearing somehow
-% This probably prevents from using parts correctly
-% Ideally, we would use: \addcontentsline{toc}{chapter}{#1}
+% Chapter pages of unnumbered chapters (foreword, acknowledgements, bibliography)
+% They are added to the table of contents as parts rather than as chapters, which
+% would be the natural \addcontentsline{toc}{chapter}{#1}: minitoc drops the
+% mini-tables of contents of the whole document otherwise
+% This is also why parts cannot be used in a document
 \RequirePackage{fourier-orns}%
 \makeatletter%
 \renewcommand{\@makeschapterhead}[1]{%
@@ -1110,7 +1129,9 @@
 %%%%%%%%%%%%%%%%%% BIBLIOGRAPHY %%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% Use biblatex
+% Use biblatex, with the custom fields declared in "template/hdr.dbx" ("group",
+% "poster", "video", "code", "prize" and "slides"): data model commands cannot be
+% used in a preamble, hence the separate file, read through the "datamodel" option
 \RequirePackage{csquotes}%
 \RequirePackage[backend=biber, datamodel=template/hdr, style=authoryear, natbib=true, sorting=customsort, backref=true, url=false, isbn=false, doi=false, dashed=false, maxnames=99]{biblatex}%
 
@@ -1207,8 +1228,10 @@
     }%
 }%
 
-% Macro to duplicate icons if a list is provided
-% Customize missing entries with following constant
+% The fields holding the extras of an entry are comma-separated lists of URLs, so
+% one icon is drawn per URL: an entry with two repositories gets two GitHub icons
+% Set "showMissing" to true to also show, greyed out, the icons of the extras that
+% the entry does not have
 \newbool{showMissing}%
 \boolfalse{showMissing}%
 \DeclareListParser{\myurlparser}{,}%
@@ -1228,7 +1251,9 @@
     }%
 }%
 
-% Macro for the icons
+% Icons shown under an entry of the author: the article itself, then its slides,
+% poster, code, video and prize, and finally the pages where the entry is cited
+% External references and online resources only get the link to the resource
 \newcommand{\bibEntryIcons}{%
     \iffieldundef{howpublished}{%
         \iffieldequalstr{group}{nogroup}{%
@@ -1381,7 +1406,8 @@
 
 \makeatletter%
 % Citations: tooltip with the title of the entry + link to its bibliography entry
-\DeclareRobustCommand{\citeTooltip}[2]{% #1 = tooltip, #2 = text
+% \citeTooltip{tooltip}{text}
+\DeclareRobustCommand{\citeTooltip}[2]{%
     \edef\hdr@cite@dest{cite.\the\c@refsection @\abx@field@entrykey}%
     \hdrTooltipLink{\hdr@cite@dest}{#1}{#2}}%
 
@@ -1471,7 +1497,7 @@
 \renewcommand\cite\citep%
 \renewcommand\citet\citep%
 
-% Nothing on header for odd pages in bibliography%
+% Nothing on header for odd pages in bibliography
 \let\oldbibliography\bibliography%
 \renewcommand{\bibliography}[1]{%
     \fancyhead[LO]{}%
@@ -1671,12 +1697,17 @@
 \RequirePackage{framed}%
 \makeatletter%
 
-% Ribbon geometry, all set from \linewidth when a box is typeset
-\newlength{\hdr@ab@band}%    % width of the colored band
-\newlength{\hdr@ab@gutter}%  % space between the band and the contents
-\newlength{\hdr@ab@notch}%   % depth of the arrow head and of the arrow tip
-\newlength{\hdr@ab@margin}%  % space left below the tip, where the next head fits
-\newlength{\hdr@ab@ribbon}%  % total width taken on the left of the contents
+% Geometry of the ribbon, all of it set from \linewidth when a box is typeset
+% - "band" is the colored band, "gutter" the space it leaves before the contents,
+%   and "ribbon" the total width taken on the left of them
+% - "notch" is the depth of the arrow head, and of the arrow tip below the band
+% - "margin" is the space left free under the tip, where the head of the next box
+%   comes to nest
+\newlength{\hdr@ab@band}%
+\newlength{\hdr@ab@gutter}%
+\newlength{\hdr@ab@notch}%
+\newlength{\hdr@ab@margin}%
+\newlength{\hdr@ab@ribbon}%
 \newcommand{\hdr@ab@setgeometry}{%
     \setlength{\hdr@ab@band}{0.06\linewidth}%
     \setlength{\hdr@ab@gutter}{0.025\linewidth}%
