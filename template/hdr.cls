@@ -255,7 +255,13 @@
 \titlespacing*{\paragraph}{\parindent}{\parskip}{\parskip}%
 
 % QR codes
+% The lowest error-correction level keeps the number of modules as low as it can
+% be, which is what matters for the long URLs of the online resources: printed at
+% the size they are here, a denser code becomes hard to scan. Nothing is lost on
+% the short ones, as the package raises the level again whenever the version it
+% settles on has room to spare
 \usepackage{qrcode}%
+\qrset{level=L}%
 
 % Stay adjusted
 \RequirePackage{microtype}%
