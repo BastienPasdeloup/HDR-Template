@@ -1662,7 +1662,9 @@
 % too tall for the space left on the page is now split over two pages, where it
 % used to be pushed as a whole to the next one and leave a large void behind
 % Each fragment carries its own piece of ribbon, the arrow head being drawn on
-% the first fragment only, and the tip on the last one only
+% the first fragment only, and the tip on the last one only. The label is not
+% repeated: it runs along the whole ribbon, each fragment taking the words that
+% fit in its own piece and leaving the others to the next one
 % Constraints on the rows: exactly one "&" per row, no optional argument to "\\",
 % and nested tables must be enclosed in braces so that the "&" and "\\" they
 % contain stay hidden from the parser
@@ -1688,20 +1690,114 @@
 \newlength{\hdr@ab@ynotch}%
 \newlength{\hdr@ab@ybase}%
 \newlength{\hdr@ab@ytip}%
+\newlength{\hdr@ab@ylow}%
+\newlength{\hdr@ab@yhigh}%
 \newlength{\hdr@ab@ylabel}%
+\newlength{\hdr@ab@avail}%
 \newlength{\hdr@ab@labelwidth}%
 \newlength{\hdr@ab@valuewidth}%
 \newsavebox{\hdr@ab@box}%
 \newsavebox{\hdr@ab@tag}%
 \newif\ifhdr@ab@head%
 \newif\ifhdr@ab@tip%
+\newif\ifhdr@ab@whole%
+\newif\ifhdr@ab@fits%
 
 % Penalty inserted between two rows: splitting a box is allowed, but discouraged
 % so that a break between two boxes is always preferred
 % A fragment is never left with a single row, and never starts with the last one
 \newcommand{\arrowBoxRowPenalty}{150}%
+% Rows are rigid, so a fragment made of rows only could not be squeezed at all by
+% "framed" when it reboxes it to the space left on the page, and TeX complained
+% about an overfull \vbox. This tiny amount of shrink between two rows (invisible,
+% and only a few points over a whole fragment) is enough to absorb it
+\newcommand{\arrowBoxRowShrink}{1pt}%
 \newcount\hdr@ab@nrows%
 \newcount\hdr@ab@row%
+
+% Before each fragment, "framed" applies the frame command to a dummy box, only
+% to measure the width it adds. Nothing must be drawn then, and above all no word
+% of the label must be consumed by such a trial
+\newif\ifhdr@ab@measuring%
+\let\hdr@ab@sizeofframe\fb@sizeofframe%
+\def\fb@sizeofframe#1{\begingroup\hdr@ab@measuringtrue\hdr@ab@sizeofframe#1\endgroup}%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%% RIBBON LABEL %%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% The label, typeset in a box (to be measured, or to be rotated and drawn)
+% The two transparent bars keep the text away from the ends of the ribbon
+\newcommand{\hdr@ab@labelbox}[1]{%
+    \sbox\hdr@ab@tag{\scriptsize\textcolor{\hdr@ab@color}{%
+        \hypersetup{linkcolor=\hdr@ab@color}%
+        \textbf{{\transparent{0}{|}}#1{\transparent{0}{|}}}}}}%
+
+% Words of the label are consumed one by one, fragment after fragment
+% \hdr@ab@rest holds those that are left, always ended by \hdr@ab@endword
+\let\hdr@ab@endword\relax%
+\def\hdr@ab@endmarker{\hdr@ab@endword}%
+% A label holding an environment cannot be cut between two of its words: such a
+% label is kept whole, and simply goes to the first fragment where it fits
+\newif\ifhdr@ab@atomic%
+\long\def\hdr@ab@testenv#1\begin#2\hdr@ab@stop{%
+    \def\hdr@ab@tmp{#2}%
+    \ifx\hdr@ab@tmp\@empty\hdr@ab@atomicfalse\else\hdr@ab@atomictrue\fi}%
+\long\def\hdr@ab@peel#1 #2\hdr@ab@stop{\def\hdr@ab@word{#1}\gdef\hdr@ab@rest{#2}}%
+\newcommand{\hdr@ab@takefirst}{\expandafter\hdr@ab@peel\hdr@ab@rest\hdr@ab@stop}%
+\newcommand{\hdr@ab@putback}{%
+    \xdef\hdr@ab@rest{%
+        \unexpanded\expandafter{\hdr@ab@word}\space
+        \unexpanded\expandafter{\hdr@ab@rest}}}%
+
+% Whether all the words have been used
+\newcommand{\hdr@ab@ifnowordleft}[2]{%
+    \hdr@ab@takefirst%
+    \hdr@ab@putback%
+    \ifx\hdr@ab@word\hdr@ab@endmarker#1\else#2\fi}%
+
+% Test whether one more word still fits in the piece of ribbon at hand
+% Tooltips are turned off, since these trials are thrown away
+\newcommand{\hdr@ab@trycandidate}{%
+    \edef\hdr@ab@candidate{%
+        \unexpanded\expandafter{\hdr@ab@taken}%
+        \ifx\hdr@ab@taken\@empty\else\space\fi%
+        \unexpanded\expandafter{\hdr@ab@word}}%
+    \begingroup%
+        \hdrtipsoff%
+        \hdr@ab@labelbox{\hdr@ab@candidate}%
+        \ifdim\wd\hdr@ab@tag>\hdr@ab@avail%
+            \global\hdr@ab@fitsfalse%
+        \else%
+            \global\hdr@ab@fitstrue%
+        \fi%
+    \endgroup}%
+
+% Take the words that fit in a piece of ribbon of length #1, leave the others
+\newcommand{\hdr@ab@takewords}[1]{%
+    \setlength{\hdr@ab@avail}{#1}%
+    \gdef\hdr@ab@taken{}%
+    \hdr@ab@takeloop}%
+\newcommand{\hdr@ab@takeloop}{%
+    \hdr@ab@takefirst%
+    \ifx\hdr@ab@word\hdr@ab@endmarker%
+        \hdr@ab@putback%
+        \let\hdr@ab@next\relax%
+    \else%
+        \hdr@ab@trycandidate%
+        \ifhdr@ab@fits%
+            \global\let\hdr@ab@taken\hdr@ab@candidate%
+            \let\hdr@ab@next\hdr@ab@takeloop%
+        \else%
+            \hdr@ab@putback%
+            \let\hdr@ab@next\relax%
+        \fi%
+    \fi%
+    \hdr@ab@next}%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%% RIBBON %%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % One piece of ribbon, drawn in a box of zero height and depth so that it never
 % interferes with the height of the fragment it decorates
@@ -1725,10 +1821,28 @@
         \setlength{\hdr@ab@ybase}{0pt}%
         \setlength{\hdr@ab@ytip}{0pt}%
     \fi%
-    \setlength{\hdr@ab@ylabel}{\dimexpr0.5\hdr@ab@height-0.005\linewidth\relax}%
-    \sbox\hdr@ab@tag{\scriptsize\textcolor{\hdr@ab@color}{%
-        \hypersetup{linkcolor=\hdr@ab@color}%
-        \textbf{{\transparent{0}{|}}\hdr@ab@label{\transparent{0}{|}}}}}%
+    % The label lies on the middle line of the band, so it is centred on what is
+    % colored along that very line: the head digs a whole notch into it from the
+    % top, the tip carries it down to its point, and neither of them is drawn on
+    % the side where the box continues on another page
+    \setlength{\hdr@ab@ylow}{\z@}%
+    \ifhdr@ab@tip%
+        \setlength{\hdr@ab@ylow}{\hdr@ab@margin}%
+    \fi%
+    \setlength{\hdr@ab@yhigh}{\hdr@ab@height}%
+    \ifhdr@ab@head%
+        \addtolength{\hdr@ab@yhigh}{-\hdr@ab@notch}%
+    \fi%
+    \setlength{\hdr@ab@ylabel}{\dimexpr0.5\hdr@ab@ylow+0.5\hdr@ab@yhigh\relax}%
+    % Words drawn here: as many as fit, or all of them for an unbroken box, which
+    % has no next fragment to leave the remaining ones to
+    \hdr@ab@takewords{\dimexpr\hdr@ab@yhigh-\hdr@ab@ylow\relax}%
+    \ifhdr@ab@whole%
+        \hdr@ab@ifnowordleft{}{\gdef\hdr@ab@taken{}}%
+    \fi%
+    \ifx\hdr@ab@taken\@empty\else%
+        \hdr@ab@labelbox{\hdr@ab@taken}%
+    \fi%
     \raisebox{-\dp\hdr@ab@box}[\z@][\z@]{\makebox[\hdr@ab@ribbon][l]{%
         \begin{tikzpicture}[inner sep=0pt, outer sep=0pt, baseline=0pt]%
             \useasboundingbox (0pt, 0pt) rectangle (\hdr@ab@ribbon, \hdr@ab@height);%
@@ -1744,7 +1858,7 @@
                 \fi%
                 -- (0pt, \hdr@ab@ybase)%
             -- cycle;%
-            \ifdim\wd\hdr@ab@tag<\hdr@ab@height%
+            \ifx\hdr@ab@taken\@empty\else%
                 \node[anchor=center] at (\hdr@ab@xmid, \hdr@ab@ylabel)%
                     {\rotatebox{-90}{\usebox\hdr@ab@tag}};%
             \fi%
@@ -1755,7 +1869,15 @@
 \long\def\hdr@ab@frame#1{%
     \sbox\hdr@ab@box{#1}%
     \setlength{\hdr@ab@height}{\dimexpr\ht\hdr@ab@box+\dp\hdr@ab@box\relax}%
-    \hbox{\hdr@ab@drawribbon\box\hdr@ab@box}}%
+    \ifhdr@ab@measuring%
+        \hbox{\kern\hdr@ab@ribbon\box\hdr@ab@box}%
+    \else%
+        \hbox{\hdr@ab@drawribbon\box\hdr@ab@box}%
+    \fi}%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%% ROWS %%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Rows are read one by one, and split at their "&" into a label and a value
 % The list ends with a sentinel row, appended by \arrowBox and detected here
@@ -1807,24 +1929,40 @@
                 \penalty\arrowBoxRowPenalty%
             \fi%
         \fi%
+    \fi%
+    \ifnum\hdr@ab@row<\hdr@ab@nrows%
+        \vskip\z@\@minus\arrowBoxRowShrink%
     \fi}%
 
-% The box itself
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%% BOX %%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \newcommand{\arrowBox}[4]{%
     \par%
     \begingroup%
     \hdr@ab@setgeometry%
     \def\hdr@ab@color{#1}%
-    \def\hdr@ab@label{#2}%
+    \hdr@ab@testenv#2\begin\hdr@ab@stop%
+    \ifhdr@ab@atomic%
+        \xdef\hdr@ab@rest{\unexpanded{{#2}}\space\noexpand\hdr@ab@endword\space}%
+    \else%
+        \xdef\hdr@ab@rest{\unexpanded{#2}\space\noexpand\hdr@ab@endword\space}%
+    \fi%
     % Same decoration everywhere, except for the head and the tip
-    \def\FrameCommand{\hdr@ab@headtrue\hdr@ab@tiptrue\hdr@ab@frame}%
-    \def\FirstFrameCommand{\hdr@ab@headtrue\hdr@ab@tipfalse\hdr@ab@frame}%
-    \def\MidFrameCommand{\hdr@ab@headfalse\hdr@ab@tipfalse\hdr@ab@frame}%
-    \def\LastFrameCommand{\hdr@ab@headfalse\hdr@ab@tiptrue\hdr@ab@frame}%
+    \def\FrameCommand{\hdr@ab@headtrue\hdr@ab@tiptrue\hdr@ab@wholetrue\hdr@ab@frame}%
+    \def\FirstFrameCommand{\hdr@ab@headtrue\hdr@ab@tipfalse\hdr@ab@wholefalse\hdr@ab@frame}%
+    \def\MidFrameCommand{\hdr@ab@headfalse\hdr@ab@tipfalse\hdr@ab@wholefalse\hdr@ab@frame}%
+    \def\LastFrameCommand{\hdr@ab@headfalse\hdr@ab@tiptrue\hdr@ab@wholefalse\hdr@ab@frame}%
     % Spacing around the contents, chosen to reproduce the look of the previous
     % (unbreakable) version: no space added by "framed" between two boxes, and
     % the negative kern compensates what it adds after each of them
     \setlength{\OuterFrameSep}{\z@}%
+    % When "framed" squeezes a fragment into the space left on the page, it also
+    % cancels its own simulated glue, which can leave less shrink than it takes:
+    % the last points then overflow the box. They fall in the padding below the
+    % last row, where they cannot be seen, so they are not worth a warning
+    \vfuzz\valparskip%
     \global\hdr@ab@labelwidth=\z@%
     \global\hdr@ab@nrows=\z@%
     \let\hdr@ab@dorow\hdr@ab@measurerow%
@@ -1836,18 +1974,21 @@
         \parindent\z@ \parskip\z@ \@secpenalty\@M}%
         \setlength{\hdr@ab@valuewidth}{%
             \dimexpr\hsize-\hdr@ab@labelwidth-4\tabcolsep-\arrayrulewidth\relax}%
-        % A plain \vskip, not \vspace*: the latter inserts a zero-height rule, which
+        % Plain \vskip, not \vspace*: the latter inserts a zero-height rule, which
         % would make this very first glue a legal breakpoint and let "framed" split
         % the box right there, leaving a stub of ribbon at the bottom of the page
-        \vskip\valparskip%
+        % Both paddings may shrink a little, so that a fragment squeezed by
+        % "framed" to fit the space left on the page does not overflow its box
+        \vskip\dimexpr\valparskip\relax\@minus\dimexpr\valparskip\relax%
         \titlespacing*{\paragraph}{0pt}{0.5\valparskip}{0pt}%
         \textcolor{missingColor}{#3~}\par%
         \nopagebreak%
-        \vspace*{\valparskip}%
+        \vskip\dimexpr\valparskip\relax\@minus\dimexpr\valparskip\relax%
         \hdr@ab@row=\z@%
         \let\hdr@ab@dorow\hdr@ab@emitrow%
         \hdr@ab@rowloop#4\\\hdr@ab@sentinel\\%
-        \vspace*{2.5\valparskip}%
+        \nopagebreak%
+        \vskip\dimexpr2.5\valparskip\relax\@minus\dimexpr2\valparskip\relax%
     \endMakeFramed%
     \kern-\valparskip%
     \endgroup}%
