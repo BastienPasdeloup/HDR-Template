@@ -42,7 +42,12 @@ Note the \verb|\date| command: it takes an ISO date and formats it according to 
 %                reads as one continuous timeline
 % - heading      shown above the table, and greyed out: links stay colored, so an
 %                icon without a link (here GitHub) shows as unavailable
-% - rows         the body of a "r|X" tabularx, so use & and \\ as usual
+% - rows         two columns, written with & and \\ as in a table: the first one is
+%                right-aligned, the second one takes the remaining width
+%                Each row is typeset on its own, so a box that does not fit on the
+%                page is split instead of being pushed to the next one: give every
+%                row exactly one &, no optional argument to \\, and put nested
+%                tables between braces so their own & and \\ stay hidden
 
 \subsection[cv_supervision_phd]{\acro{phd} Students}
 

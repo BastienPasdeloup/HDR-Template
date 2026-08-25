@@ -1,0 +1,36 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%% INFORMATION %%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Extension of the Biblatex data model with the custom fields used by "hdr.cls"
+% Biblatex only offers generic "usera" ... "userf" fields for custom data, so we
+% define fields with explicit names instead (Biber rejects undeclared fields)
+% This file is loaded through the "datamodel=template/hdr" option of Biblatex
+% Data model macros cannot be used in a preamble, hence this separate file
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%% FIELDS %%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% * "group"  -> Category used to group the entries in the bibliography
+% * "poster" -> URL(s) of the poster(s) associated with the entry
+% * "video"  -> URL(s) of the video(s) associated with the entry
+% * "code"   -> URL(s) of the code repository/repositories associated with the entry
+% * "prize"  -> URL(s) of the page(s) announcing a prize received by the entry
+% * "slides" -> URL(s) of the slides associated with the entry
+\DeclareDatamodelFields[type=field, datatype=literal]{
+    group,
+    poster,
+    video,
+    code,
+    prize,
+    slides}
+
+% These fields are allowed in all entry types
+\DeclareDatamodelEntryfields{
+    group,
+    poster,
+    video,
+    code,
+    prize,
+    slides}

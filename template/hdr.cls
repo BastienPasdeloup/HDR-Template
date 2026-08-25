@@ -1112,7 +1112,7 @@
 
 % Use biblatex
 \RequirePackage{csquotes}%
-\RequirePackage[backend=biber, style=authoryear, natbib=true, sorting=customsort, backref=true, url=false, isbn=false, doi=false, dashed=false, maxnames=99]{biblatex}%
+\RequirePackage[backend=biber, datamodel=template/hdr, style=authoryear, natbib=true, sorting=customsort, backref=true, url=false, isbn=false, doi=false, dashed=false, maxnames=99]{biblatex}%
 
 % Chapter title
 \defbibheading{bibliography}[\bibname]{\chapter*[bibliography]{\cstBibliography}}%
@@ -1166,7 +1166,7 @@
 % For my refs: [ X_{addendum} ]
 \DeclareSortingTemplate{customsort}{%
     \sort[direction=ascending]{\field{howpublished}}%
-    \sort[direction=ascending]{\field{usera}}%
+    \sort[direction=ascending]{\field{group}}%
     \sort[direction=ascending]{\field{addendum}}%
     \sort[direction=ascending]{\field{labelname}}%
     \sort[direction=ascending]{\field{year}}%
@@ -1191,7 +1191,7 @@
             \iffieldundef{addendum}{}{%
                 \ifcategoriesused%
                     \ifonlyonecategory\else%
-                        \myabbr{\thefield{usera}}%
+                        \myabbr{\thefield{group}}%
                         \textsubscript{\scriptsize\number\numexpr\thefield{addendum}\relax}%
                         ~|~%
                     \fi%
@@ -1231,16 +1231,16 @@
 % Macro for the icons
 \newcommand{\bibEntryIcons}{%
     \iffieldundef{howpublished}{%
-        \iffieldequalstr{usera}{nousera}{%
+        \iffieldequalstr{group}{nogroup}{%
             \printIconList{\faNewspaper[regular]}{url}%
             \ifshortdoc\else---\hspace{0.2cm}\fi%
         }{%
             \printIconList{\faNewspaper[regular]}{url}%
-            \printIconList{\faImages}{userf}%
-            \printIconList{\faImage}{userb}%
-            \printIconList{\faGithub}{userd}%
-            \printIconList{\faYoutube}{userc}%
-            \printIconList{\faTrophy}{usere}%
+            \printIconList{\faImages}{slides}%
+            \printIconList{\faImage}{poster}%
+            \printIconList{\faGithub}{code}%
+            \printIconList{\faYoutube}{video}%
+            \printIconList{\faTrophy}{prize}%
             \par\vspace*{0cm}%
         }%
     }{}%
@@ -1419,9 +1419,9 @@
     \previouswithiconfalse%
     \bibopenbracket%
 }{%
-    \iffieldequalstr{usera}{nousera}{%
+    \iffieldequalstr{group}{nogroup}{%
         \iffieldundef{addendum}{}{%
-            \errmessage{External references should not have "usera" or "addendum" fields (found in \thefield{entrykey})}%
+            \errmessage{External references should not have "group" or "addendum" fields (found in \thefield{entrykey})}%
         }%
         \iffieldundef{howpublished}{%
             \citeTooltipExternal{\thefield{title}}{%
@@ -1441,8 +1441,8 @@
         \global\previouswithicontrue%
     }{%
         \ifcategoriesused%
-            \ifcsname abbr@\thefield{usera}\endcsname\else%
-                \errmessage{Citing reference \thefield{entrykey} with undeclared category "\thefield{usera}". This entry will not appear in the bibliography}%
+            \ifcsname abbr@\thefield{group}\endcsname\else%
+                \errmessage{Citing reference \thefield{entrykey} with undeclared category "\thefield{group}". This entry will not appear in the bibliography}%
             \fi%
             \ifonlyonecategory%
                 \citeTooltip{\thefield{title}}{%
@@ -1450,11 +1450,11 @@
                     \iffieldundef{note}{}{\textsuperscript{(\printfield{note})}}%
                 }%
             \else%
-                \citeTooltip{\thefield{title}}{\myabbr{\thefield{usera}}}%
+                \citeTooltip{\thefield{title}}{\myabbr{\thefield{group}}}%
                 \iffieldundef{addendum}{}{\textsubscript{\scriptsize\number\numexpr\thefield{addendum}\relax}}%
             \fi%
         \else%
-            \errmessage{When no categories are used, no references should have "usera" or "addendum" fields (found in \thefield{entrykey}). This entry will not appear in the bibliography}%
+            \errmessage{When no categories are used, no references should have "group" or "addendum" fields (found in \thefield{entrykey}). This entry will not appear in the bibliography}%
             \citeTooltip{\thefield{title}}{%
                 \printnames{labelname}\setunit{,\space}\printfield{year}%
                 \iffieldundef{note}{}{\textsuperscript{(\printfield{note})}}%
@@ -1493,14 +1493,14 @@
     \fi%
     \categoriesusedtrue%
     \ifcsname abbr@#1\endcsname%
-        \errmessage{Duplicate bibliography category \thefield{usera}}%
+        \errmessage{Duplicate bibliography category \thefield{group}}%
     \else%
         \expandafter\gdef\csname abbr@#1\endcsname{#2}%
     \fi%
     \DeclareSourcemap{%
         \maps[datatype=bibtex]{%
             \map{%
-                \step[fieldsource=usera, match=\regexp{#1}, final]%
+                \step[fieldsource=group, match=\regexp{#1}, final]%
                 \step[fieldset=keywords, fieldvalue={filter_#1}, append]}}}%
     \g@addto@macro\@biblioCategories{%
         \ifshortdoc%
@@ -1519,16 +1519,16 @@
 \DeclareSourcemap{%
     \maps[datatype=bibtex]{%
         \map{%
-            \step[fieldsource=usera, null]%
-            \step[fieldset=usera, fieldvalue={nousera}]%
-            \step[fieldsource=usera, match=\regexp{nousera}, final]%
+            \step[fieldsource=group, null]%
+            \step[fieldset=group, fieldvalue={nogroup}]%
+            \step[fieldsource=group, match=\regexp{nogroup}, final]%
             \step[fieldsource=howpublished, null, final]%
             \step[fieldset=keywords, fieldvalue={filter_url}, append]%
         }%
         \map{%
-            \step[fieldsource=usera, null]%
-            \step[fieldset=usera, fieldvalue={nousera}]%
-            \step[fieldsource=usera, match=\regexp{nousera}, final]%
+            \step[fieldsource=group, null]%
+            \step[fieldset=group, fieldvalue={nogroup}]%
+            \step[fieldsource=group, match=\regexp{nogroup}, final]%
             \step[fieldset=keywords, fieldvalue={filter_external}, append]%
         }}}%
 \olddocument}%
@@ -1656,38 +1656,200 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Arrow + content
+% Usage: \arrowBox{color}{ribbon label}{heading}{rows of the table}
+% The rows keep the "&" and "\\" syntax of a two-column table, but they are
+% typeset one at a time instead of as a single unbreakable table: a box that is
+% too tall for the space left on the page is now split over two pages, where it
+% used to be pushed as a whole to the next one and leave a large void behind
+% Each fragment carries its own piece of ribbon, the arrow head being drawn on
+% the first fragment only, and the tip on the last one only
+% Constraints on the rows: exactly one "&" per row, no optional argument to "\\",
+% and nested tables must be enclosed in braces so that the "&" and "\\" they
+% contain stay hidden from the parser
+\RequirePackage{framed}%
 \makeatletter%
-\newcommand{\arrowBox}[4]{%
+
+% Ribbon geometry, all set from \linewidth when a box is typeset
+\newlength{\hdr@ab@band}%    % width of the colored band
+\newlength{\hdr@ab@gutter}%  % space between the band and the contents
+\newlength{\hdr@ab@notch}%   % depth of the arrow head and of the arrow tip
+\newlength{\hdr@ab@margin}%  % space left below the tip, where the next head fits
+\newlength{\hdr@ab@ribbon}%  % total width taken on the left of the contents
+\newcommand{\hdr@ab@setgeometry}{%
+    \setlength{\hdr@ab@band}{0.06\linewidth}%
+    \setlength{\hdr@ab@gutter}{0.025\linewidth}%
+    \setlength{\hdr@ab@notch}{0.02\linewidth}%
+    \setlength{\hdr@ab@margin}{0.12cm}%
+    \setlength{\hdr@ab@ribbon}{\dimexpr\hdr@ab@band+\hdr@ab@gutter\relax}}%
+
+% Coordinates of the shape, and dimensions of the fragment being decorated
+\newlength{\hdr@ab@height}%
+\newlength{\hdr@ab@xmid}%
+\newlength{\hdr@ab@ynotch}%
+\newlength{\hdr@ab@ybase}%
+\newlength{\hdr@ab@ytip}%
+\newlength{\hdr@ab@ylabel}%
+\newlength{\hdr@ab@labelwidth}%
+\newlength{\hdr@ab@valuewidth}%
+\newsavebox{\hdr@ab@box}%
+\newsavebox{\hdr@ab@tag}%
+\newif\ifhdr@ab@head%
+\newif\ifhdr@ab@tip%
+
+% Penalty inserted between two rows: splitting a box is allowed, but discouraged
+% so that a break between two boxes is always preferred
+% A fragment is never left with a single row, and never starts with the last one
+\newcommand{\arrowBoxRowPenalty}{150}%
+\newcount\hdr@ab@nrows%
+\newcount\hdr@ab@row%
+
+% One piece of ribbon, drawn in a box of zero height and depth so that it never
+% interferes with the height of the fragment it decorates
+% The head and the tip are omitted on a fragment that is too short for them, and
+% a fragment holding nothing but glue gets no ribbon at all
+\newcommand{\hdr@ab@drawribbon}{%
+    \ifdim\hdr@ab@height<\baselineskip\else%
+        \hdr@ab@drawpiece%
+    \fi}%
+\newcommand{\hdr@ab@drawpiece}{%
+    \setlength{\hdr@ab@xmid}{0.5\hdr@ab@band}%
+    \setlength{\hdr@ab@ynotch}{\dimexpr\hdr@ab@height-\hdr@ab@notch\relax}%
+    \ifdim\hdr@ab@height<\dimexpr3\hdr@ab@notch+\hdr@ab@margin\relax%
+        \hdr@ab@headfalse%
+        \hdr@ab@tipfalse%
+    \fi%
+    \ifhdr@ab@tip%
+        \setlength{\hdr@ab@ybase}{\dimexpr\hdr@ab@margin+\hdr@ab@notch\relax}%
+        \setlength{\hdr@ab@ytip}{\hdr@ab@margin}%
+    \else%
+        \setlength{\hdr@ab@ybase}{0pt}%
+        \setlength{\hdr@ab@ytip}{0pt}%
+    \fi%
+    \setlength{\hdr@ab@ylabel}{\dimexpr0.5\hdr@ab@height-0.005\linewidth\relax}%
+    \sbox\hdr@ab@tag{\scriptsize\textcolor{\hdr@ab@color}{%
+        \hypersetup{linkcolor=\hdr@ab@color}%
+        \textbf{{\transparent{0}{|}}\hdr@ab@label{\transparent{0}{|}}}}}%
+    \raisebox{-\dp\hdr@ab@box}[\z@][\z@]{\makebox[\hdr@ab@ribbon][l]{%
+        \begin{tikzpicture}[inner sep=0pt, outer sep=0pt, baseline=0pt]%
+            \useasboundingbox (0pt, 0pt) rectangle (\hdr@ab@ribbon, \hdr@ab@height);%
+            \fill[\hdr@ab@color!20]%
+                (0pt, \hdr@ab@height)%
+                \ifhdr@ab@head%
+                    -- (\hdr@ab@xmid, \hdr@ab@ynotch)%
+                \fi%
+                -- (\hdr@ab@band, \hdr@ab@height)%
+                -- (\hdr@ab@band, \hdr@ab@ybase)%
+                \ifhdr@ab@tip%
+                    -- (\hdr@ab@xmid, \hdr@ab@ytip)%
+                \fi%
+                -- (0pt, \hdr@ab@ybase)%
+            -- cycle;%
+            \ifdim\wd\hdr@ab@tag<\hdr@ab@height%
+                \node[anchor=center] at (\hdr@ab@xmid, \hdr@ab@ylabel)%
+                    {\rotatebox{-90}{\usebox\hdr@ab@tag}};%
+            \fi%
+        \end{tikzpicture}}}}%
+
+% Decoration of one fragment: the piece of ribbon, then the contents
+% "framed" hands over the fragment as a box, and calls this once per page
+\long\def\hdr@ab@frame#1{%
+    \sbox\hdr@ab@box{#1}%
+    \setlength{\hdr@ab@height}{\dimexpr\ht\hdr@ab@box+\dp\hdr@ab@box\relax}%
+    \hbox{\hdr@ab@drawribbon\box\hdr@ab@box}}%
+
+% Rows are read one by one, and split at their "&" into a label and a value
+% The list ends with a sentinel row, appended by \arrowBox and detected here
+\def\hdr@ab@sentinel{}%
+\def\hdr@ab@sentinelrow{\hdr@ab@sentinel}%
+\long\def\hdr@ab@rowloop#1\\{%
+    \def\hdr@ab@thisrow{#1}%
+    \ifx\hdr@ab@thisrow\hdr@ab@sentinelrow%
+        \let\hdr@ab@next\relax%
+    \else%
+        \ifblank{#1}{}{\hdr@ab@dorow#1\hdr@ab@endrow}%
+        \let\hdr@ab@next\hdr@ab@rowloop%
+    \fi%
+    \hdr@ab@next}%
+
+% First pass over the rows: width of the widest label, as the "r" column of a
+% table would have it (tooltips are turned off, since this copy is thrown away)
+\long\def\hdr@ab@measurerow#1&#2\hdr@ab@endrow{%
+    \global\advance\hdr@ab@nrows\@ne%
     \begingroup%
-    \begin{tikzpicture}%
-        \node (table) at (0.085\linewidth, 0) {%
-            \let\old@centercr\@centercr%
-            \let\old@normalcr\@normalcr%
-            \begin{minipage}{0.915\linewidth}%
-                \let\@centercr\old@centercr%
-                \let\@normalcr\old@normalcr%
-                \vspace*{-\topskip}%
-                \vspace{2\valparskip}%
-                \titlespacing*{\paragraph}{0pt}{0.5\valparskip}{0pt}%
-                \textcolor{missingColor}{#3~}\par\vspace*{\valparskip}%
-                \begin{tabularx}{\linewidth}{r|X}%
-                    #4%
-                \end{tabularx}%
-                \vspace{2\valparskip}%
-            \end{minipage}%
-        };%
-        \coordinate (topwest) at (table.west|-table.north);%
-        \coordinate (southwest) at (table.west|-table.south);%
-        \fill[#1!20]%
-        ([xshift=-0.085\linewidth]topwest) --%
-            ([xshift=-0.055\linewidth, yshift=-0.02\linewidth]topwest) --%
-            ([xshift=-0.025\linewidth]topwest) --%
-            ([xshift=-0.025\linewidth, yshift={0.02\linewidth+0.12cm}]southwest) --%
-            ([xshift=-0.055\linewidth, yshift=0.12cm]southwest) --%
-            ([xshift=-0.085\linewidth, yshift={0.02\linewidth+0.12cm}]southwest) --%
-        cycle;%
-        \node[anchor=center] at ([xshift=-0.055\linewidth, yshift=-0.005\linewidth]table.west){\rotatebox{-90}{\scriptsize{\textcolor{#1}{\hypersetup{linkcolor=#1}\textbf{{\transparent{0}{|}}#2{\transparent{0}{|}}}}}}};
-    \end{tikzpicture}%
+    \hdrtipsoff%
+    \sbox\hdr@ab@box{\ignorespaces#1\unskip}%
+    \ifdim\wd\hdr@ab@box>\hdr@ab@labelwidth%
+        \global\hdr@ab@labelwidth=\wd\hdr@ab@box%
+    \fi%
+    \endgroup}%
+
+% Second pass: each row becomes a table of its own, so that a page break may
+% occur between two of them. No interline glue between the rows, so that the
+% vertical rules of the successive tables join
+\long\def\hdr@ab@emitrow#1&#2\hdr@ab@endrow{%
+    \advance\hdr@ab@row\@ne%
+    \ifnum\hdr@ab@row>\@ne%
+        \nointerlineskip%
+    \fi%
+    \hbox{%
+        \begin{tabular}[t]{%
+            >{\raggedleft\arraybackslash\ignorespaces}p{\hdr@ab@labelwidth}<{\unskip}%
+            |>{\ignorespaces}p{\hdr@ab@valuewidth}<{\unskip}}%
+            #1 & #2%
+        \end{tabular}}%
+    \ifnum\hdr@ab@row=\@ne%
+        \nopagebreak%
+    \else%
+        \ifnum\hdr@ab@row<\hdr@ab@nrows%
+            \ifnum\numexpr\hdr@ab@row+\@ne\relax=\hdr@ab@nrows%
+                \nopagebreak%
+            \else%
+                \penalty\arrowBoxRowPenalty%
+            \fi%
+        \fi%
+    \fi}%
+
+% The box itself
+\newcommand{\arrowBox}[4]{%
+    \par%
+    \begingroup%
+    \hdr@ab@setgeometry%
+    \def\hdr@ab@color{#1}%
+    \def\hdr@ab@label{#2}%
+    % Same decoration everywhere, except for the head and the tip
+    \def\FrameCommand{\hdr@ab@headtrue\hdr@ab@tiptrue\hdr@ab@frame}%
+    \def\FirstFrameCommand{\hdr@ab@headtrue\hdr@ab@tipfalse\hdr@ab@frame}%
+    \def\MidFrameCommand{\hdr@ab@headfalse\hdr@ab@tipfalse\hdr@ab@frame}%
+    \def\LastFrameCommand{\hdr@ab@headfalse\hdr@ab@tiptrue\hdr@ab@frame}%
+    % Spacing around the contents, chosen to reproduce the look of the previous
+    % (unbreakable) version: no space added by "framed" between two boxes, and
+    % the negative kern compensates what it adds after each of them
+    \setlength{\OuterFrameSep}{\z@}%
+    \global\hdr@ab@labelwidth=\z@%
+    \global\hdr@ab@nrows=\z@%
+    \let\hdr@ab@dorow\hdr@ab@measurerow%
+    \hdr@ab@rowloop#4\\\hdr@ab@sentinel\\%
+    % \@secpenalty is the (attractive) penalty a sectioning command adds before
+    % itself: left alone, the \paragraph of the heading would offer a breakpoint
+    % at the very top of the box, and "framed" would happily split there
+    \MakeFramed{\advance\hsize-\width \FrameRestore%
+        \parindent\z@ \parskip\z@ \@secpenalty\@M}%
+        \setlength{\hdr@ab@valuewidth}{%
+            \dimexpr\hsize-\hdr@ab@labelwidth-4\tabcolsep-\arrayrulewidth\relax}%
+        % A plain \vskip, not \vspace*: the latter inserts a zero-height rule, which
+        % would make this very first glue a legal breakpoint and let "framed" split
+        % the box right there, leaving a stub of ribbon at the bottom of the page
+        \vskip\valparskip%
+        \titlespacing*{\paragraph}{0pt}{0.5\valparskip}{0pt}%
+        \textcolor{missingColor}{#3~}\par%
+        \nopagebreak%
+        \vspace*{\valparskip}%
+        \hdr@ab@row=\z@%
+        \let\hdr@ab@dorow\hdr@ab@emitrow%
+        \hdr@ab@rowloop#4\\\hdr@ab@sentinel\\%
+        \vspace*{2.5\valparskip}%
+    \endMakeFramed%
+    \kern-\valparskip%
     \endgroup}%
 \makeatother%
 

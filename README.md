@@ -15,13 +15,15 @@ so that you can see every feature in context before writing your own document.
 * Acronyms with **tooltips** in the PDF, and an automatically generated list of acronyms.
 * A bibliography split into *your own publications* (grouped by category, with clickable icons for the paper,
   the slides, the poster, the video, the code, the prize), *external references*, and *online resources*.
-  Every one of those fields is a comma-separated list of URLs, so a single entry can carry several posters,
-  several repositories, and so on.
+  Entries carry these extras in named fields -- `group`, `slides`, `poster`, `video`, `code`, `prize` --
+  declared in `template/hdr.dbx`. Every one of them is a comma-separated list of URLs, so a single entry can
+  carry several posters, several repositories, and so on.
 * Boxes (`boxenv`) for definitions, theorems, challenges, questions..., with automatic per-type counters,
   and a dedicated `proof` environment.
 * Figures, subfigures, tables and equations numbered continuously across the whole document.
 * `\arrowBox`, to lay out a CV as a **timeline**: a colored ribbon runs along consecutive entries of the
-  same period, so that supervisions, positions or projects read chronologically at a glance.
+  same period, so that supervisions, positions or projects read chronologically at a glance. An entry that
+  does not fit on the page is split over two pages, ribbon included, rather than leaving a hole behind.
 * An example TikZ plot, of the kind a script would generate, ready to adapt.
 
 ## The three examples
@@ -73,6 +75,7 @@ manuscript/hdr/           Chapters of example 1
 manuscript/demand/        Chapters of example 2
 manuscript/phd/           Chapters of example 3
 template/hdr.cls          The template itself -- you should not need to edit this
+template/hdr.dbx          Custom bibliography fields, read by biber
 template/includes/        Front cover, back cover, chapter background
 ```
 
@@ -90,7 +93,7 @@ template/includes/        Front cover, back cover, chapter background
 \begin{boxenv}[label]{Type}[Title] ... \end{boxenv}      % starred variant: unnumbered
 \begin{proof}{label_of_statement} ... \end{proof}        % empty argument for a generic proof
 
-\arrowBox{color}{Ribbon label}{Heading}{Rows & of a \\ r|X tabularx}   % timeline entry
+\arrowBox{color}{Ribbon label}{Heading}{Label & value \\ rows of a table}  % timeline entry
 
 \acro{ai}       % AI, with a tooltip
 \acrofull{ai}   % Artificial Intelligence (AI)
