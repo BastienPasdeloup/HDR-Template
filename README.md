@@ -12,6 +12,8 @@ so that you can see every feature in context before writing your own document.
   environment, and recalled with `\nameref` — no more `\ref{fig:...}` next to `\autoref{sec:...}`.
   Unnumbered chapters are labelled the same way, and are recalled by their title: the bibliography and the list
   of acronyms come with the ready-made labels `bibliography` and `glossary`.
+  Hovering a `\nameref` link shows the name of what it points to as a **tooltip** -- the title of the chapter,
+  the caption of the figure, the title of the box -- while the link still leads there when clicked.
 * Acronyms with **tooltips** in the PDF, and an automatically generated list of acronyms.
 * A bibliography split into *your own publications* (grouped by category, with clickable icons for the paper,
   the slides, the poster, the video, the code, the prize), *external references*, and *online resources*.
@@ -99,7 +101,7 @@ template/includes/        Front cover, back cover, chapter background
 \acrofull{ai}   % Artificial Intelligence (AI)
 \acroname{ai}   % Artificial Intelligence
 
-\nameref{label} % "Chapter 2", "Figure 5", "Definition 1", ...
+\nameref{label} % "Chapter 2", "Figure 5", "Definition 1", ... with the name as a tooltip
 \cite{key}      % [J3], [12], ...
 ```
 

@@ -29,6 +29,9 @@
 % - It is not possible to use parts, please start with chapters
 % - Sectioning commands take a label as their first argument, and it is recalled
 %   with \nameref: \chapter[context]{Context} ... \nameref{context}
+% - \nameref prints the number of the element it points to ("Chapter III",
+%   "Figure 12"), and hovering it shows the name of that element as a tooltip:
+%   the title of the chapter, the caption of the figure, the title of the box
 % - Check "bibliography.bib" and "acronyms.tex" to see how they work
 % - Compile with LuaLaTeX: latexmk -lualatex -outdir=build main_hdr.tex
 
@@ -59,6 +62,10 @@
 \WarningFilter{glossaries}{No \printglossary or \printglossaries found}%
 \WarningFilter{latex}{Command \showhyphens has changed}%
 \WarningFilter{microtype}{Unknown slot number of character}%
+% Captions, titles and acronym descriptions become PDF strings (tooltips,
+% bookmarks), and hyperref reports every command it has to drop there --
+% mathematics in a caption alone would fill the log with those
+\WarningFilter{hyperref}{Token not allowed in a PDF string}%
 \hbadness=10000%
 \vbadness=10000%
 
@@ -603,6 +610,37 @@
 \RequirePackage[colorlinks=true, linkcolor=linksColor, citecolor=linksColor, urlcolor=linksColor]{hyperref}%
 \RequirePackage{xparse}%
 
+% Name of the element a label points to, kept aside for the tooltips of \nameref
+% \nameref prints the *number* of the element ("Figure 12", "Chapter III", ...),
+% so the name itself -- title of a chapter, caption of a figure, title of a box --
+% has nowhere to go: it is recorded here, next to the label, and the ACRONYMS
+% section below hangs it on the link as a hover text
+% One macro per label rather than an extra field of \newlabel: the fifth field is
+% reserved for the kernel, and nameref sanitizes the third one
+% (\@onelevel@sanitize), which would print \acro literally instead of expanding it
+\makeatletter%
+\newcommand{\hdr@currentlabeltitle}{}%
+\newcommand{\hdrlabeltitle}[1]{%
+    \IfBlankTF{#1}{\def\hdr@currentlabeltitle{}}{\def\hdr@currentlabeltitle{#1}}}%
+\newcommand{\hdr@newlabeltitle}[2]{\global\@namedef{hdr@lt@#1}{#2}}%
+% Fourth field of \newlabel, i.e. the \@currentHref of the label: the destination
+% the tooltip has to jump to. Three \expandafter to reach through \csname and
+% then through \r@<label>, whose replacement text holds the five fields
+\newcommand{\hdr@labelanchor}[1]{%
+    \ifcsname r@#1\endcsname%
+        \expandafter\expandafter\expandafter\@fourthoffive\csname r@#1\endcsname%
+    \fi}%
+% Recorded from the "label" hook, so that it follows every \label wherever it
+% comes from. Every command of this section sets the title (possibly empty) right
+% before its \label, and it is cleared again here: a title describes the element
+% that has just been labelled, and must not leak to the next label of the document
+\AddToHookWithArguments{label}{%
+    \ifdefempty{\hdr@currentlabeltitle}{}{%
+        \protected@write\@auxout{}%
+            {\string\hdr@newlabeltitle{#1}{\hdr@currentlabeltitle}}}%
+    \gdef\hdr@currentlabeltitle{}}%
+\makeatother%
+
 % Chapter / appendix
 \newcommand{\chaptertext}{}%
 \renewcommand{\chaptername}{\cstChapter}%
@@ -631,9 +669,11 @@
             \oldchapter*{#3}%
         \fi%
         \def\@currentlabelname{#3}%
+        \hdrlabeltitle{}%
     }{%
         \oldchapter{#3}%
         \edef\@currentlabelname{\iftocinappendix\cstAppendix\else\cstChapter\fi~\thechapter}%
+        \hdrlabeltitle{#3}%
     }%
     \IfValueT{#2}{\label{#2}}%
 }%
@@ -647,9 +687,11 @@
         \phantomsection%
         \oldsection*{#3}%
         \def\@currentlabelname{#3}%
+        \hdrlabeltitle{}%
     }{%
         \oldsection{#3}%
         \edef\@currentlabelname{\cstSection~\thesection}%
+        \hdrlabeltitle{#3}%
     }%
     \IfValueT{#2}{\label{#2}}%
 }%
@@ -663,9 +705,11 @@
         \phantomsection%
         \oldsubsection*{#3}%
         \def\@currentlabelname{#3}%
+        \hdrlabeltitle{}%
     }{%
         \oldsubsection{#3}%
         \edef\@currentlabelname{\cstSection~\thesubsection}%
+        \hdrlabeltitle{#3}%
     }%
     \IfValueT{#2}{\label{#2}}%
 }%
@@ -679,9 +723,11 @@
         \phantomsection%
         \oldsubsubsection*{#3}%
         \def\@currentlabelname{#3}%
+        \hdrlabeltitle{}%
     }{%
         \oldsubsubsection{#3}%
         \edef\@currentlabelname{\cstSection~\thesubsubsection}%
+        \hdrlabeltitle{#3}%
     }%
     \IfValueT{#2}{\label{#2}}%
 }%
@@ -698,6 +744,7 @@
         \oldparagraph{#3}%
     }%
     \def\@currentlabelname{#3}%
+    \hdrlabeltitle{}%
     \IfValueT{#2}{\label{#2}}%
 }%
 \makeatother%
@@ -713,6 +760,7 @@
         \oldsubparagraph{#3}%
     }%
     \def\@currentlabelname{#3}%
+    \hdrlabeltitle{}%
     \IfValueT{#2}{\label{#2}}%
 }%
 \makeatother%
@@ -748,6 +796,7 @@
 }{%
     \caption{#2}%
     \edef\@currentlabelname{\cstFigure~\thefigure}%
+    \hdrlabeltitle{#2}%
     \IfValueT{#1}{\label{#1}}%
     \endoldfigure%
 }%
@@ -758,6 +807,7 @@
 }{%
     \caption*{#2}%
     \edef\@currentlabelname{\cstFigure}%
+    \hdrlabeltitle{#2}%
     \IfValueT{#1}{\label{#1}}%
     \endoldfigure%
 }%
@@ -775,6 +825,7 @@
 }{%
     \caption{#3}%
     \edef\@currentlabelname{(\thesubfigure)}%
+    \hdrlabeltitle{#3}%
     \IfValueT{#1}{\label{#1}}%
     \endoldsubfigure%
 }%
@@ -786,6 +837,7 @@
 }{%
     \caption*{#3}%
     \edef\@currentlabelname{}%
+    \hdrlabeltitle{}%
     \IfValueT{#1}{\label{#1}}%
     \endoldsubfigure%
 }%
@@ -803,6 +855,7 @@
 }{%
     \caption{#2}%
     \edef\@currentlabelname{\cstTable~\thetable}%
+    \hdrlabeltitle{#2}%
     \IfValueT{#1}{\label{#1}}%
     \endoldtable%
 }%
@@ -813,6 +866,7 @@
 }{%
     \caption*{#2}%
     \edef\@currentlabelname{\cstTable}%
+    \hdrlabeltitle{#2}%
     \IfValueT{#1}{\label{#1}}%
     \endoldtable%
 }%
@@ -828,6 +882,7 @@
     \oldequation%
 }{%
     \edef\@currentlabelname{\cstEquation~\theequation}%
+    \hdrlabeltitle{}%
     \IfValueT{#1}{\label{#1}}%
     \endoldequation%
 }%
@@ -838,6 +893,7 @@
 }{%
     \notag%
     \edef\@currentlabelname{\cstEquation}%
+    \hdrlabeltitle{}%
     \IfValueT{#1}{\label{#1}}%
     \endoldequation%
 }%
@@ -949,15 +1005,28 @@
 % the tooltip. Test T3 in "test/" had it in this order, which is why it worked
 \newsavebox{\hdr@tipbox}%
 \DeclareRobustCommand{\hdrTooltipLink}[3]{%
+    \hdr@tooltiplink{\@citecolor}{#1}{#2}{#3}}%
+% Same, in the colour of internal links rather than in the colour of citations
+\DeclareRobustCommand{\hdrTooltipRef}[3]{%
+    \hdr@tooltiplink{\@linkcolor}{#1}{#2}{#3}}%
+% \hdr@tooltiplink{colour}{destination}{tooltip}{text}
+% The destination is expanded first: it may come from \hdr@labelanchor, which
+% yields nothing for a label that does not exist yet (first compilation run), and
+% an annotation pointing nowhere would then be written to the PDF
+\newcommand{\hdr@tip@dest}{}%
+\DeclareRobustCommand{\hdr@tooltiplink}[4]{%
     \ifhdr@tips%
-        \sbox\hdr@tipbox{\Hy@colorlink\@citecolor#3\Hy@endcolorlink}%
-        \hdr@annot width \the\wd\hdr@tipbox
-        height \the\ht\hdr@tipbox
-        depth \the\dp\hdr@tipbox
-        {/Subtype /Link /Border [0 0 0] /A << /S /GoTo /D (#1) >>}%
-        \hdrTooltip{#1}{#2}{\usebox\hdr@tipbox}%
+        \sbox\hdr@tipbox{\Hy@colorlink#1#4\Hy@endcolorlink}%
+        \edef\hdr@tip@dest{#2}%
+        \ifdefempty{\hdr@tip@dest}{}{%
+            \hdr@annot width \the\wd\hdr@tipbox
+            height \the\ht\hdr@tipbox
+            depth \the\dp\hdr@tipbox
+            {/Subtype /Link /Border [0 0 0]
+             /A << /S /GoTo /D (\hdr@tip@dest) >>}}%
+        \hdrTooltip{\hdr@tip@dest}{#3}{\usebox\hdr@tipbox}%
     \else%
-        #3%
+        #4%
     \fi}%
 
 % \hdrTooltip{destination}{tooltip}{text}
@@ -974,6 +1043,12 @@
 \hdr@tipstrue%
 \newcommand{\hdrtipsoff}{\hdr@tipsfalse}%
 
+% \nameref prints the number of the element it points to ("Figure 12"), and the
+% name of that element -- recorded beside the label in the REFERENCES section --
+% is shown as a tooltip on the link, so that the reader knows where it leads
+% without following it. Elements whose \nameref already prints their name (a
+% starred chapter, a paragraph, an entry of the \acro{cv}) recorded no title and
+% keep the plain link of hyperref
 % The name shown by \nameref may itself contain an acronym -- the title of a
 % section, of a project of the \acro{cv}, etc. The annotation of that acronym
 % would capture the click and send the reader to the list of acronyms instead of
@@ -986,9 +1061,34 @@
     \else%
         \let\hdr@nr@restore\hdr@tipsfalse%
     \fi%
-    \hdr@tipsfalse%
-    \IfBooleanTF{#1}{\hdr@orig@nameref*{#2}}{\hdr@orig@nameref{#2}}%
+    \IfBooleanTF{#1}%
+    {\hdr@tipsfalse\hdr@orig@nameref*{#2}}%
+    {\hdr@nameref@tip{#2}}%
     \hdr@nr@restore}%
+
+% \hdr@nameref@tip{label}
+% The starred \nameref is used inside the annotation, because the link and the
+% tooltip are provided by \hdrTooltipRef: the one hyperref would add on its own
+% would sit on top of the widget and swallow the hover. \hdr@tipsfalse goes
+% inside the argument, hence inside the \sbox that \hdrTooltipRef opens, so that
+% it only silences the acronyms of the name
+\newcommand{\hdr@nameref@tip}[1]{%
+    \ifhdr@tips%
+        \ifcsname hdr@lt@#1\endcsname%
+            \hdrTooltipRef{\hdr@labelanchor{#1}}%
+            {\csname hdr@lt@#1\endcsname}%
+            {\hdr@tipsfalse\hdr@orig@nameref*{#1}}%
+        \else%
+            \hdr@tipsfalse\hdr@orig@nameref{#1}%
+        \fi%
+    \else%
+        \hdr@orig@nameref{#1}%
+    \fi}%
+
+% The caption package typesets a caption once in a trial box, to find out whether
+% it fits on a single line, and throws that box away. The check runs inside a
+% group of its own, so \hdrtipsoff is undone before the caption is typeset for good
+\AtCaptionSingleLineCheck{\hdrtipsoff}%
 
 % tabularx measures its content in trial passes and throws the result away, which
 % the tables of a CV do a lot. Suppress tooltips during those passes, otherwise
@@ -1006,9 +1106,10 @@
     \hdr@tips@restore}%
 \DeclareRobustCommand{\hdrTooltip}[3]{%
     \ifhdr@tips%
-        \ifblank{#1}%
+        \edef\hdr@tip@dest{#1}%
+        \ifdefempty{\hdr@tip@dest}%
         {\def\hdr@tip@action{}}%
-        {\edef\hdr@tip@action{/A << /S /GoTo /D (#1) >>\space}}%
+        {\edef\hdr@tip@action{/A << /S /GoTo /D (\hdr@tip@dest) >>\space}}%
         \pdftooltip{\mbox{#3}}{#2}%
         \xdef\hdr@formfields{\hdr@formfields\space\hdr@lastannot\space 0 R}%
         \def\hdr@tip@action{}%
@@ -1017,13 +1118,48 @@
     \fi}%
 \makeatother%
 
-% In a PDF string (bookmarks, document properties) no annotation can be created,
-% and hyperref silently drops any command it does not know -- including the
-% \ifglshaslong test below, whose leftover arguments then break the string. So
+% In a PDF string (bookmarks, document properties, tooltips) no annotation can be
+% created, and hyperref silently drops any command it does not know -- including
+% the \ifglshaslong test below, whose leftover arguments then break the string. So
 % the acronym commands are replaced by their plain-text equivalent altogether
+% Captions and titles reach a PDF string too, now that \nameref shows them as
+% tooltips. There, \nameref reduces to the plain name it prints, since the link
+% and the tooltip it normally carries have no meaning in a string, and the math
+% commands a caption tends to contain are reduced to their content: hyperref
+% would otherwise drop that content along with the command (\text), or fail to
+% build the string at all (\bm, \hat)
+\makeatletter%
 \pdfstringdefDisableCommands{%
+    \def\hdr@nameref@tip#1{\hdr@orig@nameref*{#1}}%
+    \def\bm#1{#1}%
+    \def\boldsymbol#1{#1}%
+    \def\text#1{#1}%
+    \def\mathbb#1{#1}%
+    \def\mathbf#1{#1}%
+    \def\mathcal#1{#1}%
+    \def\mathrm#1{#1}%
+    \def\frac#1#2{#1/#2}%
+    \def\hat#1{#1}%
+    \def\bar#1{#1}%
+    \def\tilde#1{#1}%
+    \def\vec#1{#1}%
+    \def\dot#1{#1}%
+    \def\ddot#1{#1}%
+    \def\widehat#1{#1}%
+    \def\widetilde#1{#1}%
+    \def\overline#1{#1}%
+    \def\underline#1{#1}%
+% A citation in a caption would leave its key in the tooltip, since hyperref only
+% drops the command and keeps its argument
+    \def\cite#1{}%
+    \def\citep#1{}%
+    \def\citet#1{}%
+    \def\citeauthor#1{}%
+    \def\citeyear#1{}%
     \def\pdftooltip#1#2{#1}%
     \def\hdrTooltip#1#2#3{#3}%
+    \def\hdrTooltipLink#1#2#3{#3}%
+    \def\hdrTooltipRef#1#2#3{#3}%
     \def\citeTooltip#1#2{#2}%
     \def\citeTooltipNoLink#1#2{#2}%
     \def\citeTooltipExternal#1#2{#2}%
@@ -1033,6 +1169,7 @@
     \def\acrofull#1{\glsentrydesc{#1} (\glsentryname{#1})}%
     \def\acroname#1{\glsentrydesc{#1}}%
 }%
+\makeatother%
 \DeclareRobustCommand{\checkacro}[1]{%
     \ifglsentryexists{#1}{}{%
         \PackageWarning{hdr}{Acronym `#1' is not defined}%
@@ -2107,6 +2244,7 @@
     \if\relax\detokenize{#2}\relax%
         \IfBlankTF{#3}{%
             \def\@currentlabelname{\cstBox}%
+            \hdrlabeltitle{}%
             \IfValueT{#1}{\label{#1}}%
             \begin{tcolorbox}[boxstyle]%
         }{%
@@ -2117,6 +2255,7 @@
         \box@ensurecounter{#2}%
         \refstepcounter{\box@countername{#2}}%
         \protected@edef\@currentlabelname{#2~\csname the\box@countername{#2}\endcsname}%
+        \hdrlabeltitle{#3}%
         \settowidth{\boxtitlewidth}{#2~\csname the\box@countername{#2}\endcsname\quad}%
         \IfValueT{#1}{\label{#1}}%
         \begin{tcolorbox}[boxstyle,title={%
@@ -2140,6 +2279,7 @@
     \setlength{\boxmaxtitlewidth}{\dimexpr0.9\linewidth-7.5mm\relax}%
     \if\relax\detokenize{#2}\relax%
         \def\@currentlabelname{\cstBox}%
+        \hdrlabeltitle{}%
         \IfValueT{#1}{\label{#1}}%
         \IfBlankTF{#3}{%
             \begin{tcolorbox}[boxstyle]%
@@ -2149,6 +2289,7 @@
         }%
     \else%
         \def\@currentlabelname{#2}%
+        \hdrlabeltitle{#3}%
         \settowidth{\boxtitlewidth}{#2\quad}%
         \IfValueT{#1}{\label{#1}}%
         \begin{tcolorbox}[boxstyle,title={%
@@ -2182,10 +2323,12 @@
     \phantomsection%
     \if\relax\detokenize{#2}\relax%
         \def\@currentlabelname{\cstProof}%
+        \hdrlabeltitle{}%
         \IfValueT{#1}{\label{#1}}%
         \begin{tcolorbox}[boxstyle, proofstyle, title={\textcolor{titlesColor}{\cstProof}}]%
     \else%
         \edef\@currentlabelname{\cstProofOf~\nameref{#2}}%
+        \hdrlabeltitle{}%
         \IfValueT{#1}{\label{#1}}%
         \begin{tcolorbox}[boxstyle, proofstyle, title={\textcolor{titlesColor}{\cstProofOf~{\hypersetup{linkcolor=titlesColor}\nameref{#2}}}}]%
     \fi%
@@ -2198,10 +2341,12 @@
     \phantomsection%
     \if\relax\detokenize{#2}\relax%
         \def\@currentlabelname{\cstProof}%
+        \hdrlabeltitle{}%
         \IfValueT{#1}{\label{#1}}%
         \begin{tcolorbox}[boxstyle, proofstyle, title={\textcolor{titlesColor}{\cstProof}}]%
     \else%
         \edef\@currentlabelname{\cstProofOf~\nameref{#2}}%
+        \hdrlabeltitle{}%
         \IfValueT{#1}{\label{#1}}%
         \begin{tcolorbox}[boxstyle, proofstyle, title={\textcolor{titlesColor}{\cstProofOf~{\hypersetup{linkcolor=titlesColor}\nameref{#2}}}}]%
     \fi%
