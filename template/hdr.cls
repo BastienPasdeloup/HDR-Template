@@ -30,9 +30,11 @@
 %                           latexmk does not know about by default
 
 % Important remarks:
-% - It is not possible to use parts, please start with chapters
 % - Sectioning commands take a label as their first argument, and it is recalled
 %   with \nameref: \chapter[context]{Context} ... \nameref{context}
+% - Parts are optional; a document may start straight with chapters. \part takes
+%   the same arguments as \chapter, including the text of its page:
+%   \part[label]{Title}[Text shown under the title of the part page]
 % - \nameref prints the number of the element it points to ("Chapter III",
 %   "Figure 12"), and hovering it shows the name of that element as a tooltip:
 %   the title of the chapter, the caption of the figure, the title of the box
@@ -94,7 +96,6 @@
 % minitoc points out that titlesec is loaded and that \chapter and \part were
 % redefined after it -- three deliberate choices of this class, and the
 % mini-tables of contents do come out right
-\PassOptionsToPackage{nohints}{minitoc}%
 
 % Underfull boxes only: overfull ones are governed by \hfuzz and \vfuzz, and are
 % still reported (there is none at the time of writing)
@@ -174,6 +175,7 @@
     \newcommand{\cstInFrontOf}{devant le jury composé de :}%
     \newcommand{\cstReviewers}{Rapporteurs}%
     \newcommand{\cstExaminers}{Examinateurs}%
+    \newcommand{\cstPart}{Partie}%
     \newcommand{\cstChapter}{Chapitre}%
     \newcommand{\cstSection}{Section}%
     \newcommand{\cstAppendix}{Annexe}%
@@ -201,6 +203,7 @@
     \newcommand{\cstInFrontOf}{before the jury composed of:}%
     \newcommand{\cstReviewers}{Reviewers}%
     \newcommand{\cstExaminers}{Examiners}%
+    \newcommand{\cstPart}{Part}%
     \newcommand{\cstChapter}{Chapter}%
     \newcommand{\cstSection}{Section}%
     \newcommand{\cstAppendix}{Appendix}%
@@ -436,30 +439,25 @@
 \newcommand\tocEntrySpacing{3}%
 \newcommand\minitocEntrySpacing{4}%
 
-% Parts are formatted as chapters in the table of contents
-% Unnumbered chapters are in fact added to it as parts (see the chapter pages
-% further down), because adding them as chapters makes minitoc lose track of the
-% mini-tables of contents
+% Parts, one notch above chapters
 \renewcommand*\l@part[2]{%
     \ifnum \c@tocdepth > -1\relax%
         \stepcounter{tocchapterpartcounter}%
         \ifnum\thetocchapterpartcounter>1%
-            \vspace{1em}%
+            \vspace{1.6em}%
         \fi%
-            {\iftocinappendix%
-                    % In appendices, chapters appear as sections
-                    \vspace{-1.3em}%
-                    \setlength\@tempdima{\tocEntrySpacing em}%
-                    \hspace*{\tocEntrySpacing em}%
-                    \small%
-                \else%
-                    % Formatting in TOC
-                    \setlength\@tempdima{\tocEntrySpacing em}%
-                    \normalsize%
-                    \bfseries%
-                \fi%
+            {\setlength\@tempdima{\tocEntrySpacing em}%
+                \large%
+                \bfseries\scshape%
                 #1\margindotfill#2\par}%
+        \vspace{0.3em}%
     \fi}%
+
+% The divider the \appendices command inserts. It stands at the level of a part
+% in the PDF bookmarks, so that the appendices hang under it, but it reads in the
+% table of contents like the chapters it introduces, hence its own entry type
+\newcommand*\l@appendices{\l@chapter}%
+\def\toclevel@appendices{-1}%
 
 % Format chapters
 \renewcommand*\l@chapter[2]{%
@@ -677,17 +675,6 @@
 \RequirePackage[colorlinks=true, linkcolor=linksColor, citecolor=linksColor, urlcolor=linksColor]{hyperref}%
 \RequirePackage{xparse}%
 
-% Unnumbered chapters go to the table of contents as parts (see the chapter pages
-% further down), and hyperref would then give them bookmark level -1, one above a
-% numbered chapter. Everything under such a chapter would jump two levels at
-% once, which hyperref refuses: it pulls the first entry up and files the ones
-% that follow under it, so that a numbered chapter ends up inside the
-% acknowledgements, and the categories of the bibliography inside the first of
-% them. The class has no real parts, so both share the level of a chapter
-\makeatletter%
-\def\toclevel@part{0}%
-\makeatother%
-
 % Name of the element a label points to, kept aside for the tooltips of \nameref
 % \nameref prints the *number* of the element ("Figure 12", "Chapter III", ...),
 % so the name itself -- title of a chapter, caption of a figure, title of a box --
@@ -717,6 +704,76 @@
         \protected@write\@auxout{}%
         {\string\hdr@newlabeltitle{#1}{\hdr@currentlabeltitle}}}%
     \gdef\hdr@currentlabeltitle{}}%
+\makeatother%
+
+% Part
+% Parts are optional: a document may start straight with chapters. A part takes a
+% page of its own, in the same style as a chapter page, and sits one level above
+% chapters in the table of contents and in the bookmarks
+% \part[label]{Title}[text of the part page], starred for an unnumbered one
+\newcommand{\parttext}{}%
+\renewcommand{\partname}{\cstPart}%
+\makeatletter%
+% Unlike a chapter page, a part page carries nothing below its title, so the
+% whole block is centred vertically and no ornament closes it. A part that has a
+% text of its own keeps one ornament, between the title and that text
+\newcommand{\hdr@makeparthead}[2]{%
+    \cleardoublepage%
+    \AddChapterBackground%
+    \vspace*{0pt}%
+    \vfill%
+    {\centering%
+        \if\relax\detokenize{#2}\relax%
+        \else%
+            \normalfont\huge\scshape\color{titlesColor}\contour{white}{#2}\par%
+            \vspace*{10pt}%
+        \fi%
+        \normalfont\Huge\bfseries\scshape\color{titlesColor}\contour{white}{#1}\par}%
+    \if\relax\detokenize\expandafter{\parttext}%
+        \relax%
+    \else%
+        {\centering%
+            \vspace*{40pt}%
+            \chapterSeparator\par%
+            \vspace*{50pt}}%
+        \parttext\par%
+        \renewcommand{\parttext}{}%
+    \fi%
+    \vfill%
+    \vspace*{0pt}%
+    % Same header as a chapter page: the rule and the page number, no running
+    % title. A part sets no mark of its own, the next chapter does it
+    \thispagestyle{emptyheader}%
+    \pagebreak}%
+\let\oldpart\part%
+\RenewDocumentCommand{\part}{s o m O{}}{%
+    \if\relax\detokenize\expandafter{#4}%
+    \else%
+        \renewcommand{\parttext}{%
+            \begingroup
+            \let\oldnewline\\%
+            \renewcommand{\\}{\oldnewline[\valparskip]}%
+            #4%
+            \endgroup%
+        }%
+    \fi%
+    \IfBooleanTF{#1}{%
+        \cleardoublepage%
+        \phantomsection%
+        \addcontentsline{toc}{part}{#3}%
+        \hdr@makeparthead{#3}{}%
+        \def\@currentlabelname{#3}%
+        \hdrlabeltitle{}%
+    }{%
+        \cleardoublepage%
+        \refstepcounter{part}%
+        \addcontentsline{toc}{part}{\protect\numberline{\thepart}#3}%
+        \hdr@makeparthead{#3}{\cstPart~~\thepart}%
+        \edef\@currentlabelname{\cstPart~\thepart}%
+        \hdrlabeltitle{#3}%
+    }%
+    \IfValueT{#2}{\label{#2}}%
+}%
 \makeatother%
 
 % Chapter / appendix
@@ -860,7 +917,7 @@
         \renewcommand{\chaptername}{\cstAppendix}%
         \cleardoublepage%
         \phantomsection%
-        \addcontentsline{toc}{part}{\cstAppendices}%
+        \addcontentsline{toc}{appendices}{\cstAppendices}%
         \addtocontents{toc}{\protect\tocinappendixtrue}%
         \oldappendix%
     \fi%
@@ -1323,7 +1380,7 @@
     \cleardoublepage%
     \AddChapterBackground%
     \ifnotcreatingtoc
-        \addcontentsline{toc}{part}{#1}%
+        \mtcaddchapter[#1]%
     \fi%
     \markboth{#1}{}%
     \vspace*{0pt}%

@@ -8,6 +8,8 @@ so that you can see every feature in context before writing your own document.
 
 * Custom covers (front page with jury composition, back page with abstract and QR code).
 * Chapter pages with a background image, a chapter abstract, and a mini table of contents.
+* Optional **parts**, with a page of their own in the same style, their own text, and their own level in the
+  table of contents and in the PDF bookmarks. A document may just as well start straight with chapters.
 * Simplified label management: labels are declared as an **optional argument** of the sectioning command or
   environment, and recalled with `\nameref` — no more `\ref{fig:...}` next to `\autoref{sec:...}`.
   Unnumbered chapters are labelled the same way, and are recalled by their title: the bibliography and the list
@@ -96,6 +98,7 @@ template/includes/        Front cover, back cover, chapter background
 \begin{table}[label]{Caption}    ... \end{table}
 \begin{equation}[label]          ... \end{equation}
 
+\part[label]{Title}[Text of the part page]                % optional, starred variant: unnumbered
 \begin{boxenv}[label]{Type}[Title] ... \end{boxenv}      % starred variant: unnumbered
 \begin{proof}{label_of_statement} ... \end{proof}        % empty argument for a generic proof
 
