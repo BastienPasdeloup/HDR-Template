@@ -12,6 +12,10 @@
 % "hdr_demand" is the short variant: tighter spacing, a running head reduced to the
 % page number, no blank page added to start chapters on the right, no back cover,
 % and a bibliography reduced to the publications of the author
+% Two more options, both off by default: "unnumbered_in_toc" lists \section*,
+% \subsection*, ... in the table of contents like the numbered ones, and
+% "include_uncited_refs" prints the entries of "bibliography.bib" that the
+% document never cites, as an exhaustive list of publications requires
 % The template ships three complete examples, one per kind: "main_hdr.tex",
 % "main_demand.tex" and "main_phd.tex"
 
@@ -83,6 +87,24 @@
 \DeclareOption{phd}{%
     \newif\ifshortdoc \shortdocfalse%
     \newif\ifhdr \hdrfalse}%
+
+% Unnumbered sectioning commands in the table of contents
+% \section*, \subsection*, ... leave no trace there; with this option they get an
+% entry formatted like the numbered ones, their title starting where the number of
+% a numbered entry starts. Unnumbered *chapters* are listed either way: the class
+% needs them there for minitoc to keep its bearings
+\newif\ifhdr@unnumberedintoc%
+\hdr@unnumberedintocfalse%
+\DeclareOption{unnumbered_in_toc}{\hdr@unnumberedintoctrue}%
+
+% Uncited references in the bibliography
+% Only the entries actually cited are printed; with this option every entry of
+% "bibliography.bib" is, through the \nocite at the very end of this file. This is
+% what an exhaustive list of publications needs, since a document rarely cites all
+% the works of its author
+\newif\ifhdr@uncitedrefs%
+\hdr@uncitedrefsfalse%
+\DeclareOption{include_uncited_refs}{\hdr@uncitedrefstrue}%
 
 % French/English
 \def\doc@language{english}
@@ -528,6 +550,17 @@
                 #1\margindotfill#2\par}%
     \fi}%
 
+% Entry of an unnumbered sectioning command, written by the starred commands of
+% the REFERENCES section below: \@ssect writes none of its own, since an
+% unnumbered section normally stays out of the table of contents
+% No \numberline around the title, so that it starts where the number of a
+% numbered entry starts; everything else is formatted by the \l@... commands above
+% \hdr@starcontentsline{level}{title}
+\newcommand{\hdr@starcontentsline}[2]{%
+    \ifhdr@unnumberedintoc%
+        \addcontentsline{toc}{#1}{#2}%
+    \fi}%
+
 % Remove mini-TOC title
 \renewcommand{\mtctitle}{}%
 
@@ -637,7 +670,7 @@
 \AddToHookWithArguments{label}{%
     \ifdefempty{\hdr@currentlabeltitle}{}{%
         \protected@write\@auxout{}%
-            {\string\hdr@newlabeltitle{#1}{\hdr@currentlabeltitle}}}%
+        {\string\hdr@newlabeltitle{#1}{\hdr@currentlabeltitle}}}%
     \gdef\hdr@currentlabeltitle{}}%
 \makeatother%
 
@@ -686,6 +719,7 @@
     \IfBooleanTF{#1}{%
         \phantomsection%
         \oldsection*{#3}%
+        \hdr@starcontentsline{section}{#3}%
         \def\@currentlabelname{#3}%
         \hdrlabeltitle{}%
     }{%
@@ -704,6 +738,7 @@
     \IfBooleanTF{#1}{%
         \phantomsection%
         \oldsubsection*{#3}%
+        \hdr@starcontentsline{subsection}{#3}%
         \def\@currentlabelname{#3}%
         \hdrlabeltitle{}%
     }{%
@@ -722,6 +757,7 @@
     \IfBooleanTF{#1}{%
         \phantomsection%
         \oldsubsubsection*{#3}%
+        \hdr@starcontentsline{subsubsection}{#3}%
         \def\@currentlabelname{#3}%
         \hdrlabeltitle{}%
     }{%
@@ -740,6 +776,7 @@
     \IfBooleanTF{#1}{%
         \phantomsection%
         \oldparagraph*{#3}%
+        \hdr@starcontentsline{paragraph}{#3}%
     }{%
         \oldparagraph{#3}%
     }%
@@ -756,6 +793,7 @@
     \IfBooleanTF{#1}{%
         \phantomsection%
         \oldsubparagraph*{#3}%
+        \hdr@starcontentsline{subparagraph}{#3}%
     }{%
         \oldsubparagraph{#3}%
     }%
@@ -1023,7 +1061,7 @@
             height \the\ht\hdr@tipbox
             depth \the\dp\hdr@tipbox
             {/Subtype /Link /Border [0 0 0]
-             /A << /S /GoTo /D (\hdr@tip@dest) >>}}%
+                /A << /S /GoTo /D (\hdr@tip@dest) >>}}%
         \hdrTooltip{\hdr@tip@dest}{#3}{\usebox\hdr@tipbox}%
     \else%
         #4%
@@ -1149,8 +1187,8 @@
     \def\widetilde#1{#1}%
     \def\overline#1{#1}%
     \def\underline#1{#1}%
-% A citation in a caption would leave its key in the tooltip, since hyperref only
-% drops the command and keeps its argument
+    % A citation in a caption would leave its key in the tooltip, since hyperref only
+    % drops the command and keeps its argument
     \def\cite#1{}%
     \def\citep#1{}%
     \def\citet#1{}%
@@ -1915,10 +1953,6 @@
 \let\hdr@ab@sizeofframe\fb@sizeofframe%
 \def\fb@sizeofframe#1{\begingroup\hdr@ab@measuringtrue\hdr@ab@sizeofframe#1\endgroup}%
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%% RIBBON LABEL %%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 % The label, typeset in a box (to be measured, or to be rotated and drawn)
 % The two transparent bars keep the text away from the ends of the ribbon
 \newcommand{\hdr@ab@labelbox}[1]{%
@@ -1987,10 +2021,6 @@
         \fi%
     \fi%
     \hdr@ab@next}%
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%% RIBBON %%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % One piece of ribbon, drawn in a box of zero height and depth so that it never
 % interferes with the height of the fragment it decorates
@@ -2070,10 +2100,6 @@
         \hbox{\hdr@ab@drawribbon\box\hdr@ab@box}%
     \fi}%
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%% ROWS %%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 % Rows are read one by one, and split at their "&" into a label and a value
 % The list ends with a sentinel row, appended by \arrowBox and detected here
 \def\hdr@ab@sentinel{}%
@@ -2129,10 +2155,7 @@
         \vskip\z@\@minus\arrowBoxRowShrink%
     \fi}%
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%% BOX %%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+% Boxes using the ribbon
 \newcommand{\arrowBox}[4]{%
     \par%
     \begingroup%
@@ -2403,6 +2426,14 @@
 { \nameInitials { \authorFirstName \c_space_tl \authorName } }
 \ExplSyntaxOff
 
+% Print every entry of the bibliography, even those that are not cited
+% Enabled by the "include_uncited_refs" class option
+\makeatletter%
+\ifhdr@uncitedrefs%
+    \nocite{*}%
+\fi%
+\makeatother%
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%% FINAL ADJUSTMENTS %%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2456,14 +2487,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%% LET'S GO! %%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% Placeholder text generator, handy while drafting (\lipsum, \lipsum[1-3], ...)
-\RequirePackage{lipsum}%
-
-% Print every entry of the bibliography, even those that are not cited
-% This is generally what you want for an HDR, where the bibliography doubles as a list of publications
-% Comment this line out if you only want the entries you actually cite
-\nocite{*}%
 
 % Done
 \endinput%

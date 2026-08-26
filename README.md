@@ -14,12 +14,16 @@ so that you can see every feature in context before writing your own document.
   of acronyms come with the ready-made labels `bibliography` and `glossary`.
   Hovering a `\nameref` link shows the name of what it points to as a **tooltip** -- the title of the chapter,
   the caption of the figure, the title of the box -- while the link still leads there when clicked.
+  With the `unnumbered_in_toc` class option, unnumbered sectioning commands (`\section*`, `\subsection*`, ...)
+  are listed in the table of contents like the numbered ones, their title starting where a number would.
 * Acronyms with **tooltips** in the PDF, and an automatically generated list of acronyms.
 * A bibliography split into *your own publications* (grouped by category, with clickable icons for the paper,
   the slides, the poster, the video, the code, the prize), *external references*, and *online resources*.
   Entries carry these extras in named fields -- `group`, `slides`, `poster`, `video`, `code`, `prize` --
   declared in `template/hdr.dbx`. Every one of them is a comma-separated list of URLs, so a single entry can
   carry several posters, several repositories, and so on.
+  The `include_uncited_refs` class option adds the entries the document never cites, which is what an
+  exhaustive list of publications needs; without it, only the works actually cited are printed.
 * Boxes (`boxenv`) for definitions, theorems, challenges, questions..., with automatic per-type counters,
   and a dedicated `proof` environment.
 * Figures, subfigures, tables and equations numbered continuously across the whole document.
@@ -32,9 +36,9 @@ so that you can see every feature in context before writing your own document.
 
 | Source | Result | Document class options | What it shows |
 | --- | --- | --- | --- |
-| `main_hdr.tex` | [main_hdr.pdf](build/main_hdr.pdf) | `[hdr, english]` | A full HDR manuscript: unnumbered foreword and acknowledgements, numbered chapters, appendices, bibliography, list of acronyms. |
-| `main_demand.tex` | [main_demand.pdf](build/main_demand.pdf) | `[hdr_demand, french]` | The short document sent to the university to register for the HDR: unnumbered foreword, no chapter pages, no table of contents, sworn statement and signature on the cover. |
-| `main_phd.tex` | [main_phd.pdf](build/main_phd.pdf) | `[phd, english]` | A PhD manuscript: same commands, unnumbered acknowledgements, single jury list, appendix of proofs. |
+| `main_hdr.tex` | [main_hdr.pdf](build/main_hdr.pdf) | `[hdr, english, unnumbered_in_toc, include_uncited_refs]` | A full HDR manuscript: unnumbered foreword and acknowledgements (with their sections listed in the table of contents), numbered chapters, appendices, bibliography, list of acronyms. |
+| `main_demand.tex` | [main_demand.pdf](build/main_demand.pdf) | `[hdr_demand, french, include_uncited_refs]` | The short document sent to the university to register for the HDR: unnumbered foreword, no chapter pages, no table of contents, sworn statement and signature on the cover. |
+| `main_phd.tex` | [main_phd.pdf](build/main_phd.pdf) | `[phd, english, include_uncited_refs]` | A PhD manuscript: same commands, unnumbered acknowledgements, single jury list, appendix of proofs. |
 
 All three share `acronyms.tex`, `bibliography.bib` and the images in `manuscript/figures/`.
 Every piece of text is a placeholder: replace it with your own.
