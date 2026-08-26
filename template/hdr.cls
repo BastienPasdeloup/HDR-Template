@@ -447,7 +447,23 @@
 \inmaintoctrue%
 
 % Various values for appearance
-\newcommand{\margindotfill}{\hspace{0.5cm}\dotfill\hspace{0.5cm}}%
+% Dot leaders, and the page number they lead to
+% \dotfill centres its dots in the space it has to fill, so the last one lands
+% wherever the leftover happens to leave it, and every line gets an offset of its
+% own. \leaders puts them on a grid instead, shared by every entry since the cell
+% has a fixed width and holds a dot of a fixed size. The page number then goes in
+% a box of its own, so that the space to fill always ends at the same place
+% whatever the number of digits -- without it, a three-digit number would pull
+% the dots one step further left than a two-digit one
+\newlength{\tocDotSpacing}%
+\setlength{\tocDotSpacing}{5pt}%
+\newlength{\tocPageNumberWidth}%
+\setlength{\tocPageNumberWidth}{16pt}%
+\newcommand{\margindotfill}{%
+    \hspace{0.5cm}%
+    \leaders\hb@xt@\tocDotSpacing{\hss\normalsize.\hss}\hfill%
+    \hspace{0.5cm}}%
+\newcommand{\tocpagenumber}[1]{\hb@xt@\tocPageNumberWidth{\hfil#1}}%
 \newcommand\tocEntrySpacing{3}%
 
 % Everything that follows a part in the table of contents belongs to it, and is
@@ -475,7 +491,7 @@
             {\setlength\@tempdima{\tocEntrySpacing em}%
                 \large%
                 \bfseries\scshape%
-                #1\margindotfill#2\par}%
+                #1\margindotfill\tocpagenumber{#2}\par}%
         \vspace{0.3em}%
         \hdr@inparttrue%
     \fi}%
@@ -506,7 +522,7 @@
                     \normalsize%
                     \bfseries%
                 \fi%
-                #1\margindotfill#2\par}%
+                #1\margindotfill\tocpagenumber{#2}\par}%
     \fi}%
 
 % Format sections
@@ -537,7 +553,7 @@
                     \normalsize%
                 \fi%
             \fi%
-            #1\margindotfill#2\par}%
+            #1\margindotfill\tocpagenumber{#2}\par}%
     \fi}%
 
 % Format subsections
@@ -572,7 +588,7 @@
                         \small%
                     \fi%
                 \fi%
-                #1\margindotfill#2\par}%
+                #1\margindotfill\tocpagenumber{#2}\par}%
     \fi}%
 
 % Format subsubsections
@@ -607,7 +623,7 @@
                         \footnotesize%
                     \fi%
                 \fi%
-                #1\margindotfill#2\par}%
+                #1\margindotfill\tocpagenumber{#2}\par}%
     \fi}%
 
 % Entry of an unnumbered sectioning command, written by the starred commands of
