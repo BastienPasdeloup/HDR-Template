@@ -859,7 +859,6 @@
     \renewenvironment{theglossary}{}{}%
     \renewcommand*{\glossentry}[2]{%
         \begingroup%
-        \hdrtipsoff%
         \ifglshaslong{##1}{%
             \begin{tabularx}{\textwidth}{@{}l@{}X@{}}%
                 \glsentryitem{##1}\glstarget{##1}{\glsentryname{##1}} & \raggedleft\margindotfill\glsentrylong{##1} %
@@ -974,6 +973,22 @@
 \newif\ifhdr@tips%
 \hdr@tipstrue%
 \newcommand{\hdrtipsoff}{\hdr@tipsfalse}%
+
+% The name shown by \nameref may itself contain an acronym -- the title of a
+% section, of a project of the \acro{cv}, etc. The annotation of that acronym
+% would capture the click and send the reader to the list of acronyms instead of
+% the referenced element, so annotations are suppressed inside the name. No group
+% is opened here, because ulem's \dotuline does not accept one in its argument
+\NewCommandCopy{\hdr@orig@nameref}{\nameref}%
+\RenewDocumentCommand{\nameref}{s m}{%
+    \ifhdr@tips%
+        \let\hdr@nr@restore\hdr@tipstrue%
+    \else%
+        \let\hdr@nr@restore\hdr@tipsfalse%
+    \fi%
+    \hdr@tipsfalse%
+    \IfBooleanTF{#1}{\hdr@orig@nameref*{#2}}{\hdr@orig@nameref{#2}}%
+    \hdr@nr@restore}%
 
 % tabularx measures its content in trial passes and throws the result away, which
 % the tables of a CV do a lot. Suppress tooltips during those passes, otherwise
@@ -1482,8 +1497,12 @@
                     \iffieldundef{note}{}{\textsuperscript{(\printfield{note})}}%
                 }%
             \else%
-                \citeTooltip{\thefield{title}}{\myabbr{\thefield{group}}}%
-                \iffieldundef{addendum}{}{\textsubscript{\scriptsize\number\numexpr\thefield{addendum}\relax}}%
+                % The number belongs inside the citation label: outside, it would be
+                % neither clickable nor coloured, and the tooltip would stop before it
+                \citeTooltip{\thefield{title}}{%
+                    \myabbr{\thefield{group}}%
+                    \iffieldundef{addendum}{}{\textsubscript{\scriptsize\number\numexpr\thefield{addendum}\relax}}%
+                }%
             \fi%
         \else%
             \errmessage{When no categories are used, no references should have "group" or "addendum" fields (found in \thefield{entrykey}). This entry will not appear in the bibliography}%
