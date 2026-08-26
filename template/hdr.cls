@@ -12,10 +12,12 @@
 % "hdr_demand" is the short variant: tighter spacing, a running head reduced to the
 % page number, no blank page added to start chapters on the right, no back cover,
 % and a bibliography reduced to the publications of the author
-% Two more options, both off by default: "unnumbered_in_toc" lists \section*,
-% \subsection*, ... in the table of contents like the numbered ones, and
+% Three more options, all off by default: "unnumbered_in_toc" lists \section*,
+% \subsection*, ... in the table of contents like the numbered ones,
 % "include_uncited_refs" prints the entries of "bibliography.bib" that the
-% document never cites, as an exhaustive list of publications requires
+% document never cites, as an exhaustive list of publications requires, and
+% "appendices_in_toc" adds a line introducing the appendices in the table of
+% contents (a document may add its own \part*{Appendices} instead)
 % The template ships three complete examples, one per kind: "main_hdr.tex",
 % "main_demand.tex" and "main_phd.tex"
 
@@ -125,6 +127,15 @@
 \newif\ifhdr@unnumberedintoc%
 \hdr@unnumberedintocfalse%
 \DeclareOption{unnumbered_in_toc}{\hdr@unnumberedintoctrue}%
+
+% Appendices in the table of contents
+% By default \appendices leaves no trace there, and a document that wants a line
+% introducing its appendices adds its own -- \part*{Appendices} gives it a page
+% and an entry of its own. With this option the class inserts that line itself,
+% reading like the chapters it introduces, and shifts the appendices under it
+\newif\ifhdr@appendicesintoc%
+\hdr@appendicesintocfalse%
+\DeclareOption{appendices_in_toc}{\hdr@appendicesintoctrue}%
 
 % Uncited references in the bibliography
 % Only the entries actually cited are printed; with this option every entry of
@@ -274,6 +285,7 @@
 \RequirePackage{eso-pic}%
 \RequirePackage{fontawesome5}%
 \RequirePackage{amssymb}%
+\RequirePackage{dsfont}%
 \RequirePackage{fontspec}%
 \RequirePackage{twemojis}%
 \RequirePackage{transparent}%
@@ -437,6 +449,20 @@
 % Various values for appearance
 \newcommand{\margindotfill}{\hspace{0.5cm}\dotfill\hspace{0.5cm}}%
 \newcommand\tocEntrySpacing{3}%
+
+% Everything that follows a part in the table of contents belongs to it, and is
+% indented by one more step -- the one a section takes with respect to its
+% chapter. The switch is raised by \l@part while the table of contents is
+% typeset, so a document without parts is left exactly as it was, and the entries
+% that come before the first part (a foreword, typically) belong to no part and
+% keep their place. It applies to the appendices, the bibliography and the list
+% of acronyms as well, on top of the shift \iftocinappendix gives the first of
+% them. Mini-tables of contents live inside a single chapter, so they never see it
+\newif\ifhdr@inpart%
+\newcommand{\hdr@partindent}{%
+    \ifhdr@inpart%
+        \hspace*{\tocEntrySpacing em}%
+    \fi}%
 \newcommand\minitocEntrySpacing{4}%
 
 % Parts, one notch above chapters
@@ -451,6 +477,7 @@
                 \bfseries\scshape%
                 #1\margindotfill#2\par}%
         \vspace{0.3em}%
+        \hdr@inparttrue%
     \fi}%
 
 % The divider the \appendices command inserts. It stands at the level of a part
@@ -470,11 +497,12 @@
                     % In appendices, chapters appear as sections
                     \vspace{-1.3em}%
                     \setlength\@tempdima{\tocEntrySpacing em}%
-                    \hspace*{\tocEntrySpacing em}%
+                    \hspace*{\tocEntrySpacing em}\hdr@partindent%
                     \small%
                 \else%
                     % Formatting in TOC
                     \setlength\@tempdima{\tocEntrySpacing em}%
+                    \hdr@partindent%
                     \normalsize%
                     \bfseries%
                 \fi%
@@ -489,7 +517,7 @@
                     % In appendices, sections appear as subsections
                     \vspace{-0.3em}%
                     \setlength\@tempdima{\tocEntrySpacing em}%
-                    \hspace*{\the\numexpr2*\tocEntrySpacing\relax em}%
+                    \hspace*{\the\numexpr2*\tocEntrySpacing\relax em}\hdr@partindent%
                     \footnotesize%
                 \else%
                     % Formatting in mini-TOC
@@ -501,7 +529,7 @@
                     % Formatting in TOC
                     \vspace{-0.3em}%
                     \setlength\@tempdima{\tocEntrySpacing em}%
-                    \hspace*{\tocEntrySpacing em}%
+                    \hspace*{\tocEntrySpacing em}\hdr@partindent%
                     \small%
                 \else%
                     % Formatting in mini-TOC
@@ -520,7 +548,7 @@
                         % In appendices, subsections appear as subsubsections
                         \vspace{-0.3em}%
                         \setlength\@tempdima{\tocEntrySpacing em}%
-                        \hspace*{\the\numexpr3*\tocEntrySpacing\relax em}%
+                        \hspace*{\the\numexpr3*\tocEntrySpacing\relax em}\hdr@partindent%
                         \scriptsize%
                     \else%
                         % Formatting in mini-TOC
@@ -534,7 +562,7 @@
                         % Formatting in TOC
                         \vspace{-0.3em}%
                         \setlength\@tempdima{\tocEntrySpacing em}%
-                        \hspace*{\the\numexpr2*\tocEntrySpacing\relax em}%
+                        \hspace*{\the\numexpr2*\tocEntrySpacing\relax em}\hdr@partindent%
                         \footnotesize%
                     \else%
                         % Formatting in mini-TOC
@@ -555,7 +583,7 @@
                         % In appendices, subsubsections appear as subsubsubsections
                         \vspace{-0.3em}%
                         \setlength\@tempdima{\tocEntrySpacing em}%
-                        \hspace*{\the\numexpr4*\tocEntrySpacing\relax em}%
+                        \hspace*{\the\numexpr4*\tocEntrySpacing\relax em}\hdr@partindent%
                         \tiny%
                     \else%
                         % Formatting in mini-TOC
@@ -569,7 +597,7 @@
                         % Formatting in TOC
                         \vspace{-0.3em}%
                         \setlength\@tempdima{\tocEntrySpacing em}%
-                        \hspace*{\the\numexpr3*\tocEntrySpacing\relax em}%
+                        \hspace*{\the\numexpr3*\tocEntrySpacing\relax em}\hdr@partindent%
                         \scriptsize%
                     \else%
                         % Formatting in mini-TOC
@@ -711,9 +739,15 @@
 % page of its own, in the same style as a chapter page, and sits one level above
 % chapters in the table of contents and in the bookmarks
 % \part[label]{Title}[text of the part page], starred for an unnumbered one
+% Its number is a Roman numeral, set doublestroke in the table of contents, where
+% a plain one would read like the number of a chapter. The word "Part" is spelled
+% out everywhere else -- on the part page and in what \nameref prints -- so those
+% keep the plain numeral, which a PDF string can carry
 \newcommand{\parttext}{}%
 \renewcommand{\partname}{\cstPart}%
+\renewcommand{\thepart}{\Roman{part}}%
 \makeatletter%
+\newcommand{\hdr@partnumber}[1]{\ensuremath{\mathds{#1}}}%
 % Unlike a chapter page, a part page carries nothing below its title, so the
 % whole block is centred vertically and no ornament closes it. A part that has a
 % text of its own keeps one ornament, between the title and that text
@@ -767,7 +801,7 @@
     }{%
         \cleardoublepage%
         \refstepcounter{part}%
-        \addcontentsline{toc}{part}{\protect\numberline{\thepart}#3}%
+        \addcontentsline{toc}{part}{\protect\numberline{\protect\hdr@partnumber{\thepart}}#3}%
         \hdr@makeparthead{#3}{\cstPart~~\thepart}%
         \edef\@currentlabelname{\cstPart~\thepart}%
         \hdrlabeltitle{#3}%
@@ -915,10 +949,17 @@
     \else%
         \tocinappendixtrue%
         \renewcommand{\chaptername}{\cstAppendix}%
-        \cleardoublepage%
-        \phantomsection%
-        \addcontentsline{toc}{appendices}{\cstAppendices}%
-        \addtocontents{toc}{\protect\tocinappendixtrue}%
+        \ifhdr@appendicesintoc%
+            \cleardoublepage%
+            \phantomsection%
+            \addcontentsline{toc}{appendices}{\cstAppendices}%
+            % This switch demotes the appendices by one level in the table of
+            % contents, to place them under the line just added. Without that
+            % line there is nothing to place them under, and a \part* the
+            % document adds itself already provides the level, so it is only
+            % written when the class inserts the line
+            \addtocontents{toc}{\protect\tocinappendixtrue}%
+        \fi%
         \oldappendix%
     \fi%
 }%
