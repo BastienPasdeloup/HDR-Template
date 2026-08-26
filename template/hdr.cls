@@ -59,17 +59,45 @@
 \ProvidesClass{template/hdr}[2025/03/31 HDR Template]%
 \LoadClass[a4paper, 11pt, twoside]{book}%
 
-% Ignore non-harmful warnings
+% Warnings that report a situation this class creates on purpose, and that no
+% document can act upon. Each one is filtered by its exact text, so anything else
+% the same package has to say still reaches the log -- keep it that way
 \RequirePackage{silence}%
+
+% glossaries loads datatool-base, which asks tracklang for a support file for
+% every language babel knows about. TeX Live ships no "datatool-french.ldf", so a
+% French document reports that one missing dialect. Nothing of datatool is used
+% here; an English document does not hit it at all, since the datetime2 modules
+% further down follow the language of the document
 \WarningFilter{tracklang}{No `datatool' support for dialect `french'}%
+
+% pdfcomment, which provides the tooltips, pulls in marginnote, which checks that
+% page numbers alternate as they should in a two-sided document. The short
+% document deliberately starts its chapters on either side (no blank page), so
+% two odd pages do follow each other there. No margin note is ever used
 \WarningFilter{marginnote}{Consecutive odd pages found}%
-\WarningFilter{glossaries}{No \printglossary or \printglossaries found}%
-\WarningFilter{latex}{Command \showhyphens has changed}%
+
+% microtype lets an accented letter inherit the protrusion of its base letter,
+% but its list for the TU encoding names them by accent command (\'e, \v s, ...),
+% and their slot cannot be resolved in an OpenType font: the 105 of them are
+% reported and dropped. Only single-glyph entries of that list survive, so the
+% inheritance is a no-op here either way. The list can be redeclared to keep just
+% those, but that pins a copy of a microtype internal table in this class
 \WarningFilter{microtype}{Unknown slot number of character}%
+
 % Captions, titles and acronym descriptions become PDF strings (tooltips,
-% bookmarks), and hyperref reports every command it has to drop there --
-% mathematics in a caption alone would fill the log with those
+% bookmarks), where mathematics cannot be represented: hyperref reports every
+% token it drops, one per math shift, superscript, subscript and symbol. That is
+% ~190 messages in the manuscript, all of them expected
 \WarningFilter{hyperref}{Token not allowed in a PDF string}%
+
+% minitoc points out that titlesec is loaded and that \chapter and \part were
+% redefined after it -- three deliberate choices of this class, and the
+% mini-tables of contents do come out right
+\PassOptionsToPackage{nohints}{minitoc}%
+
+% Underfull boxes only: overfull ones are governed by \hfuzz and \vfuzz, and are
+% still reported (there is none at the time of writing)
 \hbadness=10000%
 \vbadness=10000%
 
@@ -326,7 +354,13 @@
 \renewcommand{\tagform@}[1]{\maketag@@@{\color{titlesColor}(\ignorespaces#1\unskip\@@italiccorr)}}%
 
 % Dates format
-\RequirePackage[en-US, french]{datetime2}%
+% Only the module of the language of the document is loaded: datetime2 declares
+% every module it is given to tracklang, and glossaries then looks for a
+% "datatool" support file for each of them -- there is none for French, which is
+% harmless but noisy
+\iflanguage{french}%
+    {\RequirePackage[french]{datetime2}}%
+    {\RequirePackage[en-US]{datetime2}}%
 \iflanguage{english}{%
     \newcommand{\mkenglishordinal}[1]{%
         \number#1\textsuperscript{%
@@ -643,6 +677,17 @@
 \RequirePackage[colorlinks=true, linkcolor=linksColor, citecolor=linksColor, urlcolor=linksColor]{hyperref}%
 \RequirePackage{xparse}%
 
+% Unnumbered chapters go to the table of contents as parts (see the chapter pages
+% further down), and hyperref would then give them bookmark level -1, one above a
+% numbered chapter. Everything under such a chapter would jump two levels at
+% once, which hyperref refuses: it pulls the first entry up and files the ones
+% that follow under it, so that a numbered chapter ends up inside the
+% acknowledgements, and the categories of the bibliography inside the first of
+% them. The class has no real parts, so both share the level of a chapter
+\makeatletter%
+\def\toclevel@part{0}%
+\makeatother%
+
 % Name of the element a label points to, kept aside for the tooltips of \nameref
 % \nameref prints the *number* of the element ("Figure 12", "Chapter III", ...),
 % so the name itself -- title of a chapter, caption of a figure, title of a box --
@@ -946,7 +991,15 @@
 \glssetnoexpandfield{long}%
 \glssetnoexpandfield{description}%
 \loadglsentries{acronyms}%
-\makeglossaries%
+% \makeglossaries opens the file the list of acronyms is built from. A short
+% document never prints that list, and glossaries warns when the file it
+% opened is left unused; the acronyms themselves, and their tooltips, work
+% either way. A short document that does want the list can call
+% \makeglossaries in its own preamble
+\ifshortdoc%
+\else%
+    \makeglossaries%
+\fi%
 
 % Customize entries
 \newglossarystyle{acronymsstyle}{%
