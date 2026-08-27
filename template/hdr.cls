@@ -1616,13 +1616,21 @@
 
 % My name underlined in refs
 \RequirePackage[normalem]{ulem}%
+% An "and others" at the end of an author field becomes "et al.", and the
+% "nameaddon" field of Biblatex is printed right after the names -- which is where
+% a remark on the authors belongs, an entry with two hundred of them typically:
+% Biber reads everything between two "and" as a name, so such a remark cannot be
+% written inside the field itself
 \DeclareNameFormat{author}{%
     \ifthenelse{\equal{\namepartfamily}{\authorName} \and \equal{\namepartgiven}{\authorFirstName}}%
     {\dotuline{\namepartgiven\space{\scshape\namepartfamily}}}%
     {\namepartgiven\space{\scshape\namepartfamily}}%
     \ifthenelse{\value{listcount} < \value{listtotal}}%
     {,\space\newunit\newblock}%
-    {}}%
+    {%
+        \ifmorenames{\space\emph{et al.}}{}%
+        \iffieldundef{nameaddon}{}{\space\thefield{nameaddon}}%
+    }}%
 
 % Show as [Author et al., date]
 % Use field "note" for the suffix to put to the ref in case of ambiguous entries
@@ -1630,9 +1638,9 @@
 \DeclareNameFormat{labelname}{%
     \ifnum\value{listcount}=1%
         \textsc{\namepartfamily}%
-        \ifnum\value{listtotal}>1%
-            ~\emph{et al.}%
-        \fi%
+        \ifboolexpr{ test {\ifnumgreater{\value{listtotal}}{1}} or test {\ifmorenames} }%
+            {~\emph{et al.}}%
+            {}%
     \fi}%
 
 % Sort using sortname
@@ -1671,7 +1679,7 @@
                     \fi%
                 \else\fi}%
             \printnames{labelname}%
-            \iffieldundef{year}{}{,~\printfield{year}}%
+            \iffieldundef{year}{}{,~\theYear}%
             \iffieldundef{note}{}{\textsuperscript{(\printfield{note})}}%
         }{%
             \textsc{\printfield{howpublished}}%
@@ -1744,6 +1752,18 @@
     }%
 }%
 
+% Year of an entry, or the years it spans
+% Biber reads "year" as a date, so a range cannot be written there: "2015 -- 2018"
+% is kept as a legacy string it can neither sort nor split, and it says so at every
+% run. A range is given as "date = {2015/2018}" instead, which reaches the styles
+% as "year" and "endyear" -- the two halves this macro joins again
+\newcommand{\theYear}{%
+    \thefield{year}%
+    \iffieldundef{endyear}{}{%
+        \iffieldequalstr{endyear}{}{}{~--~\thefield{endyear}}%
+    }%
+}%
+
 % Macro for a reference type
 \newcommand{\declareReferenceType}[2]{%
     \DeclareBibliographyDriver{#1}{%
@@ -1765,29 +1785,35 @@
     \DeclareBibliographyDriver{secondcol:#1}{#2}%
 }%
 
+% Macro for a reference type that reuses the layout of another one
+% Both drivers have to be aliased: \fullcite reads the entry through the
+% "secondcol:" one, so an alias that declares only the first leaves \fullcite to
+% the standard Biblatex layout, with a warning at every run
+\newcommand{\aliasReferenceType}[2]{%
+    \DeclareBibliographyAlias{#1}{#2}%
+    \DeclareBibliographyAlias{secondcol:#1}{secondcol:#2}%
+}%
+
 % Thesis/report
 \declareReferenceType{thesis}{%
     \printnames{author}\space%
-    (\thefield{year}).\space%
+    (\theYear).\space%
     \textbf{``\thefield{title}''}.\space%
     \textit{%
         \thelist{institution}%
         \iffieldundef{type}{}{\space(\thefield{type})}%
     }%
 }%
-\DeclareBibliographyAlias{phdthesis}{thesis}%
-\DeclareBibliographyAlias{secondcol:phdthesis}{secondcol:thesis}%
-\DeclareBibliographyAlias{mdthesis}{thesis}%
-\DeclareBibliographyAlias{secondcol:mdthesis}{secondcol:thesis}%
-\DeclareBibliographyAlias{report}{thesis}%
-\DeclareBibliographyAlias{secondcol:report}{secondcol:thesis}%
-\DeclareBibliographyAlias{manual}{thesis}%
-\DeclareBibliographyAlias{secondcol:manual}{secondcol:thesis}%
+\aliasReferenceType{phdthesis}{thesis}%
+\aliasReferenceType{mdthesis}{thesis}%
+\aliasReferenceType{report}{thesis}%
+\aliasReferenceType{mastersthesis}{thesis}%
+\aliasReferenceType{techreport}{thesis}%
 
 % Manual
 \declareReferenceType{manual}{%
     \printnames{author}%
-    \iffieldundef{year}{}{\space(\thefield{year})}.\space%
+    \iffieldundef{year}{}{\space(\theYear)}.\space%
     \textbf{``\thefield{title}''}.\space%
     \textit{\thelist{organization}}%
 }%
@@ -1795,7 +1821,7 @@
 % Publications
 \declareReferenceType{default}{%
     \printnames{author}\space%
-    (\thefield{year}).\space%
+    (\theYear).\space%
     \textbf{``\thefield{title}''}.\space%
     \textit{%
         \thefield{booktitle}%
@@ -1811,19 +1837,53 @@
         }%
     }%
 }%
-\DeclareBibliographyAlias{incollection}{default}%
-\DeclareBibliographyAlias{secondcol:incollection}{secondcol:default}%
-\DeclareBibliographyAlias{inproceedings}{default}%
-\DeclareBibliographyAlias{secondcol:inproceedings}{secondcol:default}%
-\DeclareBibliographyAlias{article}{default}%
-\DeclareBibliographyAlias{secondcol:article}{secondcol:default}%
-\DeclareBibliographyAlias{book}{default}%
-\DeclareBibliographyAlias{secondcol:book}{secondcol:default}%
+\aliasReferenceType{article}{default}%
+\aliasReferenceType{book}{default}%
+\aliasReferenceType{incollection}{default}%
+\aliasReferenceType{inproceedings}{default}%
+
+% The types this template does not expect, sent to the closest layout so that
+% every entry -- and every \fullcite -- is drawn by the class rather than by the
+% standard Biblatex drivers. The remaining standard types are containers rather
+% than references ("set", "xdata", "custom...") and are left alone
+\aliasReferenceType{bookinbook}{default}%
+\aliasReferenceType{booklet}{default}%
+\aliasReferenceType{collection}{default}%
+\aliasReferenceType{conference}{default}%
+\aliasReferenceType{dataset}{default}%
+\aliasReferenceType{inbook}{default}%
+\aliasReferenceType{inreference}{default}%
+\aliasReferenceType{misc}{default}%
+\aliasReferenceType{mvbook}{default}%
+\aliasReferenceType{mvcollection}{default}%
+\aliasReferenceType{mvproceedings}{default}%
+\aliasReferenceType{mvreference}{default}%
+\aliasReferenceType{patent}{default}%
+\aliasReferenceType{periodical}{default}%
+\aliasReferenceType{proceedings}{default}%
+\aliasReferenceType{reference}{default}%
+\aliasReferenceType{software}{default}%
+\aliasReferenceType{suppbook}{default}%
+\aliasReferenceType{suppcollection}{default}%
+\aliasReferenceType{suppperiodical}{default}%
+\aliasReferenceType{unpublished}{default}%
 
 % URL
 \newlength{\firstColWidth}%
 \setlength{\firstColWidth}{\cstBiblioFirstColWidth}%
 \renewbibmacro*{urldate}{\date{\thefield{urlyear}-\thefield{urlmonth}-\thefield{urlday}}}%
+% The entry itself, kept aside so that the driver of the second column can reuse
+% it: an online resource has a first column of its own -- a QR code, and the date
+% it was last visited -- so it cannot go through \declareReferenceType
+\newcommand{\bibEntryOnline}{%
+    \ifnameundef{author}{}{%
+        \printnames{author}%
+        \iffieldundef{year}{}{\space(\theYear)}%
+        .\space%
+    }%
+    \textbf{``\thefield{title}''}%
+    \iflistundef{organization}{}{.\space\textit{\thelist{organization}}}%
+}%
 \DeclareBibliographyDriver{online}{%
     \justifying%
     \small%
@@ -1845,17 +1905,13 @@
     \hfill%
     \begin{minipage}[t]{\cstBiblioLastColWidth}%
         \vspace{0pt}%
-        \ifnameundef{author}{}{%
-            \printnames{author}%
-            \iffieldundef{year}{}{\space(\thefield{year})}%
-            .\space%
-        }%
-        \textbf{``\thefield{title}''}%
-        \iflistundef{organization}{}{.\space\textit{\thelist{organization}}}%
-        .%
+        \bibEntryOnline.%
     \end{minipage}%
     \par\vspace*{\cstBiblioEntriesSpacing}%
 }%
+\DeclareBibliographyDriver{secondcol:online}{\bibEntryOnline}%
+\aliasReferenceType{electronic}{online}%
+\aliasReferenceType{www}{online}%
 
 \makeatletter%
 % Citations: tooltip with the title of the entry + link to its bibliography entry
@@ -1904,7 +1960,7 @@
         }%
         \iffieldundef{howpublished}{%
             \citeTooltipExternal{\thefield{title}}{%
-                \printnames{labelname}\setunit{,\space}\printfield{year}%
+                \printnames{labelname}\setunit{,\space}\printtext{\theYear}%
                 \iffieldundef{note}{}{\textsuperscript{(\printfield{note})}}%
             }%
             \space%
@@ -1925,7 +1981,7 @@
             \fi%
             \ifonlyonecategory%
                 \citeTooltip{\thefield{title}}{%
-                    \printnames{labelname}\setunit{,\space}\printfield{year}%
+                    \printnames{labelname}\setunit{,\space}\printtext{\theYear}%
                     \iffieldundef{note}{}{\textsuperscript{(\printfield{note})}}%
                 }%
             \else%
@@ -1939,7 +1995,7 @@
         \else%
             \errmessage{When no categories are used, no references should have "group" or "addendum" fields (found in \thefield{entrykey}). This entry will not appear in the bibliography}%
             \citeTooltip{\thefield{title}}{%
-                \printnames{labelname}\setunit{,\space}\printfield{year}%
+                \printnames{labelname}\setunit{,\space}\printtext{\theYear}%
                 \iffieldundef{note}{}{\textsuperscript{(\printfield{note})}}%
             }%
         \fi%

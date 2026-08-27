@@ -32,6 +32,10 @@ so that you can see every feature in context before writing your own document.
   Entries carry these extras in named fields -- `group`, `slides`, `poster`, `video`, `code`, `prize` --
   declared in `template/hdr.dbx`. Every one of them is a comma-separated list of URLs, so a single entry can
   carry several posters, several repositories, and so on.
+  Two conventions of Biblatex are worth knowing here: an entry that spans several years takes them as a range,
+  `date = {2015/2018}` rather than a `year` field Biber cannot parse, and an entry with too many authors to list
+  ends its `author` field with `and others`, which prints as *et al.* -- a remark on them, such as the number
+  left out, goes in the `nameaddon` field, printed right after the names.
   The `include_uncited_refs` class option adds the entries the document never cites, which is what an
   exhaustive list of publications needs; without it, only the works actually cited are printed.
 * Boxes (`boxenv`) for definitions, theorems, challenges, questions..., with automatic per-type counters,
