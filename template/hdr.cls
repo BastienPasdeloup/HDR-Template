@@ -16,7 +16,7 @@
 % \subsection*, ... in the table of contents like the numbered ones,
 % "include_uncited_refs" prints the entries of "bibliography.bib" that the
 % document never cites, as an exhaustive list of publications requires, and
-% "appendices_in_toc" adds a line introducing the appendices in the table of
+% "group_appendices_in_toc" adds a line introducing the appendices in the table
 % contents (a document may add its own \part*{Appendices} instead)
 % The template ships three complete examples, one per kind: "main_hdr.tex",
 % "main_demand.tex" and "main_phd.tex"
@@ -133,9 +133,9 @@
 % introducing its appendices adds its own -- \part*{Appendices} gives it a page
 % and an entry of its own. With this option the class inserts that line itself,
 % reading like the chapters it introduces, and shifts the appendices under it
-\newif\ifhdr@appendicesintoc%
-\hdr@appendicesintocfalse%
-\DeclareOption{appendices_in_toc}{\hdr@appendicesintoctrue}%
+\newif\ifhdr@groupappendicesintoc%
+\hdr@groupappendicesintocfalse%
+\DeclareOption{group_appendices_in_toc}{\hdr@groupappendicesintoctrue}%
 
 % Uncited references in the bibliography
 % Only the entries actually cited are printed; with this option every entry of
@@ -145,6 +145,17 @@
 \newif\ifhdr@uncitedrefs%
 \hdr@uncitedrefsfalse%
 \DeclareOption{include_uncited_refs}{\hdr@uncitedrefstrue}%
+
+% Bibliography and list of acronyms outside the parts
+% Once a part has been opened, everything that follows it is indented under it in
+% the table of contents, the bibliography and the list of acronyms included: they
+% are chapters, and they come after the last part. With this option those two keep
+% the indentation of a part instead, so that they read as resources of the whole
+% document rather than as material of its last part, and their PDF bookmarks are
+% lifted back to the top level as well. A document without parts is left untouched
+\newif\ifhdr@resourcesoutsidepart%
+\hdr@resourcesoutsidepartfalse%
+\DeclareOption{resources_outside_part}{\hdr@resourcesoutsideparttrue}%
 
 % French/English
 \def\doc@language{english}
@@ -201,8 +212,8 @@
     \newcommand{\cstBibliography}{Bibliographie}%
     \newcommand{\cstGlossary}{Acronymes}%
     \newcommand{\cstRefsAuthor}{Références auxquelles j'ai contribué}%
-    \newcommand{\cstRefsOthers}{Autres références citées dans ce document}%
-    \newcommand{\cstRefsURLs}{Ressources en ligne citées dans ce document}%
+    \newcommand{\cstRefsOthers}{Autres références}%
+    \newcommand{\cstRefsURLs}{Ressources en ligne}%
     \newcommand{\cstRefsList}{Liste des publications}%
 }{}%
 \iflanguage{english}{%
@@ -229,8 +240,8 @@
     \newcommand{\cstBibliography}{Bibliography}%
     \newcommand{\cstGlossary}{Acronyms}%
     \newcommand{\cstRefsAuthor}{References I Contributed To}%
-    \newcommand{\cstRefsOthers}{Other References Cited in this Document}%
-    \newcommand{\cstRefsURLs}{Online Resources Cited in this Document}%
+    \newcommand{\cstRefsOthers}{Other References}%
+    \newcommand{\cstRefsURLs}{Online Resources}%
     \newcommand{\cstRefsList}{List of Publications}%
 }{}%
 
@@ -478,6 +489,50 @@
 \newcommand{\hdr@partindent}{%
     \ifhdr@inpart%
         \hspace*{\tocEntrySpacing em}%
+    \fi}%
+
+% Bibliography and list of acronyms back to the left margin
+% The switch above is raised by \l@part while the table of contents is typeset and
+% stays raised for everything that follows, so the only way to take these two
+% lists out of the last part is to lower it again from inside the .toc file, just
+% before their entries -- which is what the "resources_outside_part" option does.
+% In the PDF bookmarks, nesting follows the level of the entry rather than the
+% order of the file, so the whole family is shifted by one notch while these two
+% lists are printed: their chapter is written at the level of a part, and the
+% sections and subsections it contains one notch above their usual level. They
+% then sit beside the parts rather than under the last one, and both readings
+% agree. The chapter cannot be moved on its own: hyperref refuses a gap of more
+% than one level between an entry and the next, and renumbers the whole subtree
+% when it finds one -- which would turn the first category of the bibliography
+% into the parent of the others. The levels are restored once the lists are
+% printed, so that a document putting them elsewhere keeps its later chapters
+% where they belong. Nothing happens unless the document actually opened a part
+\newif\ifhdr@partused%
+\hdr@partusedfalse%
+\newif\ifhdr@resourceslifted%
+\hdr@resourcesliftedfalse%
+\newcommand{\hdr@resourcesoutofpart}{%
+    \ifhdr@resourcesoutsidepart%
+        \ifhdr@partused%
+            \addtocontents{toc}{\protect\hdr@inpartfalse}%
+            \let\hdr@toclevel@chapter\toclevel@chapter%
+            \let\hdr@toclevel@section\toclevel@section%
+            \let\hdr@toclevel@subsection\toclevel@subsection%
+            \def\toclevel@chapter{-1}%
+            \def\toclevel@section{0}%
+            \def\toclevel@subsection{1}%
+            \hdr@resourcesliftedtrue%
+        \fi%
+    \fi}%
+% The switch is what the restore reads, so that it never puts back levels that
+% were not saved -- a short document prints no list of acronyms, and its
+% bibliography is a section rather than a chapter
+\newcommand{\hdr@resourcesbackinpart}{%
+    \ifhdr@resourceslifted%
+        \let\toclevel@chapter\hdr@toclevel@chapter%
+        \let\toclevel@section\hdr@toclevel@section%
+        \let\toclevel@subsection\hdr@toclevel@subsection%
+        \hdr@resourcesliftedfalse%
     \fi}%
 \newcommand\minitocEntrySpacing{4}%
 
@@ -778,7 +833,7 @@
             \normalfont\huge\scshape\color{titlesColor}\contour{white}{#2}\par%
             \vspace*{10pt}%
         \fi%
-        \normalfont\Huge\bfseries\scshape\color{titlesColor}\contour{white}{#1}\par}%
+        \normalfont\Huge\bfseries\scshape\color{titlesColor}\hdrContourTitle{#1}\par}%
     \if\relax\detokenize\expandafter{\parttext}%
         \relax%
     \else%
@@ -797,6 +852,9 @@
     \pagebreak}%
 \let\oldpart\part%
 \RenewDocumentCommand{\part}{s o m O{}}{%
+    % Read by \hdr@resourcesoutofpart, which only has something to do in a
+    % document that opened at least one part
+    \global\hdr@partusedtrue%
     \if\relax\detokenize\expandafter{#4}%
     \else%
         \renewcommand{\parttext}{%
@@ -965,7 +1023,7 @@
     \else%
         \tocinappendixtrue%
         \renewcommand{\chaptername}{\cstAppendix}%
-        \ifhdr@appendicesintoc%
+        \ifhdr@groupappendicesintoc%
             \cleardoublepage%
             \phantomsection%
             \addcontentsline{toc}{appendices}{\cstAppendices}%
@@ -1141,6 +1199,7 @@
 \renewcommand{\printglossaries}{%
     \addtocontents{toc}{\protect\tocinappendixfalse}%
     \tocinappendixfalse%
+    \hdr@resourcesoutofpart%
     \cleardoublepage%
     \chapter*[glossary]{\cstGlossary}%
     \renewcommand{\glossarysection}[2][]{}
@@ -1148,6 +1207,7 @@
     % \global is required: the switch set by \newif is a local \let, and the
     % .aux file is read inside a group (minitoc writes \global the same way)
     \immediate\write\@auxout{\string\global\string\hdrglossaryprintedtrue}%
+    \hdr@resourcesbackinpart%
     \renewcommand\rightmark{}}%
 \makeatother%
 
@@ -1426,6 +1486,36 @@
 \RequirePackage{contour}%
 \contourlength{0.7pt}%
 
+% Titles broken over several lines
+% \contour puts its argument in a box, and a box does not break: a title that does
+% not fit on one line -- a part carrying the title of the whole document,
+% typically -- would run past both margins. Every word is therefore outlined on
+% its own, with ordinary spaces in between, so that the paragraph builder breaks
+% the title wherever it needs to. The outline is thinner than a space and drawn
+% outward only, so the result reads like a single \contour around the whole title.
+% The argument is expanded first, since a title usually arrives as a command
+% (\documentTitle, typically) whose spaces would otherwise stay out of reach, and
+% \\ is passed through, so that a title may still force its own breaks
+\ExplSyntaxOn
+\tl_new:N \l__hdr_title_tl
+\seq_new:N \l__hdr_title_seq
+\seq_new:N \l__hdr_title_out_seq
+\cs_new_protected:Npn \__hdr_contour_word:n #1
+{
+    \tl_if_blank:nF {#1}
+    { \tl_if_eq:nnTF {#1} { \\ } { \\ } { \contour { white } {#1} } }
+}
+\NewDocumentCommand { \hdrContourTitle } { m }
+{
+    \tl_set:Nx \l__hdr_title_tl { \text_expand:n {#1} }
+    \seq_set_split:NnV \l__hdr_title_seq { ~ } \l__hdr_title_tl
+    \seq_clear:N \l__hdr_title_out_seq
+    \seq_map_inline:Nn \l__hdr_title_seq
+    { \seq_put_right:Nn \l__hdr_title_out_seq { \__hdr_contour_word:n {##1} } }
+    \seq_use:Nn \l__hdr_title_out_seq { ~ }
+}
+\ExplSyntaxOff
+
 % Chapter pages of unnumbered chapters (foreword, acknowledgements, bibliography)
 % They are added to the table of contents as parts rather than as chapters, which
 % would be the natural \addcontentsline{toc}{chapter}{#1}: minitoc drops the
@@ -1442,7 +1532,7 @@
     \markboth{#1}{}%
     \vspace*{0pt}%
     {\centering%
-        \normalfont\huge\bfseries\scshape\color{titlesColor}\contour{white}{#1}\par%
+        \normalfont\huge\bfseries\scshape\color{titlesColor}\hdrContourTitle{#1}\par%
         \vspace*{40pt}%
         \chapterSeparator\par%
         \vspace*{50pt}}%
@@ -1470,7 +1560,7 @@
     {\centering%
         \normalfont\huge\scshape\color{titlesColor}\contour{white}{\chaptername~~\thechapter}\par%
         \vspace*{10pt}%
-        \normalfont\huge\bfseries\scshape\color{titlesColor}\contour{white}{#1}\par%
+        \normalfont\huge\bfseries\scshape\color{titlesColor}\hdrContourTitle{#1}\par%
         \vspace*{40pt}%
         \chapterSeparator\par%
         \vspace*{50pt}}%
@@ -1955,6 +2045,7 @@
             \@biblioCategories%
         \fi%
     \else%
+        \hdr@resourcesoutofpart%
         \printbibheading%
         \ifcategoriesused%
             \section*[bibliography_author]{\cstRefsAuthor}%
@@ -1980,6 +2071,7 @@
             \fi%
         \fi%
     \fi%
+    \hdr@resourcesbackinpart%
 }%
 \makeatother%
 

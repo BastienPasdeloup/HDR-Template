@@ -12,8 +12,12 @@ so that you can see every feature in context before writing your own document.
   table of contents and in the PDF bookmarks. A document may just as well start straight with chapters.
   Once a part has been opened, everything that follows is indented under it in the table of contents, and
   part numbers are set doublestroke so that they do not read like chapter numbers. `\appendices` adds no
-  line of its own to the table of contents: use `\part*{Appendices}` for one, or the `appendices_in_toc`
+  line of its own to the table of contents: use `\part*{Appendices}` for one, or the `group_appendices_in_toc`
   class option to let the class insert it.
+  The bibliography and the list of acronyms are chapters too, and they come after the last part, so they are
+  indented under it like everything else. The `resources_outside_part` class option keeps them at the level of
+  a part instead -- in the table of contents and in the PDF bookmarks -- so that they read as resources of the
+  whole document rather than as material of its last part.
 * Simplified label management: labels are declared as an **optional argument** of the sectioning command or
   environment, and recalled with `\nameref` — no more `\ref{fig:...}` next to `\autoref{sec:...}`.
   Unnumbered chapters are labelled the same way, and are recalled by their title: the bibliography and the list
@@ -42,7 +46,7 @@ so that you can see every feature in context before writing your own document.
 
 | Source | Result | Document class options | What it shows |
 | --- | --- | --- | --- |
-| `main_hdr.tex` | [main_hdr.pdf](build/main_hdr.pdf) | `[hdr, english, unnumbered_in_toc, include_uncited_refs, appendices_in_toc]` | A full HDR manuscript: unnumbered foreword and acknowledgements (with their sections listed in the table of contents), numbered chapters, appendices, bibliography, list of acronyms. |
+| `main_hdr.tex` | [main_hdr.pdf](build/main_hdr.pdf) | `[hdr, english, unnumbered_in_toc, include_uncited_refs, group_appendices_in_toc]` | A full HDR manuscript: unnumbered foreword and acknowledgements (with their sections listed in the table of contents), numbered chapters, appendices, bibliography, list of acronyms. |
 | `main_demand.tex` | [main_demand.pdf](build/main_demand.pdf) | `[hdr_demand, french, include_uncited_refs]` | The short document sent to the university to register for the HDR: unnumbered foreword, no chapter pages, no table of contents, sworn statement and signature on the cover. |
 | `main_phd.tex` | [main_phd.pdf](build/main_phd.pdf) | `[phd, english, include_uncited_refs]` | A PhD manuscript: same commands, unnumbered acknowledgements, single jury list, appendix of proofs. |
 
