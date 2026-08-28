@@ -98,6 +98,7 @@
 % minitoc points out that titlesec is loaded and that \chapter and \part were
 % redefined after it -- three deliberate choices of this class, and the
 % mini-tables of contents do come out right
+\PassOptionsToPackage{nohints}{minitoc}%
 
 % Underfull boxes only: overfull ones are governed by \hfuzz and \vfuzz, and are
 % still reported (there is none at the time of writing)
@@ -385,8 +386,8 @@
 % "datatool" support file for each of them -- there is none for French, which is
 % harmless but noisy
 \iflanguage{french}%
-{\RequirePackage[french]{datetime2}}%
-{\RequirePackage[en-US]{datetime2}}%
+    {\RequirePackage[french]{datetime2}}%
+    {\RequirePackage[en-US]{datetime2}}%
 \iflanguage{english}{%
     \newcommand{\mkenglishordinal}[1]{%
         \number#1\textsuperscript{%
@@ -1166,6 +1167,16 @@
 \RequirePackage[acronym]{glossaries}%
 \glssetnoexpandfield{long}%
 \glssetnoexpandfield{description}%
+% An acronym that is a variation of another one -- a plural, an adjective, a
+% translation -- is written without a "long" field, so that the list of acronyms
+% does not hold a line of its own for it, and names in its "alt" field the key of
+% the acronym it varies. It then behaves as that acronym as far as the list is
+% concerned: its link leads to that entry, and writing only the variation is
+% enough for that entry to be listed. Its own description is what its tooltip
+% shows, so that a plural still reads as a plural when hovered
+\makeatletter%
+\glsaddstoragekey{alt}{}{\hdr@acroalt}%
+\makeatother%
 \loadglsentries{acronyms}%
 % \makeglossaries opens the file the list of acronyms is built from. A short
 % document never prints that list, and glossaries warns when the file it
@@ -1177,20 +1188,83 @@
     \makeglossaries%
 \fi%
 
+% Which acronyms the document actually uses
+% \glsaddall (see the BIBLIOGRAPHY section) hands every entry of "acronyms.tex"
+% to makeglossaries, whether the document uses it or not, so that the list of
+% acronyms does not depend on what happens to be cited -- and neither does the
+% number of makeglossaries passes. Deciding what to *show* is therefore left to
+% the style below, and every \acro records the key it was given.
+% Two sources are combined, because an acronym may be used after the list is
+% printed, or inside the list itself:
+%  - a flag raised during the current run, which covers everything typeset before
+%    the list: the covers, the body and -- this is the important one -- the
+%    bibliography, where many acronyms appear only as the venue of an entry;
+%  - the keys read back from the .aux file, which cover the rest: the back cover,
+%    and an acronym that only appears in the long form of another entry, hence is
+%    typeset while the list is being built. Those need one further compilation to
+%    show up, exactly as a \ref does.
+% The write is \immediate so that a key recorded inside a box that is measured
+% and thrown away (the trial passes of tabularx, the single-line check of a
+% caption) is not lost with the box
+\makeatletter%
+\newcommand{\hdr@acroused}[1]{\global\@namedef{hdr@au@#1}{}}%
+\newcommand{\hdr@recordacro}[1]{%
+    \ifcsname hdr@aw@#1\endcsname\else%
+        \global\@namedef{hdr@aw@#1}{}%
+        \global\@namedef{hdr@au@#1}{}%
+        \immediate\write\@auxout{\string\hdr@acroused{#1}}%
+        % Using a variation is using the acronym it varies: that one carries the
+        % long form, hence the entry both of them lead to, so it belongs in the
+        % list even when the document only ever writes the variation. The guard
+        % above doubles as the stop condition of a chain of "alt" fields
+        \edef\hdr@ra@alt{\hdr@acroalt{#1}}%
+        \ifdefempty{\hdr@ra@alt}{}{%
+            \expandafter\ifglsentryexists\expandafter{\hdr@ra@alt}%
+            {\expandafter\hdr@recordacro\expandafter{\hdr@ra@alt}}%
+            {\PackageWarning{hdr}{Acronym `#1' varies `\hdr@ra@alt', which is not defined}}%
+        }%
+    \fi}%
+% \hdr@ifacroused{key}{used}{unused}
+\newcommand{\hdr@ifacroused}[3]{\ifcsname hdr@au@#1\endcsname#2\else#3\fi}%
+
+% \hdr@setacrodest{key} leaves in \hdr@acrodest the key of the entry the link of
+% that acronym has to lead to: the acronym itself when the list holds a line for
+% it, the acronym it varies otherwise, and nothing at all when neither is listed
+% -- an entry deliberately kept out of the list, or an "alt" pointing nowhere.
+% The variation itself is never a destination, since it is not printed
+\newcommand{\hdr@acrodest}{}%
+\newcommand{\hdr@setacrodest}[1]{%
+    \ifglshaslong{#1}%
+    {\def\hdr@acrodest{#1}}%
+    {\edef\hdr@acrodest{\hdr@acroalt{#1}}%
+     \ifdefempty{\hdr@acrodest}{}{%
+        \expandafter\ifglsentryexists\expandafter{\hdr@acrodest}%
+        {\expandafter\ifglshaslong\expandafter{\hdr@acrodest}{}{\def\hdr@acrodest{}}}%
+        {\def\hdr@acrodest{}}}}}%
+\makeatother%
+
 % Customize entries
+\makeatletter%
 \newglossarystyle{acronymsstyle}{%
     \renewenvironment{theglossary}{}{}%
     \renewcommand*{\glossentry}[2]{%
         \begingroup%
+        % An entry without a "long" field is a variation of another acronym, or
+        % one deliberately kept out of the list: it is reached through its
+        % tooltip only. An entry the document never uses has no business here
+        % either -- and using a variation counts as using what it varies
         \ifglshaslong{##1}{%
-            \begin{tabularx}{\textwidth}{@{}l@{}X@{}}%
-                \glsentryitem{##1}\glstarget{##1}{\glsentryname{##1}} & \raggedleft\margindotfill\glsentrylong{##1} %
-            \end{tabularx}\\%
+            \hdr@ifacroused{##1}{%
+                \begin{tabularx}{\textwidth}{@{}l@{}X@{}}%
+                    \glsentryitem{##1}\glstarget{##1}{\glsentryname{##1}} & \raggedleft\margindotfill\glsentrylong{##1} %
+                \end{tabularx}\\%
+            }{}%
         }{}%
         \endgroup%
     }%
     \renewcommand*{\glsgroupskip}{}%
 }
+\makeatother%
 \setglossarystyle{acronymsstyle}%
 
 % Set glossary title and avoid too many double pages before
@@ -1439,6 +1513,7 @@
     \def\acroname#1{\glsentrydesc{#1}}%
 }%
 \makeatother%
+\makeatletter%
 \DeclareRobustCommand{\checkacro}[1]{%
     \ifglsentryexists{#1}{}{%
         \PackageWarning{hdr}{Acronym `#1' is not defined}%
@@ -1447,12 +1522,15 @@
 \DeclareRobustCommand{\acro}[1]{%
     \checkacro{#1}%
     \ifglsentryexists{#1}{%
-        % Entries with an empty "long" are not printed in the list of acronyms,
-        % so there is no target to jump to for those (plural/adjective variants)
+        \hdr@recordacro{#1}%
+        % A variation is not printed in the list, so its link leads to the entry
+        % of the acronym it varies; an entry that is listed leads to itself, and
+        % one that is neither carries a tooltip without a link
         \ifhdrglossaryprinted%
-            \ifglshaslong{#1}%
-            {\hdrTooltip{glo:#1}{\glsentrydesc{#1}}{\glsentryname{#1}}}%
+            \hdr@setacrodest{#1}%
+            \ifdefempty{\hdr@acrodest}%
             {\hdrTooltip{}{\glsentrydesc{#1}}{\glsentryname{#1}}}%
+            {\hdrTooltip{glo:\hdr@acrodest}{\glsentrydesc{#1}}{\glsentryname{#1}}}%
         \else%
             \hdrTooltip{}{\glsentrydesc{#1}}{\glsentryname{#1}}%
         \fi%
@@ -1467,9 +1545,11 @@
 \DeclareRobustCommand{\acroname}[1]{%
     \checkacro{#1}%
     \ifglsentryexists{#1}{%
+        \hdr@recordacro{#1}%
         \glsentrydesc{#1}%
     }{#1}%
 }
+\makeatother%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%% CHAPTER PAGES %%%%%%%%%%%%%%%%%
@@ -1596,6 +1676,9 @@
 \defbibheading{bibliography}[\bibname]{\chapter*[bibliography]{\cstBibliography}}%
 
 % Allow acronyms in the bibliography
+% \glsaddall hands every entry to makeglossaries, so the .acr file -- and the
+% number of passes needed to settle it -- does not depend on which acronyms the
+% document uses; "acronymsstyle" then shows only the ones actually recorded
 \AtEveryBibitem{\glsunsetall\glsaddall}%
 
 % We distinguish cases when pages are used for article numbers rather than articles
@@ -1641,10 +1724,10 @@
 \addbibresource{bibliography.bib}
 \DeclareNameFormat{labelname}{%
     \ifnum\value{listcount}=1%
-    \textsc{\namepartfamily}%
-    \ifboolexpr{ test {\ifnumgreater{\value{listtotal}}{1}} or test {\ifmorenames} }%
-    {~\emph{et al.}}%
-    {}%
+        \textsc{\namepartfamily}%
+        \ifboolexpr{ test {\ifnumgreater{\value{listtotal}}{1}} or test {\ifmorenames} }%
+            {~\emph{et al.}}%
+            {}%
     \fi}%
 
 % Sort using sortname
@@ -1920,13 +2003,22 @@
 \makeatletter%
 % Citations: tooltip with the title of the entry + link to its bibliography entry
 % \citeTooltip{tooltip}{text}
+% The label may itself contain an acronym -- an "howpublished" field written as
+% \acro{gdpr} for an online resource, say. Its annotation would sit on the very
+% same rectangle as the one of the citation and, being written last, would capture
+% both the hover and the click, sending the reader to the list of acronyms instead
+% of the bibliography. Annotations are therefore suppressed inside the label, so
+% that an acronym there is only typeset as its short form: this is the treatment
+% \nameref already gives to the acronyms of the name it prints. \hdr@tipsfalse goes
+% inside the argument, hence inside the \sbox that \hdrTooltipLink opens (resp. the
+% \mbox of \hdrTooltip), so the label keeps the tooltip and the link of the citation
 \DeclareRobustCommand{\citeTooltip}[2]{%
     \edef\hdr@cite@dest{cite.\the\c@refsection @\abx@field@entrykey}%
-    \hdrTooltipLink{\hdr@cite@dest}{#1}{#2}}%
+    \hdrTooltipLink{\hdr@cite@dest}{#1}{\hdr@tipsfalse#2}}%
 
 % Same, for entries that are excluded from the bibliography: nothing to link to
 \DeclareRobustCommand{\citeTooltipNoLink}[2]{%
-    \hdrTooltip{}{#1}{\Hy@colorlink\@citecolor#2\Hy@endcolorlink}}%
+    \hdrTooltip{}{#1}{\hdr@tipsfalse\Hy@colorlink\@citecolor#2\Hy@endcolorlink}}%
 \makeatother%
 
 % External references and URLs are only linked when they appear in the

@@ -7,18 +7,29 @@
 % * "long"        -> The developed form shown in the list of acronyms, where the
 %                    letters the short form is made of are usually put in bold
 % * "description" -> What a reader sees when hovering the acronym in the document
-
-% If "long" is empty, the acronym will not appear in the list but will be available for tooltips
-% This can be used for instance to have a plural version of an acronym to show in a tooltip without duplicating the entry
+% * "alt"         -> The key of the acronym this entry is a variation of (optional)
 
 % In the document, use:
 % * \acro{key}     -> Shows the short form, with the description as a tooltip (e.g., "CNN")
 % * \acrofull{key} -> Shows the description, followed by the short form (e.g., "Convolutional Neural Network (CNN)")
 % * \acroname{key} -> Shows the description only (e.g., "Convolutional Neural Network")
 
-% Every entry of this file is listed in every document that prints a list of acronyms,
-% whether it is cited or not, and an acronym is only turned into a link to that list
-% in the documents that do print it
+% This file may hold more acronyms than a document uses: only the ones a document
+% actually writes are listed in it, so the same file can serve several documents
+% without each of them carrying the acronyms of the others. Writing an acronym in
+% a bibliography entry counts as using it, and an acronym is turned into a link to
+% that list only in the documents that do print it
+
+% Variations -- a plural, an adjective, a translation -- are declared without a
+% "long" field, and name in "alt" the key of the acronym they vary. Such an entry
+% has no line of its own in the list: its link leads to the entry of that acronym,
+% and writing only the variation is enough for that entry to be listed. Its own
+% description is what its tooltip shows, so that a plural still reads as a plural
+
+% An entry with neither "long" nor "alt" is never listed and never linked: it is
+% reached through its tooltip only. Use it for an acronym you want to gloss on
+% hover without giving it a line of its own
+
 % This file is shared by the three example documents (HDR, HDR demand, PhD)
 % Entries are sorted alphabetically, which is not required but makes edition easier
 
@@ -34,15 +45,14 @@
     description = {Artificial Intelligence}
 }
 
-% Example of a French counterpart of an existing acronym
-% All entries of this file are listed in every document that prints a list of acronyms,
-% so a language-specific entry is better declared with an empty "long": it then keeps
-% its tooltip, without appearing in the list of the documents written in another language
+% Example of a variation: the French counterpart of the acronym above
+% It has no "long" of its own, so the list holds no line for it; "alt" sends both
+% its link and the fact that it was used to the entry it varies
 \newglossaryentry{ai_fr}
 {
     type        = {acronym},
     name        = {IA},
-    long        = {},
+    alt         = {ai},
     description = {Intelligence Artificielle}
 }
 
@@ -62,22 +72,25 @@
     description = {Convolutional Neural Network}
 }
 
-% Example of a tooltip-only entry: "long" is empty, so it does not pollute the list of acronyms
-% Here, this gives a plural form without duplicating the entry above
+% Another variation: a plural, without duplicating the entry above
+% Hovering it shows "Convolutional Neural Networks", clicking it leads to the
+% "CNN" entry, and a document that only ever writes \acro{cnn_plural} still gets
+% that entry in its list of acronyms
 \newglossaryentry{cnn_plural}
 {
     type        = {acronym},
     name        = {CNNs},
-    long        = {},
+    alt         = {cnn},
     description = {Convolutional Neural Networks}
 }
 
-% Same as above: only used in the French example, hence not listed
+% Example of an entry that is neither listed nor linked: it varies nothing, and
+% giving it no "long" keeps it out of the list while its tooltip still works
+% (a "long" would be fine too -- it is only listed where it is actually used)
 \newglossaryentry{ed}
 {
     type        = {acronym},
     name        = {ED},
-    long        = {},
     description = {École Doctorale}
 }
 

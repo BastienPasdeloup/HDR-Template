@@ -27,6 +27,11 @@ so that you can see every feature in context before writing your own document.
   With the `unnumbered_in_toc` class option, unnumbered sectioning commands (`\section*`, `\subsection*`, ...)
   are listed in the table of contents like the numbered ones, their title starting where a number would.
 * Acronyms with **tooltips** in the PDF, and an automatically generated list of acronyms.
+  Only the acronyms a document actually uses are listed, so one `acronyms.tex` can serve several documents
+  without each of them carrying the acronyms of the others -- an acronym written only in a bibliography
+  entry counts as used. A plural, an adjective or a translation is declared as a *variation*: no `long`
+  field, and the key of the acronym it varies in an `alt` field. Such an entry gets no line of its own,
+  its link leads to that acronym, and using it is enough for that acronym to be listed.
 * A bibliography split into *your own publications* (grouped by category, with clickable icons for the paper,
   the slides, the poster, the video, the code, the prize), *external references*, and *online resources*.
   Entries carry these extras in named fields -- `group`, `slides`, `poster`, `video`, `code`, `prize` --
