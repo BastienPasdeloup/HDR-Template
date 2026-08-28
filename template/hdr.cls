@@ -385,8 +385,8 @@
 % "datatool" support file for each of them -- there is none for French, which is
 % harmless but noisy
 \iflanguage{french}%
-    {\RequirePackage[french]{datetime2}}%
-    {\RequirePackage[en-US]{datetime2}}%
+{\RequirePackage[french]{datetime2}}%
+{\RequirePackage[en-US]{datetime2}}%
 \iflanguage{english}{%
     \newcommand{\mkenglishordinal}[1]{%
         \number#1\textsuperscript{%
@@ -408,7 +408,11 @@
     \DTMsetdatestyle{frenchtoday}%
     \addto\extrasfrench{\DTMsetdatestyle{frenchtoday}}%
 }{}%
-\renewcommand{\date}[1]{%
+% \StrCut is not expandable, so a fragile \date breaks as soon as it appears in a
+% moving argument -- the caption of a figure, written to the .lof and to the .aux
+% for the tooltip of \nameref. Declared robust, it survives the write and is only
+% split when it is actually typeset
+\DeclareRobustCommand{\date}[1]{%
     \StrCut{#1}{-}\yearpart\tempmonthday%
     \StrCut{\tempmonthday}{-}\monthpart\daypart%
     \DTMdisplaydate{\yearpart}{\monthpart}{\daypart}{-1}%
@@ -1637,10 +1641,10 @@
 \addbibresource{bibliography.bib}
 \DeclareNameFormat{labelname}{%
     \ifnum\value{listcount}=1%
-        \textsc{\namepartfamily}%
-        \ifboolexpr{ test {\ifnumgreater{\value{listtotal}}{1}} or test {\ifmorenames} }%
-            {~\emph{et al.}}%
-            {}%
+    \textsc{\namepartfamily}%
+    \ifboolexpr{ test {\ifnumgreater{\value{listtotal}}{1}} or test {\ifmorenames} }%
+    {~\emph{et al.}}%
+    {}%
     \fi}%
 
 % Sort using sortname
