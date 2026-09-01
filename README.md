@@ -121,9 +121,12 @@ template/includes/        Front cover, back cover, chapter background
 
 \arrowBox{color}{Ribbon label}{Heading}{Label & value \\ rows of a table}  % timeline entry
 
-\acro{ai}       % AI, with a tooltip
-\acrofull{ai}   % Artificial Intelligence (AI)
-\acroname{ai}   % Artificial Intelligence
+\acro{ai}                 % AI, with a tooltip
+\acrofull{ai}             % Artificial Intelligence (AI)
+\acroname{ai}             % Artificial Intelligence
+\firstbold{Caltech}       % Caltech with a bold C, for a "long" field whose bold letters are not all typed
+\firstbold[3]{Biomedical} % optional number of letters to embolden, 1 by default
+\firstbold{\acro{ai}}     % also takes an acronym, whose tooltip and link are kept
 
 \nameref{label} % "Chapter 2", "Figure 5", "Definition 1", ... with the name as a tooltip
 \cite{key}      % [J3], [12], ...

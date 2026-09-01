@@ -386,8 +386,8 @@
 % "datatool" support file for each of them -- there is none for French, which is
 % harmless but noisy
 \iflanguage{french}%
-    {\RequirePackage[french]{datetime2}}%
-    {\RequirePackage[en-US]{datetime2}}%
+{\RequirePackage[french]{datetime2}}%
+{\RequirePackage[en-US]{datetime2}}%
 \iflanguage{english}{%
     \newcommand{\mkenglishordinal}[1]{%
         \number#1\textsuperscript{%
@@ -1210,19 +1210,19 @@
 \newcommand{\hdr@acroused}[1]{\global\@namedef{hdr@au@#1}{}}%
 \newcommand{\hdr@recordacro}[1]{%
     \ifcsname hdr@aw@#1\endcsname\else%
-        \global\@namedef{hdr@aw@#1}{}%
-        \global\@namedef{hdr@au@#1}{}%
-        \immediate\write\@auxout{\string\hdr@acroused{#1}}%
-        % Using a variation is using the acronym it varies: that one carries the
-        % long form, hence the entry both of them lead to, so it belongs in the
-        % list even when the document only ever writes the variation. The guard
-        % above doubles as the stop condition of a chain of "alt" fields
-        \edef\hdr@ra@alt{\hdr@acroalt{#1}}%
-        \ifdefempty{\hdr@ra@alt}{}{%
-            \expandafter\ifglsentryexists\expandafter{\hdr@ra@alt}%
-            {\expandafter\hdr@recordacro\expandafter{\hdr@ra@alt}}%
-            {\PackageWarning{hdr}{Acronym `#1' varies `\hdr@ra@alt', which is not defined}}%
-        }%
+    \global\@namedef{hdr@aw@#1}{}%
+    \global\@namedef{hdr@au@#1}{}%
+    \immediate\write\@auxout{\string\hdr@acroused{#1}}%
+    % Using a variation is using the acronym it varies: that one carries the
+    % long form, hence the entry both of them lead to, so it belongs in the
+    % list even when the document only ever writes the variation. The guard
+    % above doubles as the stop condition of a chain of "alt" fields
+    \edef\hdr@ra@alt{\hdr@acroalt{#1}}%
+    \ifdefempty{\hdr@ra@alt}{}{%
+        \expandafter\ifglsentryexists\expandafter{\hdr@ra@alt}%
+        {\expandafter\hdr@recordacro\expandafter{\hdr@ra@alt}}%
+        {\PackageWarning{hdr}{Acronym `#1' varies `\hdr@ra@alt', which is not defined}}%
+    }%
     \fi}%
 % \hdr@ifacroused{key}{used}{unused}
 \newcommand{\hdr@ifacroused}[3]{\ifcsname hdr@au@#1\endcsname#2\else#3\fi}%
@@ -1237,10 +1237,10 @@
     \ifglshaslong{#1}%
     {\def\hdr@acrodest{#1}}%
     {\edef\hdr@acrodest{\hdr@acroalt{#1}}%
-     \ifdefempty{\hdr@acrodest}{}{%
-        \expandafter\ifglsentryexists\expandafter{\hdr@acrodest}%
-        {\expandafter\ifglshaslong\expandafter{\hdr@acrodest}{}{\def\hdr@acrodest{}}}%
-        {\def\hdr@acrodest{}}}}}%
+        \ifdefempty{\hdr@acrodest}{}{%
+            \expandafter\ifglsentryexists\expandafter{\hdr@acrodest}%
+            {\expandafter\ifglshaslong\expandafter{\hdr@acrodest}{}{\def\hdr@acrodest{}}}%
+            {\def\hdr@acrodest{}}}}}%
 \makeatother%
 
 % Customize entries
@@ -1511,31 +1511,117 @@
     \def\acro#1{\glsentryname{#1}}%
     \def\acrofull#1{\glsentrydesc{#1} (\glsentryname{#1})}%
     \def\acroname#1{\glsentrydesc{#1}}%
+    \let\firstbold\hdr@firstbold@string%
 }%
 \makeatother%
+
+% Puts the first letters of its argument in bold, for the "long" field of an
+% acronym whose bold letters are not all typed by hand. The optional argument is
+% how many of them go in bold, one by default:
+% \firstbold{Caltech}       shows "Caltech"    with a bold C
+% \firstbold[3]{Biomedical} shows "Biomedical" with a bold Bio
+% \firstbold[2]{\acro{ai}}  shows "AI"         with both letters bold
+% Asking for more letters than the argument holds puts all of it in bold, and
+% asking for none puts nothing in bold
+% The argument is one of three things:
+%  - text, or anything that expands to text -- \glsentryname{key}, the short form
+%    of another acronym, is expanded before its letters are counted;
+%  - a single \acro{key}, which is a different matter: \acro is deliberately robust
+%    and records the key it is given, so it cannot be taken apart letter by letter.
+%    That case is recognised below and sent through the same machinery as \acro
+%    itself, so the acronym keeps its tooltip and its link;
+%  - anything else, which is left alone with a warning
+% In a PDF string the argument is shown as it stands, since no formatting command
+% survives there
+\makeatletter%
+\newcommand{\hdr@firstbold@warn}{%
+    \PackageWarning{hdr}{%
+        \protect\firstbold\space takes text, an expandable command\MessageBreak
+        or a single \protect\acro. Nothing was put in bold}}%
+\ExplSyntaxOn
+\NewDocumentCommand { \firstbold } { O{1} m }
+    { \__hdr_firstbold:nn {#1} {#2} }
+% A "long" field reaches this through a protected expansion, which turns a robust
+% \acro into \protect followed by the internal command of \acro. Drop that
+% \protect, then look at what follows
+\cs_new_protected:Npn \__hdr_firstbold:nn #1#2
+    {
+        \tl_if_blank:nF {#2}
+            {
+                \tl_if_head_eq_meaning:nNTF {#2} \protect
+                    { \__hdr_firstbold_unprotect:nw {#1} #2 \q_stop }
+                    { \__hdr_firstbold_select:nn {#1} {#2} }
+            }
+    }
+\cs_new_protected:Npn \__hdr_firstbold_unprotect:nw #1 \protect #2 \q_stop
+    { \__hdr_firstbold_select:nn {#1} {#2} }
+% An acronym -- written \acro{key}, or left as the internal command of \acro by a
+% protected expansion -- goes through the machinery of \acro itself, so that it
+% keeps its tooltip and its link. Anything else is text
+\cs_new_protected:Npn \__hdr_firstbold_select:nn #1#2
+    {
+        \bool_lazy_or:nnTF
+            { \tl_if_head_eq_meaning_p:nN {#2} \acro }
+            { \tl_if_head_eq_meaning_p:nN {#2} \hdr@acro@inner }
+            { \__hdr_firstbold_acro:nnnw {#1} #2 \q_stop }
+            { \__hdr_firstbold_text:ne {#1} {#2} }
+    }
+% Text, or anything that expands to text: cut after the n-th letter
+\cs_new_protected:Npn \__hdr_firstbold_text:nn #1#2
+    {
+        \textbf { \tl_range:nnn {#2} { 1 } {#1} }
+        \tl_range:nnn {#2} { #1 + 1 } { -1 }
+    }
+\cs_generate_variant:Nn \__hdr_firstbold_text:nn { ne }
+% The short form of the acronym goes through \firstbold in turn, and the recursion
+% stops there because \glsentryname is expandable. Anything trailing the acronym
+% means the argument was not one of the shapes above: it is left alone
+\cs_new_protected:Npn \__hdr_firstbold_acro:nnnw #1#2#3#4 \q_stop
+    {
+        \tl_if_blank:nTF {#4}
+            { \hdr@acro@show { \firstbold [#1] } {#3} }
+            { \hdr@firstbold@warn #2 {#3} #4 }
+    }
+\ExplSyntaxOff
+% What \firstbold reduces to in a PDF string (bookmarks, tooltips): the argument,
+% whose own \acro is reduced by the block above. A PDF string is built by
+% expansion only, so this has to be *expandable*: the optional argument of a
+% \newcommand is read by \@ifnextchar, which does not expand, and the "[1]" would
+% be typeset into the string instead of being consumed
+\NewExpandableDocumentCommand{\hdr@firstbold@string}{O{1} m}{#2}%
+\makeatother%
+
 \makeatletter%
 \DeclareRobustCommand{\checkacro}[1]{%
     \ifglsentryexists{#1}{}{%
         \PackageWarning{hdr}{Acronym `#1' is not defined}%
     }%
 }
-\DeclareRobustCommand{\acro}[1]{%
-    \checkacro{#1}%
-    \ifglsentryexists{#1}{%
-        \hdr@recordacro{#1}%
+% The short form of an acronym, with its description as a tooltip and -- in a
+% document that prints the list -- a link to its entry. The first argument is the
+% command the short form is shown through, so that \acro prints it as it stands
+% and \firstbold{\acro{key}} puts its first letters in bold
+\newcommand{\hdr@acro@show}[2]{%
+    \checkacro{#2}%
+    \ifglsentryexists{#2}{%
+        \hdr@recordacro{#2}%
         % A variation is not printed in the list, so its link leads to the entry
         % of the acronym it varies; an entry that is listed leads to itself, and
         % one that is neither carries a tooltip without a link
         \ifhdrglossaryprinted%
-            \hdr@setacrodest{#1}%
+            \hdr@setacrodest{#2}%
             \ifdefempty{\hdr@acrodest}%
-            {\hdrTooltip{}{\glsentrydesc{#1}}{\glsentryname{#1}}}%
-            {\hdrTooltip{glo:\hdr@acrodest}{\glsentrydesc{#1}}{\glsentryname{#1}}}%
+            {\hdrTooltip{}{\glsentrydesc{#2}}{#1{\glsentryname{#2}}}}%
+            {\hdrTooltip{glo:\hdr@acrodest}{\glsentrydesc{#2}}{#1{\glsentryname{#2}}}}%
         \else%
-            \hdrTooltip{}{\glsentrydesc{#1}}{\glsentryname{#1}}%
+            \hdrTooltip{}{\glsentrydesc{#2}}{#1{\glsentryname{#2}}}%
         \fi%
-    }{#1}%
+    }{#2}%
 }
+\DeclareRobustCommand{\acro}[1]{\hdr@acro@show{\@firstofone}{#1}}
+% The command \acro is really made of: what a protected expansion leaves behind in
+% place of \acro, and what \firstbold above recognises an acronym by
+\expandafter\let\expandafter\hdr@acro@inner\csname acro \endcsname%
 \DeclareRobustCommand{\acrofull}[1]{%
     \checkacro{#1}%
     \ifglsentryexists{#1}{%
@@ -1724,10 +1810,10 @@
 \addbibresource{bibliography.bib}
 \DeclareNameFormat{labelname}{%
     \ifnum\value{listcount}=1%
-        \textsc{\namepartfamily}%
-        \ifboolexpr{ test {\ifnumgreater{\value{listtotal}}{1}} or test {\ifmorenames} }%
-            {~\emph{et al.}}%
-            {}%
+    \textsc{\namepartfamily}%
+    \ifboolexpr{ test {\ifnumgreater{\value{listtotal}}{1}} or test {\ifmorenames} }%
+    {~\emph{et al.}}%
+    {}%
     \fi}%
 
 % Sort using sortname

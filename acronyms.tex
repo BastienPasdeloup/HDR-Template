@@ -14,6 +14,17 @@
 % * \acrofull{key} -> Shows the description, followed by the short form (e.g., "Convolutional Neural Network (CNN)")
 % * \acroname{key} -> Shows the description only (e.g., "Convolutional Neural Network")
 
+% The bold letters of a "long" field are normally typed by hand. Where they cannot
+% be, \firstbold emboldens the first n letters of what it is given (n = 1 by
+% default), be it text or another acronym:
+% * \firstbold{Caltech}       -> "Caltech" with a bold C
+% * \firstbold[3]{Biomedical} -> "Biomedical" with a bold Bio
+% * \firstbold{\acro{key}}     -> the short form of another acronym, first letter in
+%                                bold, keeping its tooltip and its link. Use it for
+%                                a nested acronym that contributes only its first
+%                                letters to the one being defined, as UCSD does in
+%                                CUB: long = {\textbf{C}altech \firstbold{\acro{ucsd}} \textbf{B}irds}
+
 % This file may hold more acronyms than a document uses: only the ones a document
 % actually writes are listed in it, so the same file can serve several documents
 % without each of them carrying the acronyms of the others. Writing an acronym in
