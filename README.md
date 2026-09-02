@@ -108,7 +108,8 @@ template/includes/        Front cover, back cover, chapter background
 
 ```latex
 \chapter[label]{Title}[Text shown on the chapter page]   % starred variant: unnumbered
-\section[label]{Title}                                   % same for subsection, subsubsection, paragraph
+\section[label]{Title}                                   % same for subsection, subsubsection, paragraph, subparagraph
+\labeledText[label]{text}                                % names a place, not a section: see \nameref below
 
 \begin{figure}[label]{Caption}   ... \end{figure}        % no placement specifier, caption is mandatory
 \begin{subfigure}[label]{width}{Caption} ... \end{subfigure}
@@ -129,6 +130,7 @@ template/includes/        Front cover, back cover, chapter background
 \firstbold{\acro{ai}}     % also takes an acronym, whose tooltip and link are kept
 
 \nameref{label} % "Chapter 2", "Figure 5", "Definition 1", ... with the name as a tooltip
+                % for a \labeledText, its own text, e.g. the "(a)" of a part of a figure
 \cite{key}      % [J3], [12], ...
 ```
 

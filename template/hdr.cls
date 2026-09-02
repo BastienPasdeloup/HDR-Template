@@ -40,6 +40,11 @@
 % - \nameref prints the number of the element it points to ("Chapter III",
 %   "Figure 12"), and hovering it shows the name of that element as a tooltip:
 %   the title of the chapter, the caption of the figure, the title of the box
+% - \labeledText[label]{text} places "text" wherever it is written -- in a
+%   sentence, in a node of a tikzpicture -- in the colour of the titles and the
+%   font of the text around it, and \nameref{label} then prints that text and
+%   links to it. This is how the parts (a), (b), ... of a figure are labelled and
+%   commented in its caption
 % - Check "bibliography.bib" and "acronyms.tex" to see how they work
 % - Compile with LuaLaTeX: latexmk -lualatex -outdir=build main_hdr.tex
 
@@ -337,6 +342,7 @@
 \setlist[itemize]{label=•}%
 \raggedbottom%
 \titlespacing*{\paragraph}{\parindent}{\parskip}{\parskip}%
+\titlespacing*{\subparagraph}{\parindent}{\parskip}{\parskip}%
 
 % QR codes
 % The lowest error-correction level keeps the number of modules as low as it can
@@ -375,6 +381,7 @@
 \titleformat{\subsection}{\normalfont\large\bfseries\color{titlesColor}\hypersetup{linkcolor=titlesColor}}{\dashuline{\thesubsection\quad}}{0pt}{\dashuline}%
 \titleformat{\subsubsection}{\normalfont\normalsize\bfseries\color{titlesColor}\hypersetup{linkcolor=titlesColor}}{\dotuline{\thesubsubsection\quad}}{0pt}{\dotuline}%
 \titleformat{\paragraph}[runin]{\normalfont\normalsize\bfseries\color{titlesColor}\hypersetup{linkcolor=titlesColor}}{\theparagraph}{1em}{}%
+\titleformat{\subparagraph}[runin]{\normalfont\normalsize\color{titlesColor}\hypersetup{linkcolor=titlesColor}}{\thesubparagraph}{1em}{}%
 \captionsetup[figure]{labelsep=quad, name={Figure}, singlelinecheck=true, labelfont={color=titlesColor}, format=hang, justification=justified}%
 \captionsetup[subfigure]{labelsep=quad, singlelinecheck=true, labelfont={color=titlesColor}, format=hang, justification=justified}%
 \captionsetup[table]{labelsep=quad, name={Table}, singlelinecheck=true, labelfont={color=titlesColor}, format=hang, justification=justified}%
@@ -1015,6 +1022,28 @@
     \def\@currentlabelname{#3}%
     \hdrlabeltitle{}%
     \IfValueT{#2}{\label{#2}}%
+}%
+\makeatother%
+
+% Labeled text
+% Not a sectioning command, but a piece of text that can be dropped anywhere and
+% referred to from elsewhere: \labeledText[label]{text} sets "text" in the colour
+% of the titles, keeping the font and the size of the text around it, and
+% \nameref{label} prints that same text and links to where it stands. It is what
+% labels the parts (a), (b), ... of a figure whose caption comments each of them
+% in turn
+% Nothing reaches the table of contents, and no name is recorded beside the
+% label, since what \nameref prints is already the text of the element: the
+% reference therefore keeps the plain link of hyperref
+% Everything here stays in horizontal mode, so that the command also works inside
+% the node of a tikzpicture or in the middle of a sentence
+\makeatletter%
+\NewDocumentCommand{\labeledText}{o m}{%
+    \phantomsection%
+    \textcolor{titlesColor}{#2}%
+    \def\@currentlabelname{#2}%
+    \hdrlabeltitle{}%
+    \IfValueT{#1}{\label{#1}}%
 }%
 \makeatother%
 
