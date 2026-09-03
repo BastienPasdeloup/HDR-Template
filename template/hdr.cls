@@ -40,6 +40,16 @@
 % - \nameref prints the number of the element it points to ("Chapter III",
 %   "Figure 12"), and hovering it shows the name of that element as a tooltip:
 %   the title of the chapter, the caption of the figure, the title of the box
+% - No page ever ends with a heading. Every guarantee below claims room through
+%   \hdr@needvspace, which lowers \pagegoal and offers a \penalty9999 so that
+%   what cannot be shown properly starts on the next page, taking a heading
+%   just above it along. Two of them are needed. \bottomtitlespace is the room
+%   a heading claims under itself: titlesec's own "nobottomtitles*" applies it,
+%   and \hdr@bottomtitle applies it again to a heading that follows another
+%   heading, which titlesec skips and which leaves a run of headings unprotected
+%   as a whole. \arrowBoxNeed is the room an \arrowBox claims before it starts,
+%   since the smallest fragment "framed" can cut is a heading plus two rows and
+%   squeezing that into less overflows the ribbon. Both are tunable
 % - \labeledText[label]{text} places "text" wherever it is written -- in a
 %   sentence, in a node of a tikzpicture -- in the colour of the titles and the
 %   font of the text around it, and \nameref{label} then prints that text and
@@ -109,6 +119,16 @@
 % still reported (there is none at the time of writing)
 \hbadness=10000%
 \vbadness=10000%
+
+% A paragraph broken across two pages keeps at least two lines on either side of
+% the break: \clubpenalty forbids a break just after its first line,
+% \widowpenalty just before its last one, and \displaywidowpenalty does the same
+% for the line that precedes a display. A paragraph of two lines therefore never
+% splits at all. The kernel refreshes \@clubpenalty from \clubpenalty inside
+% \document, so the value set here is also the one restored after a heading
+\clubpenalty=10000%
+\widowpenalty=10000%
+\displaywidowpenalty=10000%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%% OPTIONS %%%%%%%%%%%%%%%%%%%%
@@ -334,7 +354,62 @@
 
 % Spacing
 \RequirePackage{enumitem}%
-\RequirePackage{titlesec}%
+% "nobottomtitles*" turns on titlesec's own guarantee that no title is left in
+% the bottom band of a page: titlesec lowers \pagegoal by \bottomtitlespace and
+% puts a \penalty9999 in front of the title, so a title with too little room
+% under it moves to the next page instead. The guarantee is off by default
+% (\bottomtitlespace is then -1pt), which is why headings used to end a page.
+% The starred form keeps titlesec from folding the page's stretchability into
+% the band, which is what this class wants: it sets \raggedbottom, so every page
+% carries stretch and the unstarred correction would widen the band at random
+% titlesec skips the protection for a title that directly follows another title,
+% so the first heading of a run is the one that has to claim room for the whole
+% run *and* for the content underneath it. Hence the width of the band: a fifth
+% of the text height holds two headings plus the first fragment of what comes
+% after them. It is also titlesec's own default for this option. Note that
+% \bottomtitlespace is a macro and not a length -- titlesec says so itself --
+% so it is set with \def and not with \setlength
+\RequirePackage[nobottomtitles*]{titlesec}%
+\def\bottomtitlespace{.15\textheight}%
+
+% Claims a given amount of room on the current page, moving what follows to the
+% next page when it is not there. This is titlesec's own technique, factored out
+% so the page-break guarantees of this class all use the same one: lower
+% \pagegoal by what is needed, then offer a \penalty9999, so the page builder
+% finds the page overfull and ejects at the best break it can still see. Two
+% properties matter. Nothing is claimed while \pagegoal is still \maxdimen,
+% which is the mark of a page that has no material yet, since a claim there
+% could only produce an empty page. And when the claim fires directly after a
+% heading, the best break TeX can still see is the \@secpenalty in front of that
+% heading, everything in between carrying \nobreak, so the heading travels along
+% with the content instead of being left behind
+\newcommand{\hdr@needvspace}[1]{%
+    \par%
+    \begingroup%
+        \@tempskipb\pagegoal%
+        \ifdim\@tempskipb<\maxdimen%
+            \@tempskipa\pagegoal%
+            \advance\@tempskipa-\dimexpr#1\relax%
+            \pagegoal\@tempskipa%
+            \def\@textbottom{\vskip\z@\@plus.0001fil}%
+            \penalty9999%
+            \pagegoal\@tempskipb%
+        \fi%
+    \endgroup}%
+
+% titlesec skips the guarantee above for a title that directly follows another
+% title, on the grounds that the break between those two is already forbidden.
+% True, but it leaves a *run* of headings unprotected as a whole: the first
+% heading claims the band, the rest of the run then eats it, and what gets
+% pushed to the next page is the content, not the headings. So the band is
+% claimed again from the position of the following heading, which measures it
+% under the whole run instead of under its first line
+\newcommand{\hdr@bottomtitle}{%
+    \if@nobreak%
+        \ifdim\bottomtitlespace>\z@%
+            \hdr@needvspace{\bottomtitlespace}%
+        \fi%
+    \fi}%
 \setlength{\parindent}{0pt}%
 \setlength{\parskip}{\cstParagraphSpacing}%
 \renewcommand{\arraystretch}{1.3}%
@@ -938,6 +1013,7 @@
 \makeatletter%
 \let\oldsection\section%
 \RenewDocumentCommand{\section}{s o m}{%
+    \hdr@bottomtitle%
     \IfBooleanTF{#1}{%
         \phantomsection%
         \oldsection*{#3}%
@@ -957,6 +1033,7 @@
 \makeatletter%
 \let\oldsubsection\subsection%
 \RenewDocumentCommand{\subsection}{s o m}{%
+    \hdr@bottomtitle%
     \IfBooleanTF{#1}{%
         \phantomsection%
         \oldsubsection*{#3}%
@@ -976,6 +1053,7 @@
 \makeatletter%
 \let\oldsubsubsection\subsubsection%
 \RenewDocumentCommand{\subsubsection}{s o m}{%
+    \hdr@bottomtitle%
     \IfBooleanTF{#1}{%
         \phantomsection%
         \oldsubsubsection*{#3}%
@@ -995,6 +1073,7 @@
 \makeatletter%
 \let\oldparagraph\paragraph%
 \RenewDocumentCommand{\paragraph}{s o m}{%
+    \hdr@bottomtitle%
     \IfBooleanTF{#1}{%
         \phantomsection%
         \oldparagraph*{#3}%
@@ -1012,6 +1091,7 @@
 \makeatletter%
 \let\oldsubparagraph\subparagraph%
 \RenewDocumentCommand{\subparagraph}{s o m}{%
+    \hdr@bottomtitle%
     \IfBooleanTF{#1}{%
         \phantomsection%
         \oldsubparagraph*{#3}%
@@ -2469,6 +2549,19 @@
 % about an overfull \vbox. This tiny amount of shrink between two rows (invisible,
 % and only a few points over a whole fragment) is enough to absorb it
 \newcommand{\arrowBoxRowShrink}{1pt}%
+% Room a box claims before it starts. The row loop forbids a break after the
+% first row, so the smallest first fragment "framed" can cut is the heading plus
+% two rows; asked to fit less than that, it squeezes the fragment in anyway, the
+% shrink above is not enough to absorb it, and the last row comes to rest below
+% the ribbon. Claiming that much room up front means a box that cannot show its
+% first fragment properly starts on the next page instead -- and takes a heading
+% sitting just above it along, which is what keeps a heading followed by a box
+% off the foot of a page
+% The amount is that smallest fragment, added up: the padding above the heading,
+% the heading, the gap under it, and two rows. A row is a baseline plus
+% \valparskip, not just a baseline, because \\ inside these tables is
+% \oldnewline[\valparskip]
+\newcommand{\arrowBoxNeed}{3\baselineskip+4\valparskip}%
 \newcount\hdr@ab@nrows%
 \newcount\hdr@ab@row%
 
@@ -2684,6 +2777,7 @@
 % Boxes using the ribbon
 \newcommand{\arrowBox}[4]{%
     \par%
+    \hdr@needvspace{\arrowBoxNeed}%
     \begingroup%
     \hdr@ab@setgeometry%
     \def\hdr@ab@color{#1}%

@@ -8,6 +8,11 @@
 %                    letters the short form is made of are usually put in bold
 % * "description" -> What a reader sees when hovering the acronym in the document
 % * "alt"         -> The key of the acronym this entry is a variation of (optional)
+% * "sort"        -> What the list of acronyms sorts the entry on (optional). Only
+%                    needed when "name" is not plain text: the list sorts on "name"
+%                    by default, so an entry whose short form carries markup or
+%                    punctuation (e.g., \emph{i.i.d.}) would otherwise leave its
+%                    alphabetical place. Give the bare letters here (e.g., "IID")
 
 % In the document, use:
 % * \acro{key}     -> Shows the short form, with the description as a tooltip (e.g., "CNN")
