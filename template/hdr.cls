@@ -887,7 +887,7 @@
 % that has just been labelled, and must not leak to the next label of the document
 \AddToHookWithArguments{label}{%
     \ifdefempty{\hdr@currentlabeltitle}{}{%
-        \protected@write\@auxout{}%
+        \protected@write\@auxout{\hdr@nofootnotes}%
         {\string\hdr@newlabeltitle{#1}{\hdr@currentlabeltitle}}}%
     \gdef\hdr@currentlabeltitle{}}%
 \makeatother%
@@ -957,7 +957,7 @@
         \phantomsection%
         \addcontentsline{toc}{part}{#3}%
         \hdr@makeparthead{#3}{}%
-        \def\@currentlabelname{#3}%
+        \hdr@setlabelname{#3}%
         \hdrlabeltitle{}%
     }{%
         \cleardoublepage%
@@ -998,7 +998,7 @@
         \else%
             \oldchapter*{#3}%
         \fi%
-        \def\@currentlabelname{#3}%
+        \hdr@setlabelname{#3}%
         \hdrlabeltitle{}%
     }{%
         \oldchapter{#3}%
@@ -1018,7 +1018,7 @@
         \phantomsection%
         \oldsection*{#3}%
         \hdr@starcontentsline{section}{#3}%
-        \def\@currentlabelname{#3}%
+        \hdr@setlabelname{#3}%
         \hdrlabeltitle{}%
     }{%
         \oldsection{#3}%
@@ -1038,7 +1038,7 @@
         \phantomsection%
         \oldsubsection*{#3}%
         \hdr@starcontentsline{subsection}{#3}%
-        \def\@currentlabelname{#3}%
+        \hdr@setlabelname{#3}%
         \hdrlabeltitle{}%
     }{%
         \oldsubsection{#3}%
@@ -1058,7 +1058,7 @@
         \phantomsection%
         \oldsubsubsection*{#3}%
         \hdr@starcontentsline{subsubsection}{#3}%
-        \def\@currentlabelname{#3}%
+        \hdr@setlabelname{#3}%
         \hdrlabeltitle{}%
     }{%
         \oldsubsubsection{#3}%
@@ -1081,7 +1081,7 @@
     }{%
         \oldparagraph{#3}%
     }%
-    \def\@currentlabelname{#3}%
+    \hdr@setlabelname{#3}%
     \hdrlabeltitle{}%
     \IfValueT{#2}{\label{#2}}%
 }%
@@ -1099,7 +1099,7 @@
     }{%
         \oldsubparagraph{#3}%
     }%
-    \def\@currentlabelname{#3}%
+    \hdr@setlabelname{#3}%
     \hdrlabeltitle{}%
     \IfValueT{#2}{\label{#2}}%
 }%
@@ -3096,12 +3096,106 @@
         \Hy@raisedlink{\hypertarget{Hfootnote.\@thefnmark}{}}%
         \small\makebox[2em][l]{\textcolor{titlesColor}{(\@thefnmark)}}#1%
     }%
+    % The colour and the font of the mark are pinned, and not left to the
+    % surroundings: the titles of the headings are set in bold, in the colour of
+    % the titles, and they colour every link they carry the same way, all of
+    % which the mark of a footnote carried by such a title would follow. It is a
+    % link to the note and not a piece of the title, so it looks the same
+    % wherever it stands
     \renewcommand{\@makefnmark}{%
-        \hyperlink{Hfootnote.\@thefnmark}{%
-            \textsuperscript{\small(\@thefnmark)}%
-        }%
+        \begingroup%
+            \hypersetup{linkcolor=linksColor}%
+            \hyperlink{Hfootnote.\@thefnmark}{%
+                \textsuperscript{\normalfont\small(\@thefnmark)}%
+            }%
+        \endgroup%
     }%
 }%
+
+% The titles of the sections are underlined with ulem, which sets them word by
+% word: the mark of a footnote carried by such a title is placed between two of
+% those boxes, where TeX is not in horizontal mode. \@footnotemark then saves no
+% space factor before the mark, and reads back after it one that was never set.
+% A neutral value stands in, there being no space factor to preserve when the
+% mark does not follow anything
+\providecommand{\@x@sf}{1000}%
+
+% Footnotes in the title of a heading
+% The title of a heading is a moving argument: the very tokens that are typeset
+% on the page are also written to the .toc file, handed to the running heads, and
+% turned into a PDF bookmark. A \footnote survives none of those trips -- it
+% breaks the write of the .toc outright -- and it has nothing to do there anyway:
+% it would drop a stray footnote in the table of contents, stealing a number from
+% the footnotes of the text
+% So the footnote commands become no-ops everywhere a title is written out rather
+% than typeset. They have to vanish by expansion, taking their argument with
+% them, since that is what the write of a moving argument does to them: hence
+% \DeclareExpandableDocumentCommand rather than \newcommand
+% \footnotemark is the one that cannot be declared that way, an expandable
+% command having no means of looking for an optional argument that may not be
+% there: it is simply dropped, and a \footnotemark[3] in a title would leave its
+% bracketed number behind
+\DeclareExpandableDocumentCommand{\hdr@gobblefootnote}{o m}{}%
+\newcommand{\hdr@nofootnotes}{%
+    \let\footnote\hdr@gobblefootnote%
+    \let\footnotetext\hdr@gobblefootnote%
+    \let\footnotemark\@empty}%
+
+% Table of contents, list of figures and list of tables -- and the mini-tables of
+% contents with them, since those are read back from the .toc
+% A wrapper rather than a patch of the list of commands the kernel already
+% neutralizes there (\label, \index, \glossary), whose spelling has changed over
+% the years. At the beginning of the document, and not here, so that the packages
+% that patch \addtocontents of their own -- biblatex does -- still find the
+% definition they expect
+\long\def\hdr@addtocontents#1#2{%
+    \begingroup%
+        \hdr@nofootnotes%
+        \hdr@oldaddtocontents{#1}{#2}%
+    \endgroup}%
+\AtBeginDocument{%
+    \let\hdr@oldaddtocontents\addtocontents%
+    \let\addtocontents\hdr@addtocontents}%
+
+% Running heads
+% \markboth and \markright are robust, so the wrapper has to reach the command
+% that carries their body -- the one whose name ends with a space -- or it would
+% call itself back
+\expandafter\let\expandafter\hdr@oldmarkboth\csname markboth \endcsname%
+\expandafter\def\csname markboth \endcsname#1#2{%
+    \begingroup%
+        \hdr@nofootnotes%
+        \hdr@oldmarkboth{#1}{#2}%
+    \endgroup}%
+\expandafter\let\expandafter\hdr@oldmarkright\csname markright \endcsname%
+\expandafter\def\csname markright \endcsname#1{%
+    \begingroup%
+        \hdr@nofootnotes%
+        \hdr@oldmarkright{#1}%
+    \endgroup}%
+
+% Bookmarks of the PDF
+\pdfstringdefDisableCommands{\hdr@nofootnotes}%
+
+% Name of an unnumbered element, which nameref records without expanding it (see
+% the REFERENCES section): a footnote left in there would be printed as its own
+% source by \nameref. Removed as well, but only from the titles that carry one,
+% so that every other title still reaches nameref exactly as it is written
+\newcommand{\hdr@hasfootnote}[1]{%
+    \in@{\footnote}{#1}%
+    \ifin@\else\in@{\footnotemark}{#1}\fi%
+    \ifin@\else\in@{\footnotetext}{#1}\fi}%
+\newcommand{\hdr@setlabelname}[1]{%
+    \hdr@hasfootnote{#1}%
+    \ifin@%
+        \begingroup%
+            \hdr@nofootnotes%
+            \protected@xdef\hdr@labelname{#1}%
+        \endgroup%
+        \let\@currentlabelname\hdr@labelname%
+    \else%
+        \def\@currentlabelname{#1}%
+    \fi}%
 \makeatother%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
