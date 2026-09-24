@@ -386,15 +386,15 @@
 \newcommand{\hdr@needvspace}[1]{%
     \par%
     \begingroup%
-        \@tempskipb\pagegoal%
-        \ifdim\@tempskipb<\maxdimen%
-            \@tempskipa\pagegoal%
-            \advance\@tempskipa-\dimexpr#1\relax%
-            \pagegoal\@tempskipa%
-            \def\@textbottom{\vskip\z@\@plus.0001fil}%
-            \penalty9999%
-            \pagegoal\@tempskipb%
-        \fi%
+    \@tempskipb\pagegoal%
+    \ifdim\@tempskipb<\maxdimen%
+        \@tempskipa\pagegoal%
+        \advance\@tempskipa-\dimexpr#1\relax%
+        \pagegoal\@tempskipa%
+        \def\@textbottom{\vskip\z@\@plus.0001fil}%
+        \penalty9999%
+        \pagegoal\@tempskipb%
+    \fi%
     \endgroup}%
 
 % titlesec skips the guarantee above for a title that directly follows another
@@ -441,7 +441,7 @@
 \definecolor{missingColor}{HTML}{dddddd}%
 \definecolor{titlesColor}{HTML}{00b9df}%
 \definecolor{linksColor}{HTML}{003474}%
-\definecolor{separatorColor}{HTML}{dddddd}%
+\definecolor{separatorColor}{HTML}{00b9df}%
 \definecolor{titleBoxColor}{HTML}{f5f5f5}%
 \definecolor{boxEnvColor}{HTML}{f5f5f5}%
 
@@ -1649,48 +1649,48 @@
         or a single \protect\acro. Nothing was put in bold}}%
 \ExplSyntaxOn
 \NewDocumentCommand { \firstbold } { O{1} m }
-    { \__hdr_firstbold:nn {#1} {#2} }
+{ \__hdr_firstbold:nn {#1} {#2} }
 % A "long" field reaches this through a protected expansion, which turns a robust
 % \acro into \protect followed by the internal command of \acro. Drop that
 % \protect, then look at what follows
 \cs_new_protected:Npn \__hdr_firstbold:nn #1#2
+{
+    \tl_if_blank:nF {#2}
     {
-        \tl_if_blank:nF {#2}
-            {
-                \tl_if_head_eq_meaning:nNTF {#2} \protect
-                    { \__hdr_firstbold_unprotect:nw {#1} #2 \q_stop }
-                    { \__hdr_firstbold_select:nn {#1} {#2} }
-            }
+        \tl_if_head_eq_meaning:nNTF {#2} \protect
+        { \__hdr_firstbold_unprotect:nw {#1} #2 \q_stop }
+        { \__hdr_firstbold_select:nn {#1} {#2} }
     }
+}
 \cs_new_protected:Npn \__hdr_firstbold_unprotect:nw #1 \protect #2 \q_stop
-    { \__hdr_firstbold_select:nn {#1} {#2} }
+{ \__hdr_firstbold_select:nn {#1} {#2} }
 % An acronym -- written \acro{key}, or left as the internal command of \acro by a
 % protected expansion -- goes through the machinery of \acro itself, so that it
 % keeps its tooltip and its link. Anything else is text
 \cs_new_protected:Npn \__hdr_firstbold_select:nn #1#2
-    {
-        \bool_lazy_or:nnTF
-            { \tl_if_head_eq_meaning_p:nN {#2} \acro }
-            { \tl_if_head_eq_meaning_p:nN {#2} \hdr@acro@inner }
-            { \__hdr_firstbold_acro:nnnw {#1} #2 \q_stop }
-            { \__hdr_firstbold_text:ne {#1} {#2} }
-    }
+{
+    \bool_lazy_or:nnTF
+    { \tl_if_head_eq_meaning_p:nN {#2} \acro }
+    { \tl_if_head_eq_meaning_p:nN {#2} \hdr@acro@inner }
+    { \__hdr_firstbold_acro:nnnw {#1} #2 \q_stop }
+    { \__hdr_firstbold_text:ne {#1} {#2} }
+}
 % Text, or anything that expands to text: cut after the n-th letter
 \cs_new_protected:Npn \__hdr_firstbold_text:nn #1#2
-    {
-        \textbf { \tl_range:nnn {#2} { 1 } {#1} }
-        \tl_range:nnn {#2} { #1 + 1 } { -1 }
-    }
+{
+    \textbf { \tl_range:nnn {#2} { 1 } {#1} }
+    \tl_range:nnn {#2} { #1 + 1 } { -1 }
+}
 \cs_generate_variant:Nn \__hdr_firstbold_text:nn { ne }
 % The short form of the acronym goes through \firstbold in turn, and the recursion
 % stops there because \glsentryname is expandable. Anything trailing the acronym
 % means the argument was not one of the shapes above: it is left alone
 \cs_new_protected:Npn \__hdr_firstbold_acro:nnnw #1#2#3#4 \q_stop
-    {
-        \tl_if_blank:nTF {#4}
-            { \hdr@acro@show { \firstbold [#1] } {#3} }
-            { \hdr@firstbold@warn #2 {#3} #4 }
-    }
+{
+    \tl_if_blank:nTF {#4}
+    { \hdr@acro@show { \firstbold [#1] } {#3} }
+    { \hdr@firstbold@warn #2 {#3} #4 }
+}
 \ExplSyntaxOff
 % What \firstbold reduces to in a PDF string (bookmarks, tooltips): the argument,
 % whose own \acro is reduced by the block above. A PDF string is built by
@@ -3104,10 +3104,10 @@
     % wherever it stands
     \renewcommand{\@makefnmark}{%
         \begingroup%
-            \hypersetup{linkcolor=linksColor}%
-            \hyperlink{Hfootnote.\@thefnmark}{%
-                \textsuperscript{\normalfont\small(\@thefnmark)}%
-            }%
+        \hypersetup{linkcolor=linksColor}%
+        \hyperlink{Hfootnote.\@thefnmark}{%
+            \textsuperscript{\normalfont\small(\@thefnmark)}%
+        }%
         \endgroup%
     }%
 }%
@@ -3150,8 +3150,8 @@
 % definition they expect
 \long\def\hdr@addtocontents#1#2{%
     \begingroup%
-        \hdr@nofootnotes%
-        \hdr@oldaddtocontents{#1}{#2}%
+    \hdr@nofootnotes%
+    \hdr@oldaddtocontents{#1}{#2}%
     \endgroup}%
 \AtBeginDocument{%
     \let\hdr@oldaddtocontents\addtocontents%
@@ -3164,14 +3164,14 @@
 \expandafter\let\expandafter\hdr@oldmarkboth\csname markboth \endcsname%
 \expandafter\def\csname markboth \endcsname#1#2{%
     \begingroup%
-        \hdr@nofootnotes%
-        \hdr@oldmarkboth{#1}{#2}%
+    \hdr@nofootnotes%
+    \hdr@oldmarkboth{#1}{#2}%
     \endgroup}%
 \expandafter\let\expandafter\hdr@oldmarkright\csname markright \endcsname%
 \expandafter\def\csname markright \endcsname#1{%
     \begingroup%
-        \hdr@nofootnotes%
-        \hdr@oldmarkright{#1}%
+    \hdr@nofootnotes%
+    \hdr@oldmarkright{#1}%
     \endgroup}%
 
 % Bookmarks of the PDF
@@ -3189,8 +3189,8 @@
     \hdr@hasfootnote{#1}%
     \ifin@%
         \begingroup%
-            \hdr@nofootnotes%
-            \protected@xdef\hdr@labelname{#1}%
+        \hdr@nofootnotes%
+        \protected@xdef\hdr@labelname{#1}%
         \endgroup%
         \let\@currentlabelname\hdr@labelname%
     \else%
