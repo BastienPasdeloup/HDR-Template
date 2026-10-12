@@ -1414,6 +1414,9 @@
 % carrying /TU; a viewer only honours it, and the action attached to it, when the
 % widget is a real form field, so every tooltip is collected here and declared in
 % the document catalog's /AcroForm at the very end of the document
+% "Very end" means after the last page has been shipped out, not \AtEndDocument:
+% the back cover is itself added \AtEndDocument, later in this file, and the
+% tooltips of its text would otherwise be left out of /Fields
 \makeatletter%
 % LuaTeX renamed the pdfTeX primitives, so both spellings have to be provided
 \ifdefined\pdfextension%
@@ -1426,7 +1429,7 @@
     \def\hdr@lastannot{\the\pdflastannot}%
 \fi%
 \newcommand{\hdr@formfields}{}%
-\AtEndDocument{%
+\AddToHook{enddocument/afterlastpage}{%
     \ifx\hdr@formfields\@empty\else%
         \hdr@catalog{/AcroForm << /Fields [\hdr@formfields] /NeedAppearances false >>}%
     \fi}%
@@ -2881,6 +2884,10 @@
         \box@capresult%
     \fi%
 }%
+% The type is typeset once in a box only to measure it, and that box is thrown
+% away: tooltips are turned off there (\settowidth opens a group of its own, which
+% undoes \hdrtipsoff), otherwise a citation in the type of a box* would leave a
+% reserved annotation object behind
 \NewDocumentEnvironment{boxenv}{o m O{}}{%
     \phantomsection%
     \setlength{\boxmaxtitlewidth}{\dimexpr0.9\linewidth-7.5mm\relax}%
@@ -2899,7 +2906,7 @@
         \refstepcounter{\box@countername{#2}}%
         \protected@edef\@currentlabelname{#2~\csname the\box@countername{#2}\endcsname}%
         \hdrlabeltitle{#3}%
-        \settowidth{\boxtitlewidth}{#2~\csname the\box@countername{#2}\endcsname\quad}%
+        \settowidth{\boxtitlewidth}{\hdrtipsoff#2~\csname the\box@countername{#2}\endcsname\quad}%
         \IfValueT{#1}{\label{#1}}%
         \begin{tcolorbox}[boxstyle,title={%
                     \begin{varwidth}{\boxmaxtitlewidth}%
@@ -2933,7 +2940,7 @@
     \else%
         \def\@currentlabelname{#2}%
         \hdrlabeltitle{#3}%
-        \settowidth{\boxtitlewidth}{#2\quad}%
+        \settowidth{\boxtitlewidth}{\hdrtipsoff#2\quad}%
         \IfValueT{#1}{\label{#1}}%
         \begin{tcolorbox}[boxstyle,title={%
                     \begin{varwidth}{\boxmaxtitlewidth}%
