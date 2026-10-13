@@ -858,7 +858,12 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Colors & needed packages for refs
-\RequirePackage[colorlinks=true, linkcolor=linksColor, citecolor=linksColor, urlcolor=linksColor]{hyperref}%
+% "destlabel" names the destination of every label after the label itself rather
+% than after a counter ("karimi" rather than "paragraph*.120"). The names then stay
+% the same from one version of the document to the next, so that a link from
+% outside -- manuscript.pdf#nameddest=karimi, from the slides of the defense, say --
+% keeps leading to the right place when the document changes
+\RequirePackage[colorlinks=true, linkcolor=linksColor, citecolor=linksColor, urlcolor=linksColor, destlabel=true]{hyperref}%
 \RequirePackage{xparse}%
 
 % Name of the element a label points to, kept aside for the tooltips of \nameref

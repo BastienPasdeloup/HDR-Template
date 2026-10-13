@@ -26,6 +26,9 @@ so that you can see every feature in context before writing your own document.
   the caption of the figure, the title of the box -- while the link still leads there when clicked.
   With the `unnumbered_in_toc` class option, unnumbered sectioning commands (`\section*`, `\subsection*`, ...)
   are listed in the table of contents like the numbered ones, their title starting where a number would.
+  In the PDF, the destination of every label is named after the label itself, so that it stays the same from one
+  version of the document to the next: a link from another document, `manuscript.pdf#nameddest=my_label`, keeps
+  leading to the right place when the manuscript changes.
 * Acronyms with **tooltips** in the PDF, and an automatically generated list of acronyms.
   Only the acronyms a document actually uses are listed, so one `acronyms.tex` can serve several documents
   without each of them carrying the acronyms of the others -- an acronym written only in a bibliography
